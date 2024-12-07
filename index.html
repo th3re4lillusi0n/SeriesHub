@@ -1,0 +1,974 @@
+<html><head><base href="." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeriesHub - Trova le tue serie TV</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+:root {
+  --primary: #1a237e;
+  --secondary: #304ffe;
+  --background: #fafafa;
+  --text: #212121;
+  --card-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --hover-shadow: rgba(0, 0, 0, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+}
+
+.header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  padding: 3rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, #fff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  margin-top: 0.5rem;
+}
+
+.search-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 120px;
+  z-index: 99;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: 0 4px 20px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+  box-shadow: 0 4px 25px var(--hover-shadow);
+  transform: translateY(-2px);
+}
+
+.series-list {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-gap: 1.5rem;
+}
+
+.series-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px var(--shadow);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.series-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px var(--hover-shadow);
+}
+
+.series-info {
+  flex: 1;
+}
+
+.series-info h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.7rem;
+}
+
+.series-info p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.platforms {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.platform-icon {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.platform-icon:hover {
+  transform: scale(1.1);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.platform-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.series-card {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@media (max-width: 768px) {
+  .series-card {
+    flex-direction: column;
+  }
+  
+  .platforms {
+    margin-top: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .header p {
+    font-size: 1rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1001;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 24px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transform: translateY(20px);
+  animation: modalSlideUp 0.3s ease forwards;
+}
+
+@keyframes modalSlideUp {
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.modal-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.modal-content a {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  background: var(--secondary);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.modal-content a:hover {
+  background: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.close-modal {
+  background: var(--background);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: var(--text);
+}
+
+.close-modal:hover {
+  background: #eee;
+  transform: translateY(-2px);
+}
+
+.report-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 1.2rem 2rem;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  z-index: 1000;
+}
+
+.report-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+}
+
+.report-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .report-button {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.8rem 1.2rem;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>SeriesHub</h1>
+    <p>Trova dove guardare le tue serie TV preferite</p>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Cerca una serie TV...">
+  </div>
+
+  <div class="series-list" id="seriesList">
+    <!-- Serie TV verranno caricate qui dinamicamente -->
+  </div>
+
+  <button class="report-button">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+    Segnala Serie Mancante
+  </button>
+
+  <div class="modal" id="reportModal">
+    <div class="modal-content">
+      <h3>Segnala una Serie TV Mancante</h3>
+      <p>Aiutaci a rendere il nostro database ancora più completo! Se hai notato una serie TV mancante, puoi segnalarcela attraverso il nostro server Discord.</p>
+      <p><a href="https://discord.gg/nJ3mCTJ4uP" target="_blank">Unisciti al Discord</a></p>
+      <p>Una volta entrato, apri un ticket nel canale appropriato indicando il nome della serie TV che vorresti aggiungere.</p>
+      <button class="close-modal">Chiudi</button>
+    </div>
+  </div>
+
+<script>
+const seriesData = [
+  {
+    title: "Breaking Bad",
+    description: "Un professore di chimica diventa un signore della droga",
+    platforms: ["netflix", "prime", "amc"],
+    genre: "Drama",
+    rating: 9.5
+  },
+  {
+    title: "Stranger Things",
+    description: "Misteriosi eventi soprannaturali in una piccola città",
+    platforms: ["netflix"],
+    genre: "Sci-Fi",
+    rating: 8.7
+  },
+  {
+    title: "Game of Thrones",
+    description: "Lotte di potere in un mondo fantasy",
+    platforms: ["hbo", "prime"],
+    genre: "Fantasy",
+    rating: 9.3
+  },
+  {
+    title: "The Mandalorian",
+    description: "Un cacciatore di taglie galattico protegge un bambino speciale",
+    platforms: ["disney"],
+    genre: "Sci-Fi",
+    rating: 8.8
+  },
+  {
+    title: "The Crown",
+    description: "La storia della famiglia reale britannica",
+    platforms: ["netflix"],
+    genre: "Drama",
+    rating: 8.7
+  },
+  {
+    title: "The Office (US)",
+    description: "La vita quotidiana in un ufficio di Scranton",
+    platforms: ["netflix", "prime"],
+    genre: "Comedy",
+    rating: 8.9
+  },
+  {
+    title: "Friends",
+    description: "Le avventure di sei amici a New York",
+    platforms: ["hbo", "netflix"],
+    genre: "Comedy",
+    rating: 8.9
+  },
+  {
+    title: "The Witcher",
+    description: "Le avventure di un cacciatore di mostri",
+    platforms: ["netflix"],
+    genre: "Fantasy",
+    rating: 8.2
+  },
+  {
+    title: "WandaVision",
+    description: "Wanda e Visione vivono in una realtà alternativa di sitcom",
+    platforms: ["disney"],
+    genre: "MCU/Sci-Fi",
+    rating: 8.0
+  },
+  {
+    title: "The Falcon and the Winter Soldier",
+    description: "Sam Wilson e Bucky Barnes affrontano nuove minacce",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.8
+  },
+  {
+    title: "Moon Knight",
+    description: "Un vigilante con disturbo dissociativo dell'identità",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.9
+  },
+  {
+    title: "Ms. Marvel",
+    description: "Le avventure della giovane supereroina Kamala Khan",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.5
+  },
+  {
+    title: "She-Hulk: Attorney at Law",
+    description: "Un'avvocata diventa una supereroina verde",
+    platforms: ["disney"],
+    genre: "MCU/Comedy",
+    rating: 6.8
+  },
+  {
+    title: "Secret Invasion",
+    description: "Nick Fury combatte un'invasione aliena segreta",
+    platforms: ["disney"],
+    genre: "MCU/Sci-Fi",
+    rating: 7.0
+  },
+  {
+    title: "Bridgerton",
+    description: "Romance e scandali nell'alta società londinese",
+    platforms: ["netflix"],
+    genre: "Drama/Romance",
+    rating: 8.3
+  },
+  {
+    title: "The Crown",
+    description: "La storia della famiglia reale britannica",
+    platforms: ["netflix"],
+    genre: "Drama/History",
+    rating: 8.7
+  },
+  {
+    title: "Squid Game",
+    description: "Giochi mortali per un premio in denaro",
+    platforms: ["netflix"],
+    genre: "Drama/Thriller",
+    rating: 8.7
+  },
+  {
+    title: "The Rings of Power",
+    description: "Prequel del Signore degli Anelli",
+    platforms: ["prime"],
+    genre: "Fantasy",
+    rating: 7.8
+  },
+  {
+    title: "Ted Lasso",
+    description: "Un allenatore americano di football allena una squadra di calcio inglese",
+    platforms: ["apple"],
+    genre: "Comedy",
+    rating: 8.9
+  },
+  {
+    title: "The Morning Show",
+    description: "Drama ambientato nel mondo del giornalismo televisivo",
+    platforms: ["apple"],
+    genre: "Drama",
+    rating: 8.2
+  },
+  {
+    title: "The Handmaid's Tale",
+    description: "Distopia in cui le donne sono private dei diritti",
+    platforms: ["hulu"],
+    genre: "Drama",
+    rating: 8.4
+  },
+  {
+    title: "Only Murders in the Building",
+    description: "Tre vicini indagano su un omicidio nel loro palazzo",
+    platforms: ["hulu", "disney"],
+    genre: "Comedy/Mystery",
+    rating: 8.1
+  },
+  {
+    title: "Andor",
+    description: "Prequel di Rogue One nell'universo di Star Wars",
+    platforms: ["disney"],
+    genre: "Sci-Fi",
+    rating: 8.7
+  },
+  {
+    title: "The Bear",
+    description: "Un chef torna a gestire il ristorante di famiglia",
+    platforms: ["hulu", "disney"],
+    genre: "Drama",
+    rating: 8.7
+  },
+  {
+    title: "Severance",
+    description: "Impiegati con memoria divisa tra lavoro e vita privata",
+    platforms: ["apple"],
+    genre: "Sci-Fi/Thriller",
+    rating: 8.7
+  },
+  {
+    title: "What If...?",
+    description: "Storie alternative dell'universo Marvel",
+    platforms: ["disney"],
+    genre: "MCU/Animation",
+    rating: 7.4
+  },
+  {
+    title: "Hawkeye",
+    description: "Le avventure natalizie di Clint Barton",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.6
+  },
+  {
+    title: "The Last Kingdom",
+    description: "Guerre e politica nell'Inghilterra medievale",
+    platforms: ["netflix"],
+    genre: "Action/Drama",
+    rating: 8.5
+  },
+  {
+    title: "Shadow and Bone",
+    description: "Fantasy basato sui romanzi di Leigh Bardugo",
+    platforms: ["netflix"],
+    genre: "Fantasy",
+    rating: 7.7
+  },
+  {
+    title: "The Wheel of Time",
+    description: "Fantasy epico basato sui romanzi di Robert Jordan",
+    platforms: ["prime"],
+    genre: "Fantasy",
+    rating: 7.1
+  },
+  {
+    title: "Money Heist",
+    description: "Un gruppo di rapinatori pianifica colpi elaborati",
+    platforms: ["netflix"],
+    genre: "Drama/Thriller",
+    rating: 8.3
+  },
+  {
+    title: "Ozark",
+    description: "Una famiglia coinvolta nel riciclaggio di denaro",
+    platforms: ["netflix"],
+    genre: "Drama/Crime",
+    rating: 8.5
+  },
+  {
+    title: "Narcos",
+    description: "La storia dei cartelli della droga colombiani",
+    platforms: ["netflix"],
+    genre: "Drama/Crime",
+    rating: 8.8
+  },
+  {
+    title: "The Umbrella Academy",
+    description: "Fratelli supereroi riuniti per salvare il mondo",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Action",
+    rating: 7.9
+  },
+  {
+    title: "Lucifer",
+    description: "Il diavolo gestisce un night club a Los Angeles",
+    platforms: ["netflix"],
+    genre: "Fantasy/Crime",
+    rating: 8.1
+  },
+  {
+    title: "Emily in Paris",
+    description: "Un'americana si trasferisce a Parigi per lavoro",
+    platforms: ["netflix"],
+    genre: "Comedy/Romance",
+    rating: 7.0
+  },
+  {
+    title: "Queen's Gambit",
+    description: "Una giovane prodigio degli scacchi",
+    platforms: ["netflix"],
+    genre: "Drama",
+    rating: 8.6
+  },
+  {
+    title: "The Haunting of Hill House",
+    description: "Una famiglia perseguitata da ricordi soprannaturali",
+    platforms: ["netflix"],
+    genre: "Horror/Drama",
+    rating: 8.6
+  },
+  {
+    title: "Sex Education",
+    description: "Le avventure di studenti alle prese con la sessualità",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 8.3
+  },
+  {
+    title: "Loki",
+    description: "Le avventure del dio dell'inganno",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 8.2
+  },
+  {
+    title: "The Boys",
+    description: "Supereroi corrotti contro vigilanti",
+    platforms: ["prime"],
+    genre: "Action/Drama",
+    rating: 8.7
+  },
+  {
+    title: "The Marvelous Mrs. Maisel",
+    description: "Una casalinga diventa comica stand-up",
+    platforms: ["prime"],
+    genre: "Comedy/Drama",
+    rating: 8.7
+  },
+  {
+    title: "Jack Ryan",
+    description: "Un analista CIA in missioni globali",
+    platforms: ["prime"],
+    genre: "Action/Thriller",
+    rating: 8.0
+  },
+  {
+    title: "Fleabag",
+    description: "Una donna alle prese con la vita a Londra",
+    platforms: ["prime"],
+    genre: "Comedy/Drama",
+    rating: 8.7
+  },
+  {
+    title: "Sherlock",
+    description: "Moderna interpretazione del detective",
+    platforms: ["netflix", "prime"],
+    genre: "Crime/Drama",
+    rating: 9.1
+  },
+  {
+    title: "The Walking Dead",
+    description: "Sopravvivenza in un'apocalisse zombie",
+    platforms: ["netflix", "amc"],
+    genre: "Horror/Drama",
+    rating: 8.2
+  },
+  {
+    title: "The Sopranos",
+    description: "Un boss mafioso in terapia",
+    platforms: ["hbo"],
+    genre: "Crime/Drama",
+    rating: 9.2
+  },
+  {
+    title: "Better Call Saul",
+    description: "L'origine dell'avvocato Saul Goodman",
+    platforms: ["netflix", "amc"],
+    genre: "Crime/Drama",
+    rating: 8.9
+  },
+  {
+    title: "Lost",
+    description: "Sopravvissuti di un incidente aereo su un'isola misteriosa",
+    platforms: ["hulu"],
+    genre: "Drama/Mystery",
+    rating: 8.3
+  },
+  {
+    title: "Westworld",
+    description: "Un parco a tema futuristico con robot senzienti",
+    platforms: ["hbo"],
+    genre: "Sci-Fi/Drama",
+    rating: 8.6
+  },
+  {
+    title: "The OA",
+    description: "Una donna ritorna dopo sette anni di scomparsa con abilità misteriose",
+    platforms: ["netflix"],
+    genre: "Mystery/Drama",
+    rating: 7.8
+  },
+  {
+    title: "Dark",
+    description: "Misteri e viaggi nel tempo in una piccola città tedesca",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Mystery",
+    rating: 8.8
+  },
+  {
+    title: "Narcos: Mexico",
+    description: "L'ascesa dei cartelli della droga messicani",
+    platforms: ["netflix"],
+    genre: "Crime/Drama",
+    rating: 8.4
+  },
+  {
+    title: "The Good Place",
+    description: "Una donna si ritrova per errore nel paradiso",
+    platforms: ["netflix"],
+    genre: "Comedy/Fantasy",
+    rating: 8.2
+  },
+  {
+    title: "Russian Doll",
+    description: "Una donna rivive ripetutamente il giorno della sua morte",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 7.8
+  },
+  {
+    title: "Love, Death & Robots",
+    description: "Antologia animata di storie sci-fi",
+    platforms: ["netflix"],
+    genre: "Animation/Sci-Fi",
+    rating: 8.4
+  },
+  {
+    title: "Dead to Me",
+    description: "Due donne legate da un oscuro segreto",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 8.0
+  },
+  {
+    title: "After Life",
+    description: "Un uomo affronta la vita dopo la morte della moglie",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 8.4
+  },
+  {
+    title: "The End of the F***ing World",
+    description: "Due adolescenti problematici in fuga",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 8.1
+  },
+  {
+    title: "Cobra Kai",
+    description: "Continuazione della saga di Karate Kid",
+    platforms: ["netflix"],
+    genre: "Action/Drama",
+    rating: 8.5
+  },
+  {
+    title: "The Big Bang Theory",
+    description: "Un gruppo di fisici nerd e la loro vicina aspirante attrice affrontano la vita, l'amore e la scienza",
+    platforms: ["hbo", "netflix", "prime"],
+    genre: "Comedy",
+    rating: 8.2
+  },
+  {
+    title: "The Book of Boba Fett",
+    description: "Le avventure del cacciatore di taglie di Star Wars",
+    platforms: ["disney"],
+    genre: "Sci-Fi/Action",
+    rating: 7.3
+  },
+  {
+    title: "Mighty Ducks: Game Changers",
+    description: "Una nuova generazione di giovani giocatori di hockey",
+    platforms: ["disney"],
+    genre: "Family/Sport",
+    rating: 7.3
+  },
+  {
+    title: "Big Shot",
+    description: "Un allenatore di basket in una scuola femminile",
+    platforms: ["disney"],
+    genre: "Drama/Sport",
+    rating: 7.3
+  },
+  {
+    title: "The Santa Clauses",
+    description: "Continuazione della saga di Santa Clause",
+    platforms: ["disney"],
+    genre: "Family/Comedy",
+    rating: 7.0
+  },
+  {
+    title: "The Night Manager",
+    description: "Un ex soldato si infiltra in un'organizzazione criminale",
+    platforms: ["prime"],
+    genre: "Drama/Thriller",
+    rating: 8.1
+  },
+  {
+    title: "Goliath",
+    description: "Un avvocato cerca redenzione",
+    platforms: ["prime"],
+    genre: "Drama/Legal",
+    rating: 8.2
+  },
+  {
+    title: "Tales from the Loop",
+    description: "Storie interconnesse in una città con strani fenomeni",
+    platforms: ["prime"],
+    genre: "Sci-Fi/Drama",
+    rating: 7.5
+  },
+  {
+    title: "The West Wing",
+    description: "Dietro le quinte della Casa Bianca",
+    platforms: ["hbo"],
+    genre: "Drama/Politics",
+    rating: 8.9
+  },
+  {
+    title: "Parks and Recreation",
+    description: "Le avventure del dipartimento parchi di una città",
+    platforms: ["netflix", "prime"],
+    genre: "Comedy",
+    rating: 8.6
+  },
+  {
+    title: "Mad Men",
+    description: "La vita in un'agenzia pubblicitaria negli anni '60",
+    platforms: ["prime"],
+    genre: "Drama",
+    rating: 8.7
+  },
+  {
+    title: "Brooklyn Nine-Nine",
+    description: "Le avventure di un distretto di polizia di New York",
+    platforms: ["netflix", "hulu"],
+    genre: "Comedy",
+    rating: 8.4
+  },
+  {
+    title: "Sons of Anarchy",
+    description: "Un club di motociclisti in California",
+    platforms: ["hulu"],
+    genre: "Drama/Crime",
+    rating: 8.6
+  },
+  {
+    title: "Daredevil",
+    description: "Un avvocato cieco combatte il crimine",
+    platforms: ["netflix", "disney"],
+    genre: "Action/Crime",
+    rating: 8.6
+  },
+  {
+    title: "Arrow",
+    description: "Un miliardario diventa un vigilante",
+    platforms: ["netflix"],
+    genre: "Action/Adventure",
+    rating: 7.5
+  },
+  {
+    title: "Supernatural",
+    description: "Due fratelli cacciano creature soprannaturali",
+    platforms: ["prime", "netflix"],
+    genre: "Fantasy/Horror",
+    rating: 8.4
+  }
+];
+
+function getPlatformIcon(platform) {
+  const icons = {
+    netflix: `<img src="netflix.png" alt="Netflix" style="max-width: 100%; height: auto;" />`,
+    
+    prime: `<img src="primevideo.png" alt="Prime" style="max-width: 100%; height: auto;" />`,
+    
+    hbo: `<img src="hbo.png" alt="HBO" style="max-width: 100%; height: auto;" />`,
+    
+    disney: `<img src="disney.png" alt="Disney" style="max-width: 100%; height: auto;" />`,
+    
+    amc: `<img src="amc.png" alt="AMC" style="max-width: 100%; height: auto;" />`,
+    
+    apple: `<img src="apple.png" alt="Apple" style="max-width: 100%; height: auto;" />`,
+    
+    hulu: `<img src="hulu.png" alt="Hulu" style="max-width: 100%; height: auto;" />`,
+  };
+  return icons[platform] || '';
+}
+
+function renderSeries(series) {
+  const seriesList = document.getElementById('seriesList');
+  seriesList.innerHTML = '';
+
+  series.forEach((show, index) => {
+    const seriesCard = document.createElement('div');
+    seriesCard.className = 'series-card';
+    seriesCard.style.animationDelay = `${index * 0.1}s`;
+    
+    seriesCard.innerHTML = `
+      <div class="series-info">
+        <h3>${show.title}</h3>
+        <p>${show.description}</p>
+        <p>Genere: ${show.genre} | Valutazione: <strong>${show.rating}/10</strong></p>
+      </div>
+      <div class="platforms">
+        ${show.platforms.map(platform => 
+          `<div class="platform-icon" title="Disponibile su ${platform.charAt(0).toUpperCase() + platform.slice(1)}">
+            ${getPlatformIcon(platform)}
+          </div>`
+        ).join('')}
+      </div>
+    `;
+    
+    seriesList.appendChild(seriesCard);
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredSeries = seriesData.filter(show => 
+    show.title.toLowerCase().includes(searchTerm) ||
+    show.description.toLowerCase().includes(searchTerm) ||
+    show.genre.toLowerCase().includes(searchTerm)
+  );
+  renderSeries(filteredSeries);
+});
+
+// Carica tutte le serie all'avvio
+renderSeries(seriesData);
+
+const reportButton = document.querySelector('.report-button');
+const modal = document.getElementById('reportModal');
+const closeModal = document.querySelector('.close-modal');
+
+reportButton.addEventListener('click', () => {
+  modal.style.display = 'flex';
+});
+
+closeModal.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>
