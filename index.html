@@ -1294,6 +1294,209 @@ const seriesData = [
     platforms: ["prime", "netflix"],
     genre: "Fantasy/Horror",
     rating: 8.4
+  },
+  {
+    title: "Arcane",
+    description: "Serie animata basata sul gioco League of Legends",
+    platforms: ["netflix"],
+    genre: "Animation/Fantasy",
+    rating: 9.0
+  },
+  {
+    title: "Rick and Morty",
+    description: "Le avventure intergalattiche di uno scienziato e suo nipote",
+    platforms: ["netflix", "hbo"],
+    genre: "Animation/Sci-Fi",
+    rating: 9.2
+  },
+  {
+    title: "Alias",
+    description: "Un'agente segreta combatte contro organizzazioni criminali",
+    platforms: ["prime"],
+    genre: "Action/Drama",
+    rating: 7.6
+  },
+  {
+    title: "24",
+    description: "Un agente antiterrorismo affronta minacce in tempo reale",
+    platforms: ["hulu"],
+    genre: "Action/Thriller",
+    rating: 8.3
+  },
+  {
+    title: "Prison Break",
+    description: "Un uomo cerca di far evadere il fratello dal carcere",
+    platforms: ["hulu", "disney"],
+    genre: "Action/Drama",
+    rating: 8.3
+  },
+  {
+    title: "Homeland",
+    description: "Un'agente CIA indaga su minacce terroristiche",
+    platforms: ["hulu"],
+    genre: "Drama/Thriller",
+    rating: 8.3
+  },
+  {
+    title: "Fringe",
+    description: "Indagini su fenomeni scientifici misteriosi",
+    platforms: ["prime"],
+    genre: "Sci-Fi/Mystery",
+    rating: 8.4
+  },
+  {
+    title: "Vikings",
+    description: "Le avventure dei vichinghi nell'era medievale",
+    platforms: ["netflix", "prime"],
+    genre: "Action/Drama",
+    rating: 8.5
+  },
+  {
+    title: "The Blacklist",
+    description: "Un criminale collabora con l'FBI",
+    platforms: ["netflix"],
+    genre: "Crime/Drama",
+    rating: 8.0
+  },
+  {
+    title: "Orphan Black",
+    description: "Una donna scopre di essere un clone",
+    platforms: ["prime"],
+    genre: "Sci-Fi/Thriller",
+    rating: 8.3
+  },
+  {
+    title: "Succession",
+    description: "Lotte di potere in una famiglia mediatica",
+    platforms: ["hbo"],
+    genre: "Drama",
+    rating: 8.9
+  },
+  {
+    title: "Euphoria",
+    description: "Le difficoltà dell'adolescenza moderna",
+    platforms: ["hbo"],
+    genre: "Drama",
+    rating: 8.4
+  },
+  {
+    title: "Barry",
+    description: "Un sicario che sogna di diventare attore",
+    platforms: ["hbo"],
+    genre: "Comedy/Drama",
+    rating: 8.4
+  },
+  {
+    title: "True Detective",
+    description: "Indagini su crimini complessi",
+    platforms: ["hbo"],
+    genre: "Crime/Drama",
+    rating: 8.9
+  },
+  {
+    title: "Grey's Anatomy",
+    description: "Le vite personali e professionali di medici",
+    platforms: ["netflix", "hulu"],
+    genre: "Drama/Medical",
+    rating: 7.6
+  },
+  {
+    title: "Suits",
+    description: "Un avvocato fraudolento in uno studio legale d'elite",
+    platforms: ["netflix"],
+    genre: "Drama/Legal",
+    rating: 8.4
+  },
+  {
+    title: "White Collar",
+    description: "Un truffatore aiuta l'FBI",
+    platforms: ["hulu"],
+    genre: "Crime/Drama",
+    rating: 8.2
+  },
+  {
+    title: "Burn Notice",
+    description: "Una spia licenziata cerca di scoprire chi l'ha incastrata",
+    platforms: ["hulu"],
+    genre: "Action/Drama",
+    rating: 8.0
+  },
+  {
+    title: "Angel",
+    description: "Spin-off di Buffy: un vampiro con un'anima combatte il male a Los Angeles",
+    platforms: ["hulu"],
+    genre: "Fantasy/Drama",
+    rating: 8.0
+  },
+  {
+    title: "Buffy the Vampire Slayer",
+    description: "Una teenager combatte vampiri e forze soprannaturali",
+    platforms: ["hulu"],
+    genre: "Fantasy/Drama",
+    rating: 8.2
+  },
+  {
+    title: "Roswell",
+    description: "Alieni adolescenti nascosti tra gli umani",
+    platforms: ["hulu"],
+    genre: "Sci-Fi/Drama",
+    rating: 7.5
+  },
+  {
+    title: "Alias Grace",
+    description: "Adattamento del romanzo di Margaret Atwood",
+    platforms: ["netflix"],
+    genre: "Drama",
+    rating: 7.8
+  },
+  {
+    title: "A Series of Unfortunate Events",
+    description: "Le disavventure degli orfani Baudelaire",
+    platforms: ["netflix"],
+    genre: "Drama/Comedy",
+    rating: 7.8
+  },
+  {
+    title: "Maniac",
+    description: "Due estranei partecipano a un misterioso test farmaceutico",
+    platforms: ["netflix"],
+    genre: "Drama/Sci-Fi",
+    rating: 7.7
+  },
+  {
+    title: "Sense8",
+    description: "Otto persone connesse mentalmente",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Drama",
+    rating: 8.3
+  },
+  {
+    title: "Black Mirror",
+    description: "Antologia sulla tecnologia e le sue conseguenze",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Drama",
+    rating: 8.8
+  },
+  {
+    title: "The Twilight Zone (originale)",
+    description: "Serie antologica di storie soprannaturali",
+    platforms: ["hulu"],
+    genre: "Sci-Fi/Horror",
+    rating: 9.0
+  },
+  {
+    title: "The Twilight Zone (2019)",
+    description: "Reboot della classica serie antologica",
+    platforms: ["hulu"],
+    genre: "Sci-Fi/Horror",
+    rating: 7.2
+  },
+  {
+    title: "Galavant",
+    description: "Musical comedy medievale",
+    platforms: ["hulu"],
+    genre: "Comedy/Musical",
+    rating: 7.8
   }
 ];
 
@@ -1323,11 +1526,14 @@ function getPlatformIcon(platform) {
 function renderSeries(series) {
   const seriesList = document.getElementById('seriesList');
   seriesList.innerHTML = '';
-
+  
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
+  
   series.forEach((show, index) => {
     const seriesCard = document.createElement('div');
     seriesCard.className = 'series-card';
-    seriesCard.style.animationDelay = `${index * 0.1}s`;
+    seriesCard.style.animationDelay = `${Math.min(index * 0.1, 1)}s`; // Cap animation delay at 1s
     
     seriesCard.innerHTML = `
       <div class="series-info">
@@ -1344,8 +1550,10 @@ function renderSeries(series) {
       </div>
     `;
     
-    seriesList.appendChild(seriesCard);
+    fragment.appendChild(seriesCard);
   });
+  
+  seriesList.appendChild(fragment);
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
