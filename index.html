@@ -657,9 +657,9 @@ html {
         <div class="footer-content">
           <ul>
             <li><a href="terminicondizioni.html" target="_blank">Termini e Condizioni</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Cookie Policy</a></li>
-            <li><a href="#">Note Legali</a></li>
+            <li><a href="privacypolicy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="cookiepolicy.html" target="_blank">Cookie Policy</a></li>
+            <li><a href="notelegali.html" target="_blank">Note Legali</a></li>
           </ul>
         </div>
       </div>
@@ -1266,6 +1266,10 @@ const seriesData = [
   }
 ];
 
+function sortSeriesAlphabetically(series) {
+  return series.sort((a, b) => a.title.localeCompare(b.title));
+}
+
 function getPlatformIcon(platform) {
   const icons = {
     netflix: `<img src="netflix.png" alt="Netflix" style="max-width: 100%; height: auto;" />`,
@@ -1320,11 +1324,12 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     show.description.toLowerCase().includes(searchTerm) ||
     show.genre.toLowerCase().includes(searchTerm)
   );
-  renderSeries(filteredSeries);
+  // Sort the filtered results alphabetically
+  renderSeries(sortSeriesAlphabetically(filteredSeries));
 });
 
 // Carica tutte le serie all'avvio
-renderSeries(seriesData);
+renderSeries(sortSeriesAlphabetically(seriesData));
 
 const scrollButton = document.querySelector('.scroll-bottom-btn');
 
