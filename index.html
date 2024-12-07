@@ -31,20 +31,33 @@ body {
 
 .header {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
-  padding: 3rem 2rem;
+  padding: 4rem 2rem;
   position: sticky;
   top: 0;
   z-index: 100;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: padding 0.3s ease; /* Add smooth transition */
+}
+
+.header.compact {
+  padding: 1rem 2rem;
 }
 
 .header h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   background: linear-gradient(to right, #fff, #e3f2fd);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+  transition: font-size 0.3s ease; /* Add smooth transition */
+}
+
+.header.compact h1 {
+  font-size: 2rem;
+  margin-bottom: 0.4rem;
 }
 
 .header p {
@@ -53,22 +66,29 @@ body {
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   margin-top: 0.5rem;
+  transition: font-size 0.3s ease; /* Add smooth transition */
+}
+
+.header.compact p {
+  font-size: 1rem;
+  margin-top: 0.2rem;
 }
 
 .scroll-bottom-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
+  padding: 1rem 2rem;
+  border-radius: 100px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 1.5rem auto 0;
+  gap: 0.8rem;
+  margin: 2rem auto 0;
   transition: all 0.3s ease;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 500;
+  backdrop-filter: blur(10px);
 }
 
 .scroll-bottom-btn:hover {
@@ -87,18 +107,18 @@ body {
   margin: 2rem auto;
   padding: 0 1.5rem;
   position: sticky;
-  top: 120px;
+  top: 80px; /* Reduce this value from 120px */
   z-index: 99;
 }
 
 #searchInput {
   width: 100%;
-  padding: 1.2rem 1.5rem;
-  font-size: 1.1rem;
+  padding: 1.5rem 2rem;
+  font-size: 1.2rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--card-bg);
-  box-shadow: 0 4px 20px var(--shadow);
+  box-shadow: 0 8px 30px var(--shadow);
   transition: all 0.3s ease;
 }
 
@@ -117,19 +137,20 @@ body {
 
 .series-card {
   background: var(--card-bg);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px var(--shadow);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 8px 30px var(--shadow);
   transition: all 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 2rem;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .series-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 30px var(--hover-shadow);
+  box-shadow: 0 12px 40px var(--hover-shadow);
 }
 
 .series-info {
@@ -137,17 +158,18 @@ body {
 }
 
 .series-info h3 {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 0.7rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
 }
 
 .series-info p {
   color: #666;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
 }
 
 .platforms {
@@ -157,22 +179,23 @@ body {
 }
 
 .platform-icon {
-  width: 48px;
-  height: 48px;
-  padding: 8px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  padding: 10px;
+  border-radius: 16px;
   background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .platform-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translateY(-3px);
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .platform-icon svg {
@@ -183,7 +206,7 @@ body {
 @keyframes fadeIn {
   from { 
     opacity: 0; 
-    transform: translateY(30px); 
+    transform: translateY(40px); 
   }
   to { 
     opacity: 1; 
@@ -249,17 +272,14 @@ html {
 }
 
 .modal-content {
-  background: var(--card-bg);
-  padding: 2.5rem;
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 30px;
   max-width: 800px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  transform: translateY(20px);
-  animation: modalSlideUp 0.3s ease forwards;
-  max-height: 90vh;
-  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
 }
 
 @keyframes modalSlideUp {
@@ -433,18 +453,19 @@ html {
   right: 2rem;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  padding: 1.2rem 2rem;
-  border-radius: 50px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 1.2rem 2.5rem;
+  border-radius: 100px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
   z-index: 1000;
+  backdrop-filter: blur(10px);
 }
 
 .report-button:hover {
@@ -466,10 +487,10 @@ html {
 }
 
 .footer {
-  background: linear-gradient(to right, var(--card-bg), #f8f9fa);
-  padding: 4rem 2rem;
-  margin-top: 3rem;
-  box-shadow: 0 -4px 20px var(--shadow);
+  background: linear-gradient(to right, #fff, #f8f9fa);
+  padding: 5rem 2rem;
+  margin-top: 4rem;
+  box-shadow: 0 -4px 30px var(--shadow);
 }
 
 .footer-container {
@@ -562,6 +583,15 @@ html {
   .footer {
     padding: 2rem 1rem;
   }
+}
+
+.copyright {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--text);
+  opacity: 0.8;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  margin-top: 2rem;
 }
 </style>
 </head>
@@ -701,19 +731,19 @@ html {
               </a>
             </li>
             <li>
+              <a href="https://facebook.com" target="_blank" class="social-link">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                  <path fill="currentColor" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                </svg>
+                Facebook
+              </a>
+            </li>
+            <li>
               <a href="https://twitter.com" target="_blank" class="social-link">
                 <svg viewBox="0 0 24 24" width="24" height="24">
                   <path fill="currentColor" d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
                 </svg>
                 Twitter
-              </a>
-            </li>
-            <li>
-              <a href="https://facebook.com" target="_blank" class="social-link">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                Facebook
               </a>
             </li>
             <li>
@@ -727,6 +757,9 @@ html {
           </ul>
         </div>
       </div>
+    </div>
+    <div class="copyright">
+      © 2024 SeriesHub. Tutti i diritti riservati.
     </div>
   </footer>
 
@@ -1398,6 +1431,16 @@ window.addEventListener('click', (e) => {
 document.querySelectorAll('.footer-content a').forEach(link => {
   // Add target="_blank" to all footer links
   link.setAttribute('target', '_blank');
+});
+
+// Add this JavaScript code after the existing scroll event listener
+window.addEventListener('scroll', () => {
+  const header = document.querySelector('.header');
+  if (window.scrollY > 50) { // Add compact class after scrolling 50px
+    header.classList.add('compact');
+  } else {
+    header.classList.remove('compact');
+  }
 });
 </script>
 
