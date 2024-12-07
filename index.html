@@ -1,14 +1,10 @@
-<html>
-<head>
-
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9201326908543833"
-     crossorigin="anonymous"></script>
-<base href="." />
+<html><head><base href="." />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a237e'><path d='M11.572,0C18.469,0,24,5.244,24,12c0,6.756-5.531,12-12.428,12S-0.856,18.756-0.856,12C-0.856,5.244,4.675,0,11.572,0z M10.5,16.5h3v-9h-3V16.5z M15,16.5h3v-9h-3V16.5z M6,7.5v9h3v-9H6z'/></svg>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SeriesHub - Trova le tue serie TV</title>
 <meta name="description" content="Cerca e trova la tua serie TV preferita su Serieshub e scopri dove puoi guardarla.">
+<title>SeriesHub - Trova le tue serie TV</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9201326908543833" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
 :root {
@@ -57,6 +53,33 @@ body {
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   margin-top: 0.5rem;
+}
+
+.scroll-bottom-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem auto 0;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.scroll-bottom-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.scroll-bottom-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .search-container {
@@ -229,12 +252,14 @@ html {
   background: var(--card-bg);
   padding: 2.5rem;
   border-radius: 24px;
-  max-width: 500px;
+  max-width: 800px;
   width: 90%;
   text-align: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
   transform: translateY(20px);
   animation: modalSlideUp 0.3s ease forwards;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalSlideUp {
@@ -250,11 +275,23 @@ html {
   font-weight: 700;
 }
 
-.modal-content p {
-  margin-bottom: 1.5rem;
-  line-height: 1.8;
-  color: #666;
-  font-size: 1.1rem;
+.modal-text {
+  text-align: left;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 20px;
+  line-height: 1.6;
+}
+
+.modal-text h4 {
+  margin: 1.5rem 0 0.5rem 0;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.modal-text p {
+  margin-bottom: 1rem;
+  color: var(--text);
 }
 
 .modal-content a {
@@ -329,12 +366,186 @@ html {
     padding: 0.8rem 1.2rem;
   }
 }
+
+.footer {
+  background: var(--card-bg);
+  padding: 2rem 1rem;
+  margin-top: 3rem;
+  box-shadow: 0 -4px 20px var(--shadow);
+}
+
+.footer-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section {
+  padding: 1rem;
+}
+
+.footer-section h4 {
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-section h4::after {
+  content: '▼';
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.footer-section h4.active::after {
+  transform: rotate(180deg);
+}
+
+.footer-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.footer-content.active {
+  max-height: 500px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin: 0.8rem 0;
+}
+
+.footer-section a {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.footer-section a:hover {
+  color: var(--secondary);
+}
+
+.modal-content {
+  max-width: 800px;
+}
+
+.report-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: rgba(0,0,0,0.03);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.step:hover {
+  background: rgba(0,0,0,0.05);
+  transform: translateX(5px);
+}
+
+.step-number {
+  background: var(--secondary);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-content h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary);
+}
+
+.step-content ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.step-content li {
+  margin: 0.3rem 0;
+  color: #666;
+}
+
+.report-action {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.discord-button {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.8rem;
+  background: #5865F2 !important;
+  padding: 1rem 2rem !important;
+  border-radius: 8px !important;
+  font-size: 1.1rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.discord-button:hover {
+  background: #4752C4 !important;
+  transform: translateY(-2px) !important;
+}
+
+.discord-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .step {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .step-content h4 {
+    font-size: 1.1rem;
+  }
+}
 </style>
 </head>
 <body>
   <div class="header">
     <h1>SeriesHub</h1>
     <p>Trova dove guardare le tue serie TV preferite</p>
+    <button class="scroll-bottom-btn">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+      </svg>
+      Scorri in basso
+    </button>
   </div>
 
   <div class="search-container">
@@ -355,12 +566,175 @@ html {
   <div class="modal" id="reportModal">
     <div class="modal-content">
       <h3>Segnala una Serie TV Mancante</h3>
-      <p>Aiutaci a rendere il nostro database ancora più completo! Se hai notato una serie TV mancante, puoi segnalarcela attraverso il nostro server Discord.</p>
-      <p><a href="https://discord.gg/nJ3mCTJ4uP" target="_blank">Unisciti al Discord</a></p>
-      <p>Una volta entrato, apri un ticket nel canale appropriato indicando il nome della serie TV che vorresti aggiungere.</p>
+      <div class="modal-text">
+        <div class="report-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Unisciti alla Community</h4>
+              <p>Entra a far parte della nostra community su Discord dove potrai interagire con altri appassionati di serie TV.</p>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Apri un Ticket</h4>
+              <p>Nel canale dedicato, crea un nuovo ticket specificando:</p>
+              <ul>
+                <li>Titolo della serie TV</li>
+                <li>Breve descrizione</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Conferma</h4>
+              <p>Il nostro team verificherà le informazioni e aggiungerà la serie TV al database il prima possibile.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-action">
+          <a href="https://discord.gg/nJ3mCTJ4uP" target="_blank" class="discord-button">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+              <path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+            Unisciti al Discord
+          </a>
+        </div>
+      </div>
       <button class="close-modal">Chiudi</button>
     </div>
   </div>
+
+  <div class="modal" id="termsModal">
+    <div class="modal-content">
+      <h3>Termini e Condizioni</h3>
+      <div class="modal-text">
+        <h4>1. Accettazione dei Termini</h4>
+        <p>Utilizzando SeriesHub, accetti i seguenti termini e condizioni. Il servizio è fornito "così com'è" e ci riserviamo il diritto di modificare questi termini in qualsiasi momento.</p>
+        
+        <h4>2. Utilizzo del Servizio</h4>
+        <p>SeriesHub fornisce informazioni sulla disponibilità di serie TV su varie piattaforme di streaming. Non ospitiamo né distribuiamo contenuti video.</p>
+        
+        <h4>3. Accuratezza delle Informazioni</h4>
+        <p>Ci impegniamo a fornire informazioni accurate, ma la disponibilità dei contenuti può variare nel tempo e per regione.</p>
+        
+        <h4>4. Proprietà Intellettuale</h4>
+        <p>Tutti i marchi, loghi e contenuti appartengono ai rispettivi proprietari.</p>
+      </div>
+      <button class="close-modal">Chiudi</button>
+    </div>
+  </div>
+
+  <div class="modal" id="privacyModal">
+    <div class="modal-content">
+      <h3>Privacy Policy</h3>
+      <div class="modal-text">
+        <h4>1. Raccolta dei Dati</h4>
+        <p>SeriesHub raccoglie solo i dati necessari per il funzionamento del servizio, come le query di ricerca.</p>
+        
+        <h4>2. Utilizzo dei Dati</h4>
+        <p>I dati raccolti vengono utilizzati per migliorare il servizio e personalizzare l'esperienza utente.</p>
+        
+        <h4>3. Cookie</h4>
+        <p>Utilizziamo cookie essenziali per il funzionamento del sito. Puoi gestire le preferenze dei cookie dalle impostazioni del browser.</p>
+        
+        <h4>4. Condivisione dei Dati</h4>
+        <p>Non vendiamo né condividiamo i tuoi dati personali con terze parti.</p>
+      </div>
+      <button class="close-modal">Chiudi</button>
+    </div>
+  </div>
+
+  <div class="modal" id="cookieModal">
+    <div class="modal-content">
+      <h3>Cookie Policy</h3>
+      <div class="modal-text">
+        <h4>1. Cosa sono i Cookie</h4>
+        <p>I cookie sono piccoli file di testo memorizzati sul tuo dispositivo durante la navigazione.</p>
+        
+        <h4>2. Come li Utilizziamo</h4>
+        <p>Utilizziamo cookie tecnici essenziali per il funzionamento del sito e cookie analitici per migliorare il servizio.</p>
+        
+        <h4>3. Gestione dei Cookie</h4>
+        <p>Puoi gestire o disabilitare i cookie dalle impostazioni del tuo browser.</p>
+      </div>
+      <button class="close-modal">Chiudi</button>
+    </div>
+  </div>
+
+  <div class="modal" id="legalModal">
+    <div class="modal-content">
+      <h3>Note Legali</h3>
+      <div class="modal-text">
+        <h4>1. Responsabilità</h4>
+        <p>SeriesHub non è responsabile per eventuali imprecisioni nelle informazioni fornite.</p>
+        
+        <h4>2. Copyright</h4>
+        <p>Tutti i contenuti sono protetti da copyright e appartengono ai rispettivi proprietari.</p>
+        
+        <h4>3. Disclaimer</h4>
+        <p>Il servizio è fornito "così com'è" senza garanzie di alcun tipo.</p>
+      </div>
+      <button class="close-modal">Chiudi</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h4>Informazioni Legali</h4>
+        <div class="footer-content">
+          <ul>
+            <li><a href="#">Termini e Condizioni</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Note Legali</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Chi Siamo</h4>
+        <div class="footer-content">
+          <ul>
+            <li><a href="#">Il Nostro Team</a></li>
+            <li><a href="#">Lavora con Noi</a></li>
+            <li><a href="#">Contatti</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Servizi</h4>
+        <div class="footer-content">
+          <ul>
+            <li><a href="#">Guida all'Uso</a></li>
+            <li><a href="#">Supporto</a></li>
+            <li><a href="#">Newsletter</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Community</h4>
+        <div class="footer-content">
+          <ul>
+            <li><a href="https://discord.gg/nJ3mCTJ4uP">Discord</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 <script>
 const seriesData = [
@@ -958,6 +1332,51 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 // Carica tutte le serie all'avvio
 renderSeries(seriesData);
 
+const scrollButton = document.querySelector('.scroll-bottom-btn');
+
+// Function to update button text and behavior
+function updateScrollButton() {
+  const footer = document.querySelector('.footer');
+  const footerPosition = footer.getBoundingClientRect().top;
+  const windowHeight = window.innerHeight;
+  
+  if (footerPosition <= windowHeight) {
+    // We're at the bottom
+    scrollButton.innerHTML = `
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/>
+      </svg>
+      Torna in alto
+    `;
+    scrollButton.onclick = () => {
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth'
+      });
+    };
+  } else {
+    // We're at the top
+    scrollButton.innerHTML = `
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+      </svg>
+      Scorri in basso
+    `;
+    scrollButton.onclick = () => {
+      footer.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    };
+  }
+}
+
+// Listen for scroll events
+window.addEventListener('scroll', updateScrollButton);
+
+// Initial button state
+updateScrollButton();
+
 const reportButton = document.querySelector('.report-button');
 const modal = document.getElementById('reportModal');
 const closeModal = document.querySelector('.close-modal');
@@ -974,6 +1393,67 @@ window.addEventListener('click', (e) => {
   if (e.target === modal) {
     modal.style.display = 'none';
   }
+});
+
+// Toggle footer sections on mobile
+document.querySelectorAll('.footer-section h4').forEach(header => {
+  header.addEventListener('click', () => {
+    const content = header.nextElementSibling;
+    const isActive = content.classList.contains('active');
+    
+    // Close all sections
+    document.querySelectorAll('.footer-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    document.querySelectorAll('.footer-section h4').forEach(h4 => {
+      h4.classList.remove('active');
+    });
+    
+    // Open clicked section if it wasn't active
+    if (!isActive) {
+      content.classList.add('active');
+      header.classList.add('active');
+    }
+  });
+});
+
+// Update the footer links to open modals
+document.querySelectorAll('.footer-content a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Get the modal ID based on the link text
+    const linkText = link.textContent.toLowerCase().replace(/\s+/g, '');
+    const modalId = linkText + 'Modal';
+    const modal = document.getElementById(modalId);
+    
+    // If we found a matching modal, display it
+    if (modal) {
+      modal.style.display = 'flex';
+      // Add animation for opening
+      modal.querySelector('.modal-content').style.animation = 'modalSlideUp 0.3s ease forwards';
+    }
+  });
+});
+
+// Close modals when clicking outside or on close button
+document.querySelectorAll('.modal').forEach(modal => {
+  modal.querySelector('.close-modal').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+});
+
+document.querySelector('.scroll-bottom-btn').addEventListener('click', () => {
+  document.querySelector('.footer').scrollIntoView({ 
+    behavior: 'smooth',
+    block: 'start'
+  });
 });
 </script>
 
