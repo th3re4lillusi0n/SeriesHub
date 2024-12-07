@@ -1,7 +1,7 @@
 <html><head><base href="." />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SeriesHub - Termini e Condizioni</title>
+<title>Termini e Condizioni - SeriesHub</title>
 <style>
 :root {
   --primary: #1a237e;
@@ -9,7 +9,6 @@
   --background: #fafafa;
   --text: #212121;
   --card-bg: #ffffff;
-  --shadow: rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -33,73 +32,65 @@ body {
 }
 
 .header h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .container {
   max-width: 800px;
   margin: 2rem auto;
-  padding: 0 2rem;
-}
-
-.terms-section {
-  background: white;
-  border-radius: 12px;
   padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px var(--shadow);
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-.terms-section h2 {
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
   color: var(--primary);
   margin-bottom: 1rem;
-  font-size: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--secondary);
 }
 
-.terms-section p {
+.section p {
   margin-bottom: 1rem;
 }
 
-.terms-section ul {
+.section ul {
   margin-left: 2rem;
   margin-bottom: 1rem;
 }
 
-.terms-section ul li {
+.section li {
   margin-bottom: 0.5rem;
 }
 
-.back-button {
-  display: inline-block;
-  background: var(--secondary);
-  color: white;
-  text-decoration: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-  margin-top: 1rem;
-  transition: all 0.3s ease;
-}
-
-.back-button:hover {
-  background: var(--primary);
-  transform: translateY(-2px);
+.footer {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 .last-updated {
-  text-align: center;
+  text-align: right;
   color: #666;
+  font-style: italic;
   margin-top: 2rem;
-  font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem;
+    margin: 1rem;
+    padding: 1.5rem;
   }
   
-  .terms-section {
-    padding: 1.5rem;
+  .header h1 {
+    font-size: 2rem;
   }
 }
 </style>
@@ -111,12 +102,12 @@ body {
   </div>
 
   <div class="container">
-    <div class="terms-section">
+    <div class="section">
       <h2>1. Accettazione dei Termini</h2>
       <p>Utilizzando SeriesHub, accetti integralmente i seguenti termini e condizioni. Se non accetti questi termini, ti preghiamo di non utilizzare il servizio.</p>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>2. Descrizione del Servizio</h2>
       <p>SeriesHub è un servizio di aggregazione di informazioni sulle serie TV che permette agli utenti di:</p>
       <ul>
@@ -126,7 +117,7 @@ body {
       </ul>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>3. Accuratezza delle Informazioni</h2>
       <p>Ci impegniamo a fornire informazioni accurate e aggiornate, tuttavia:</p>
       <ul>
@@ -136,7 +127,7 @@ body {
       </ul>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>4. Proprietà Intellettuale</h2>
       <p>Tutti i contenuti presenti su SeriesHub sono protetti da copyright. In particolare:</p>
       <ul>
@@ -146,7 +137,7 @@ body {
       </ul>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>5. Limitazioni di Responsabilità</h2>
       <p>SeriesHub non è responsabile per:</p>
       <ul>
@@ -156,12 +147,12 @@ body {
       </ul>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>6. Modifiche ai Termini</h2>
       <p>Ci riserviamo il diritto di modificare questi termini in qualsiasi momento. Le modifiche saranno effettive immediatamente dopo la pubblicazione sul sito.</p>
     </div>
 
-    <div class="terms-section">
+    <div class="section">
       <h2>7. Contatti</h2>
       <p>Per domande o chiarimenti sui termini e condizioni, contattaci attraverso:</p>
       <ul>
@@ -170,9 +161,13 @@ body {
       </ul>
     </div>
 
-    <a href="index.html" class="back-button">← Torna alla Home</a>
+    <div class="last-updated">
+      Ultimo aggiornamento: 7 Dicembre 2024
+    </div>
+  </div>
 
-    <p class="last-updated">Ultimo aggiornamento: 7 Dicembre 2024</p>
+  <div class="footer">
+    © 2024 SeriesHub. Tutti i diritti riservati.
   </div>
 </body>
 </html>

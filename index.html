@@ -656,10 +656,10 @@ html {
         <h4>Informazioni Legali</h4>
         <div class="footer-content">
           <ul>
-            <li><a href="terminicondizioni.html" target="_blank">Termini e Condizioni</a></li>
-            <li><a href="privacypolicy.html" target="_blank">Privacy Policy</a></li>
-            <li><a href="cookiepolicy.html" target="_blank">Cookie Policy</a></li>
-            <li><a href="notelegali.html" target="_blank">Note Legali</a></li>
+            <li><a href="https://serieshub.it/terminicondizioni.html" target="_blank">Termini e Condizioni</a></li>
+            <li><a href="https://serieshub.it/privacy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="https://serieshub.it/cookie.html" target="_blank">Cookie Policy</a></li>
+            <li><a href="https://serieshub.it/notelegali.html" target="_blank">Note Legali</a></li>
           </ul>
         </div>
       </div>
@@ -668,10 +668,10 @@ html {
         <h4>Chi Siamo</h4>
         <div class="footer-content">
           <ul>
-            <li><a href="#">Il Nostro Team</a></li>
-            <li><a href="#">Lavora con Noi</a></li>
-            <li><a href="#">Contatti</a></li>
-            <li><a href="#">FAQ</a></li>
+            <li><a href="https://serieshub.it/team.html" target="_blank">Il Nostro Team</a></li>
+            <li><a href="https://serieshub.it/careers.html" target="_blank">Lavora con Noi</a></li>
+            <li><a href="https://serieshub.it/contatti.html" target="_blank">Contatti</a></li>
+            <li><a href="https://serieshub.it/faq.html" target="_blank">FAQ</a></li>
           </ul>
         </div>
       </div>
@@ -680,10 +680,10 @@ html {
         <h4>Servizi</h4>
         <div class="footer-content">
           <ul>
-            <li><a href="#">Guida all'Uso</a></li>
-            <li><a href="#">Supporto</a></li>
-            <li><a href="#">Newsletter</a></li>
-            <li><a href="#">Blog</a></li>
+            <li><a href="https://serieshub.it/guida.html" target="_blank">Guida all'Uso</a></li>
+            <li><a href="https://serieshub.it/supporto.html" target="_blank">Supporto</a></li>
+            <li><a href="https://serieshub.it/newsletter.html" target="_blank">Newsletter</a></li>
+            <li><a href="https://serieshub.it/blog.html" target="_blank">Blog</a></li>
           </ul>
         </div>
       </div>
@@ -1394,48 +1394,10 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Update the footer links to either open modals or new pages
+// Remove modal handling code for footer links
 document.querySelectorAll('.footer-content a').forEach(link => {
-  link.addEventListener('click', (e) => {
-    const linkText = link.textContent.toLowerCase();
-    
-    // Special case for "Termini e Condizioni"
-    if (linkText === 'termini e condizioni') {
-      // Don't prevent default - let the link open in new tab
-      link.setAttribute('target', '_blank');
-      return true;
-    }
-    
-    // For all other links, keep the modal behavior
-    e.preventDefault();
-    const modalId = linkText.replace(/\s+/g, '') + 'Modal';
-    const modal = document.getElementById(modalId);
-    
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.querySelector('.modal-content').style.animation = 'modalSlideUp 0.3s ease forwards';
-    }
-  });
-});
-
-// Close modals when clicking outside or on close button
-document.querySelectorAll('.modal').forEach(modal => {
-  modal.querySelector('.close-modal').addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-  
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
-});
-
-document.querySelector('.scroll-bottom-btn').addEventListener('click', () => {
-  document.querySelector('.footer').scrollIntoView({ 
-    behavior: 'smooth',
-    block: 'start'
-  });
+  // Add target="_blank" to all footer links
+  link.setAttribute('target', '_blank');
 });
 </script>
 
