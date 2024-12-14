@@ -1,11 +1,17 @@
-<html><head><base href="." />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a237e'><path d='M11.572,0C18.469,0,24,5.244,24,12c0,6.756-5.531,12-12.428,12S-0.856,18.756-0.856,12C-0.856,5.244,4.675,0,11.572,0z M10.5,16.5h3v-9h-3V16.5z M15,16.5h3v-9h-3V16.5z M6,7.5v9h3v-9H6z'/></svg>">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Cerca e trova la tua serie TV preferita su Serieshub e scopri dove puoi guardarla.">
-<title>SeriesHub - Trova le tue serie TV</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9201326908543833" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <base href="." />
+    <link rel="icon" href="shlogo/shlogo.png" type="image/png">
+    <link rel="apple-touch-icon" href="shlogo/shlogo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cerca e trova la tua serie TV preferita su SeriesHub e scopri dove puoi guardarla.">
+    <meta name="author" content="SeriesHub">
+    <meta name="keywords" content="Serie TV, streaming, SeriesHub, cerca serie, trova serie, dove guardare serie">
+    <title>SeriesHub | Trova Serie TV</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9201326908543833" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/3Il0O9a9Y7R+WoU5zR75RhPclOg5ewcQjTj1v" crossorigin="anonymous"></script>
 <style>
 :root {
   --primary: #1a237e;
@@ -1603,6 +1609,530 @@ const seriesData = [
     platforms: ["hulu"],
     genre: "Comedy/Musical",
     rating: 7.8
+  },
+  {
+    title: "The Haunting of Bly Manor",
+    description: "Una governante americana si prende cura di due bambini orfani in una tenuta inglese infestata",
+    platforms: ["netflix"],
+    genre: "Horror/Drama",
+    rating: 7.4
+  },
+  {
+    title: "Midnight Mass",
+    description: "Misteriosi eventi soprannaturali in una piccola comunità isolata",
+    platforms: ["netflix"],
+    genre: "Horror/Drama", 
+    rating: 7.7
+  },
+  {
+    title: "La Caduta della Casa degli Usher",
+    description: "Adattamento moderno del racconto di Edgar Allan Poe",
+    platforms: ["netflix"],
+    genre: "Horror/Drama",
+    rating: 7.8
+  },
+  {
+    title: "Anthracite",
+    description: "Un'investigazione su una setta misteriosa nelle Alpi francesi",
+    platforms: ["netflix"],
+    genre: "Mystery/Thriller",
+    rating: 6.8
+  },
+  {
+    title: "Ripley",
+    description: "Un truffatore assume l'identità di un ricco ereditiere",
+    platforms: ["netflix"],
+    genre: "Drama/Thriller",
+    rating: 7.9
+  },
+  {
+    title: "Baby Reindeer",
+    description: "Storia vera di uno stalking ossessivo",
+    platforms: ["netflix"],
+    genre: "Drama",
+    rating: 8.1
+  },
+  {
+    title: "Briganti",
+    description: "Serie storica sul brigantaggio nell'Italia meridionale",
+    platforms: ["netflix"],
+    genre: "Drama/History",
+    rating: 6.9
+  },
+  {
+    title: "Transatlantic",
+    description: "Storia vera del salvataggio di rifugiati durante la Seconda Guerra Mondiale",
+    platforms: ["netflix"],
+    genre: "Drama/History",
+    rating: 7.4
+  },
+  {
+    title: "Ossessione",
+    description: "Un affair proibito che minaccia di distruggere due famiglie",
+    platforms: ["netflix"],
+    genre: "Drama/Thriller",
+    rating: 6.5
+  },
+  {
+    title: "The Night Agent",
+    description: "Un agente FBI scopre una cospirazione che arriva fino alla Casa Bianca",
+    platforms: ["netflix"],
+    genre: "Action/Thriller",
+    rating: 7.7
+  },
+  {
+    title: "Lo scontro (Beef)",
+    description: "Un incidente stradale porta a una faida crescente tra due estranei",
+    platforms: ["netflix"],
+    genre: "Drama/Comedy",
+    rating: 8.2
+  },
+  {
+    title: "La legge di Lidia Poët",
+    description: "Storia della prima avvocatessa d'Italia",
+    platforms: ["netflix"],
+    genre: "Drama/History",
+    rating: 7.3
+  },
+  {
+    title: "Dead Boy Detectives",
+    description: "Due fantasmi adolescenti risolvono misteri soprannaturali",
+    platforms: ["netflix"],
+    genre: "Mystery/Fantasy",
+    rating: 7.5
+  },
+  {
+    title: "Copycat Killer",
+    description: "Un serial killer che ricrea famosi omicidi letterari",
+    platforms: ["netflix"],
+    genre: "Crime/Thriller",
+    rating: 7.2
+  },
+  {
+    title: "The Recruit",
+    description: "Un giovane avvocato della CIA si trova coinvolto in pericolose missioni",
+    platforms: ["netflix"],
+    genre: "Action/Thriller",
+    rating: 7.5
+  },
+  {
+    title: "The Fabulous",
+    description: "Quattro amici nel mondo della moda di Seoul",
+    platforms: ["netflix"],
+    genre: "Drama/Romance",
+    rating: 7.0
+  },
+  {
+    title: "The Glory",
+    description: "Una donna cerca vendetta contro i suoi ex bulli",
+    platforms: ["netflix"],
+    genre: "Drama/Thriller",
+    rating: 8.1
+  },
+  {
+    title: "Black Knight",
+    description: "In un futuro post-apocalittico, i corrieri sono essenziali per la sopravvivenza",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Action",
+    rating: 7.2
+  },
+  {
+    title: "XO, Kitty",
+    description: "Spin-off di To All the Boys I've Loved Before",
+    platforms: ["netflix"],
+    genre: "Comedy/Romance",
+    rating: 7.0
+  },
+  {
+    title: "Love to Hate You",
+    description: "Una avvocatessa e un attore superano i loro pregiudizi sull'amore",
+    platforms: ["netflix"],
+    genre: "Romance/Comedy",
+    rating: 7.3
+  },
+  {
+    title: "Dr. Cha",
+    description: "Una casalinga torna a praticare medicina dopo 20 anni",
+    platforms: ["netflix"],
+    genre: "Drama/Medical",
+    rating: 7.4
+  },
+  {
+    title: "King the Land",
+    description: "Romance nel mondo dell'hospitality di lusso",
+    platforms: ["netflix"],
+    genre: "Romance/Comedy",
+    rating: 7.6
+  },
+  {
+    title: "The Good Bad Mother",
+    description: "Un procuratore rigido torna bambino dopo un incidente",
+    platforms: ["netflix"],
+    genre: "Drama/Comedy",
+    rating: 7.5
+  },
+  {
+    title: "Duty After School",
+    description: "Studenti combattono una minaccia aliena",
+    platforms: ["netflix"],
+    genre: "Sci-Fi/Drama",
+    rating: 7.1
+  },
+  {
+    title: "A Time Called You",
+    description: "Una donna viaggia nel tempo per ritrovare il suo amore perduto",
+    platforms: ["netflix"],
+    genre: "Romance/Fantasy",
+    rating: 7.2
+  },
+  {
+    title: "Fisk",
+    description: "Una avvocatessa ricomincia in uno studio legale eccentrico",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 7.4
+  },
+  {
+    title: "The Gloaming",
+    description: "Due detective indagano su un omicidio legato all'occulto",
+    platforms: ["netflix"],
+    genre: "Crime/Mystery",
+    rating: 6.9
+  },
+  {
+    title: "Dear Child",
+    description: "Una donna fugge dal suo rapitore con conseguenze inaspettate",
+    platforms: ["netflix"],
+    rating: 7.8
+  },
+  {
+    title: "Burning Body",
+    description: "L'omicidio di un agente di polizia svela segreti oscuri",
+    platforms: ["netflix"],
+    genre: "Crime/Drama",
+    rating: 7.0
+  },
+  {
+    title: "Bodies",
+    description: "Quattro detective in diverse epoche indagano sullo stesso omicidio",
+    platforms: ["netflix"],
+    genre: "Mystery/Sci-Fi",
+    rating: 7.6
+  },
+  {
+    title: "Lockwood & Co.",
+    description: "Giovani investigatori del paranormale a Londra",
+    platforms: ["netflix"],
+    genre: "Fantasy/Mystery",
+    rating: 7.5
+  },
+  {
+    title: "The Midnight Club",
+    description: "Malati terminali si raccontano storie horror",
+    platforms: ["netflix"],
+    genre: "Horror/Mystery",
+    rating: 6.9
+  },
+  {
+    title: "Mo",
+    description: "Un rifugiato palestinese cerca asilo in Texas",
+    platforms: ["netflix"],
+    genre: "Comedy/Drama",
+    rating: 7.8
+  },
+  {
+    title: "Inside Man",
+    description: "Un prigioniero nel braccio della morte risolve crimini",
+    platforms: ["netflix"],
+    genre: "Crime/Drama",
+    rating: 7.3
+  },
+  {
+    title: "1899",
+    description: "Misteri su una nave di migranti nell'Oceano Atlantico",
+    platforms: ["netflix"],
+    genre: "Mystery/Sci-Fi",
+    rating: 7.7
+  },
+  {
+    title: "Sandman",
+    description: "Il signore dei sogni cerca di riparare i suoi regni",
+    platforms: ["netflix"],
+    genre: "Fantasy/Drama",
+    rating: 7.7
+  },
+  {
+    title: "The Bastard Son & The Devil Himself",
+    description: "Un giovane scopre i suoi poteri in una guerra tra streghe",
+    platforms: ["netflix"],
+    genre: "Fantasy/Drama",
+    rating: 7.5
+  },
+  {
+    title: "My Dad the Bounty Hunter",
+    description: "Due bambini scoprono che il padre è un cacciatore di taglie intergalattico",
+    platforms: ["netflix"],
+    genre: "Animation/Sci-Fi",
+    rating: 7.1
+  },
+  {
+    title: "Kaleidoscope",
+    description: "Una serie antologica non lineare su una rapina",
+    platforms: ["netflix"],
+    genre: "Crime/Drama",
+    rating: 7.0
+  },
+  {
+    title: "Ahsoka",
+    description: "Le avventure della Jedi Ahsoka Tano",
+    platforms: ["disney"],
+    genre: "Sci-Fi/Action",
+    rating: 7.8
+  },
+  {
+    title: "Light Shop",
+    description: "Una serie drammatica sul mondo del retail",
+    platforms: ["disney"],
+    genre: "Drama",
+    rating: 7.3
+  },
+  {
+    title: "Uonderbois",
+    description: "Le avventure di un gruppo di giovani eroi",
+    platforms: ["disney"],
+    genre: "Family/Adventure",
+    rating: 7.1
+  },
+  {
+    title: "Skeleton Crew",
+    description: "Un gruppo di bambini perduti nella galassia di Star Wars",
+    platforms: ["disney"],
+    genre: "Sci-Fi/Adventure",
+    rating: 7.4
+  },
+  {
+    title: "Tracker",
+    description: "Un cacciatore di taglie segue le tracce dei suoi obiettivi",
+    platforms: ["disney"],
+    genre: "Action/Drama",
+    rating: 7.2
+  },
+  {
+    title: "9-1-1: Lone Star",
+    description: "Le avventure dei primi soccorritori di Austin, Texas",
+    platforms: ["disney"],
+    genre: "Drama/Action",
+    rating: 7.5
+  },
+  {
+    title: "The Good Mothers",
+    description: "La storia di tre donne all'interno della 'Ndrangheta",
+    platforms: ["disney"],
+    genre: "Drama/Crime",
+    rating: 7.6
+  },
+  {
+    title: "The Artful Dodger",
+    description: "La vita del famoso borseggiatore di Oliver Twist da adulto",
+    platforms: ["disney"],
+    genre: "Drama/Period",
+    rating: 7.3
+  },
+  {
+    title: "Cristobal Balenciaga",
+    description: "La vita del leggendario stilista spagnolo",
+    platforms: ["disney"],
+    genre: "Drama/Biography",
+    rating: 7.5
+  },
+  {
+    title: "Full Monty - La Serie",
+    description: "Il seguito del famoso film britannico",
+    platforms: ["disney"],
+    genre: "Comedy/Drama",
+    rating: 7.0
+  },
+  {
+    title: "Dopesick",
+    description: "La crisi degli oppioidi in America",
+    platforms: ["disney"],
+    genre: "Drama",
+    rating: 8.6
+  },
+  {
+    title: "Solar Opposites",
+    description: "Alieni che si stabiliscono sulla Terra",
+    platforms: ["disney"],
+    genre: "Animation/Comedy",
+    rating: 8.0
+  },
+  {
+    title: "Bob's Burgers",
+    description: "Le avventure della famiglia Belcher",
+    platforms: ["disney"],
+    genre: "Animation/Comedy",
+    rating: 8.2
+  },
+  {
+    title: "The Cleveland Show",
+    description: "Spin-off dei Griffin",
+    platforms: ["disney"],
+    genre: "Animation/Comedy",
+    rating: 6.7
+  },
+  {
+    title: "The Kardashians",
+    description: "Reality show sulla famosa famiglia",
+    platforms: ["disney"],
+    genre: "Reality",
+    rating: 6.5
+  },
+  {
+    title: "Welcome to Wrexham",
+    description: "Documentario sulla squadra di calcio di Wrexham",
+    platforms: ["disney"],
+    genre: "Documentary/Sport",
+    rating: 8.4
+  },
+  {
+    title: "Drag Me to Dinner",
+    description: "Competition show di drag queen",
+    platforms: ["disney"],
+    genre: "Reality/Competition",
+    rating: 7.1
+  },
+  {
+    title: "The Fate Ignoranti",
+    description: "Adattamento del film di Ferzan Özpetek",
+    platforms: ["disney"],
+    genre: "Drama",
+    rating: 7.2
+  },
+  {
+    title: "I Leoni di Sicilia",
+    description: "La saga della famiglia Florio",
+    platforms: ["disney"],
+    genre: "Drama/Historical",
+    rating: 7.4
+  },
+  {
+    title: "Doc - Nelle tue mani",
+    description: "Un medico perde la memoria degli ultimi dodici anni",
+    platforms: ["netflix"],
+    genre: "Drama/Medical",
+    rating: 7.8
+  },
+  {
+    title: "American Horror Stories",
+    description: "Antologia horror",
+    platforms: ["disney"],
+    genre: "Horror",
+    rating: 6.9
+  },
+  {
+    title: "Prey",
+    description: "Prequel della saga di Predator",
+    platforms: ["disney"],
+    genre: "Action/Sci-Fi",
+    rating: 7.2
+  },
+  {
+    title: "Justified",
+    description: "Un marshal federale fa rispettare la legge nel Kentucky",
+    platforms: ["disney"],
+    genre: "Crime/Drama",
+    rating: 8.6
+  },
+  {
+    title: "Bleach: La Guerra dei Mille Anni",
+    description: "La battaglia finale tra Shinigami e Quincy",
+    platforms: ["disney"],
+    genre: "Anime/Action",
+    rating: 8.8
+  },
+  {
+    title: "Tokyo Revengers",
+    description: "Un ragazzo viaggia nel tempo per salvare la sua fidanzata",
+    platforms: ["disney"],
+    genre: "Anime/Action",
+    rating: 8.2
+  },
+  {
+    title: "Tales of the Jedi",
+    description: "Storie animate dell'universo di Star Wars",
+    platforms: ["disney"],
+    genre: "Animation/Sci-Fi",
+    rating: 8.1
+  },
+  {
+    title: "The Bad Batch",
+    description: "Un gruppo di cloni speciali dopo la Guerra dei Cloni",
+    platforms: ["disney"],
+    genre: "Animation/Sci-Fi",
+    rating: 7.8
+  },
+  {
+    title: "Young Jedi Adventures",
+    description: "Le avventure dei giovani Padawan",
+    platforms: ["disney"],
+    genre: "Animation/Family",
+    rating: 6.9
+  },
+  {
+    title: "Star Wars Visions",
+    description: "Antologia anime ambientata nell'universo di Star Wars",
+    platforms: ["disney"],
+    genre: "Anime/Sci-Fi",
+    rating: 7.4
+  },
+  {
+    title: "Star Wars Rebels",
+    description: "La ribellione contro l'Impero",
+    platforms: ["disney"],
+    genre: "Animation/Sci-Fi",
+    rating: 8.0
+  },
+  {
+    title: "Marvel's Hit-Monkey",
+    description: "Una scimmia assassina cerca vendetta",
+    platforms: ["disney"],
+    genre: "Animation/Action",
+    rating: 7.2
+  },
+  {
+    title: "Ironheart",
+    description: "Le avventure di Riri Williams",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.0
+  },
+  {
+    title: "Echo",
+    description: "Spin-off di Hawkeye",
+    platforms: ["disney"],
+    genre: "MCU/Action",
+    rating: 7.1
+  },
+  {
+    title: "X-Men '97",
+    description: "Continuazione della serie animata degli X-Men",
+    platforms: ["disney"],
+    genre: "Animation/Superhero",
+    rating: 8.2
+  },
+  {
+    title: "Werewolf by Night",
+    description: "Special horror del MCU",
+    platforms: ["disney"],
+    genre: "MCU/Horror",
+    rating: 7.2
+  },
+  {
+    title: "The Gifted",
+    description: "Mutanti in fuga dalla persecuzione",
+    platforms: ["disney"],
+    genre: "Sci-Fi/Action",
+    rating: 7.3
   }
 ];
 
@@ -1728,22 +2258,18 @@ function sortSeriesAlphabetically(series) {
 
 function getPlatformIcon(platform) {
   const icons = {
-    netflix: `<img src="netflix.png" alt="Netflix" style="max-width: 100%; height: auto;" />`,
-    
-    prime: `<img src="primevideo.png" alt="Prime" style="max-width: 100%; height: auto;" />`,
-    
-    hbo: `<img src="hbo.png" alt="HBO" style="max-width: 100%; height: auto;" />`,
-    
-    disney: `<img src="disney.png" alt="Disney" style="max-width: 100%; height: auto;" />`,
-    
-    amc: `<img src="amc.png" alt="AMC" style="max-width: 100%; height: auto;" />`,
-    
-    apple: `<img src="apple.png" alt="Apple" style="max-width: 100%; height: auto;" />`,
-    
-    hulu: `<img src="hulu.png" alt="Hulu" style="max-width: 100%; height: auto;" />`,
+    netflix: `<img src="loghi/netflix.png" alt="Netflix" style="max-width: 100%; height: auto;" />`,
+    prime: `<img src="loghi/primevideo.png" alt="Prime Video" style="max-width: 100%; height: auto;" />`,
+    hbo: `<img src="loghi/hbo.png" alt="HBO" style="max-width: 100%; height: auto;" />`,
+    disney: `<img src="loghi/disney.png" alt="Disney+" style="max-width: 100%; height: auto;" />`,
+    amc: `<img src="loghi/amc.png" alt="AMC" style="max-width: 100%; height: auto;" />`,
+    apple: `<img src="loghi/apple.png" alt="Apple TV" style="max-width: 100%; height: auto;" />`,
+    hulu: `<img src="loghi/hulu.png" alt="Hulu" style="max-width: 100%; height: auto;" />`
   };
-  return icons[platform] || '';
+
+  return icons[platform] || `<img src="loghi/default.png" alt="Default" style="max-width: 100%; height: auto;" />`;
 }
+
 
 function renderSeries(series) {
   const seriesList = document.getElementById('seriesList');
