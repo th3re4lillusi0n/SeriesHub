@@ -1169,20 +1169,6 @@ const seriesData = [
     "rating": 8.6
   },
   {
-    "title": "Bleach: La Guerra dei Mille Anni",
-    "description": "La battaglia finale tra Shinigami e Quincy",
-    "platforms": ["disney"],
-    "genre": "Anime/Action",
-    "rating": 8.8
-  },
-  {
-    "title": "Tokyo Revengers",
-    "description": "Un ragazzo viaggia nel tempo per salvare la sua fidanzata",
-    "platforms": ["disney"],
-    "genre": "Anime/Action",
-    "rating": 8.2
-  },
-  {
     "title": "Tales of the Jedi",
     "description": "Storie animate dell'universo di Star Wars",
     "platforms": ["disney"],
@@ -1202,13 +1188,6 @@ const seriesData = [
     "platforms": ["disney"],
     "genre": "Animation/Family",
     "rating": 6.9
-  },
-  {
-    "title": "Star Wars Visions",
-    "description": "Antologia anime ambientata nell'universo di Star Wars",
-    "platforms": ["disney"],
-    "genre": "Anime/Sci-Fi",
-    "rating": 7.4
   },
   {
     "title": "Star Wars Rebels",
