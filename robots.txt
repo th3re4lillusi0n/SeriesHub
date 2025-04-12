@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /chi-siamo.html
+Allow: /contatti.html
+Allow: /privacypolicy.html
+Allow: /terminicondizioni.html
+Allow: /cookiepolicy.html
+Allow: /faq.html
+Allow: /guida.html
+Allow: /supporto.html
+Allow: /assets/css/
+Allow: /assets/js/
+Allow: /assets/images/
+
+Disallow: /assets/css/style.css
+Disallow: /assets/js/script.js
+
+Sitemap: https://serieshub.xyz/sitemap.xml 
