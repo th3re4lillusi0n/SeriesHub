@@ -1870,4 +1870,47 @@ body {
     .update-card {
         padding: 1.5rem;
     }
+}
+
+/* Counter styles */
+.results-counter {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.counter-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 15px 25px;
+    margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.counter-text {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+}
+
+.counter-number {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+/* Dark theme adjustments */
+[data-theme='dark'] .counter-container {
+    background: var(--card-bg-dark);
+}
+
+[data-theme='dark'] .counter-text {
+    color: var(--text-color-dark);
+}
+
+[data-theme='dark'] .counter-number {
+    color: var(--accent-color-dark);
 } 

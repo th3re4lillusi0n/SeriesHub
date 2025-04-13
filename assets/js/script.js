@@ -70,41 +70,359 @@ const seriesData = [
     {
         title: "Breaking Bad",
         description: "Un professore di chimica diventa un signore della droga",
-        platforms: ["netflix", "prime", "amc"],
-        genre: "Drama",
-        rating: 9.5,
-        image: "https://example.com/breaking-bad.jpg"
-    },
-    {
-        title: "Stranger Things", 
-        description: "Misteriosi eventi soprannaturali in una piccola città",
-        platforms: ["netflix"],
-        genre: "Sci-Fi",
-        rating: 8.7,
-        image: "https://example.com/stranger-things.jpg"
+        platforms: ["netflix", "max"],
+        genre: "Crime/Drama",
+        rating: 9.5
     },
     {
         title: "Game of Thrones",
         description: "Lotte di potere in un mondo fantasy",
-        platforms: ["hbo", "prime"],
-        genre: "Fantasy",
-        rating: 9.3,
-        image: "https://example.com/got.jpg"
+        platforms: ["hbo", "max"],
+        genre: "Fantasy/Drama",
+        rating: 9.2
     },
     {
         title: "The Mandalorian",
         description: "Un cacciatore di taglie galattico protegge un bambino speciale",
         platforms: ["disney"],
-        genre: "Sci-Fi",
-        rating: 8.8,
-        image: "https://example.com/mandalorian.jpg"
+        genre: "Sci-Fi/Action",
+        rating: 8.7
+    },
+    {
+        title: "Stranger Things",
+        description: "Misteriosi eventi soprannaturali in una piccola città dell'Indiana",
+        platforms: ["netflix"],
+        genre: "Sci-Fi/Horror",
+        rating: 8.7
+    },
+    {
+        title: "The Last of Us",
+        description: "Un contrabbandiere e una ragazza attraversano un'America post-apocalittica",
+        platforms: ["hbo", "max"],
+        genre: "Drama/Horror",
+        rating: 8.8
+    },
+    {
+        title: "House of the Dragon",
+        description: "La storia della casa Targaryen, 200 anni prima di Game of Thrones",
+        platforms: ["hbo", "max"],
+        genre: "Fantasy/Drama",
+        rating: 8.5
+    },
+    {
+        title: "Succession",
+        description: "Lotte di potere in una famiglia mediatica",
+        platforms: ["hbo", "max"],
+        genre: "Drama",
+        rating: 9.0
+    },
+    {
+        title: "Ted Lasso",
+        description: "Un allenatore americano di football allena una squadra di calcio inglese",
+        platforms: ["apple"],
+        genre: "Comedy/Drama",
+        rating: 8.9
+    },
+    {
+        title: "The Bear",
+        description: "Un chef torna a gestire il ristorante di famiglia",
+        platforms: ["disney", "hulu"],
+        genre: "Drama/Comedy",
+        rating: 8.8
+    },
+    {
+        title: "Better Call Saul",
+        description: "L'origine dell'avvocato Saul Goodman",
+        platforms: ["netflix", "max"],
+        genre: "Crime/Drama",
+        rating: 9.0
     },
     {
         title: "The Crown",
         description: "La storia della famiglia reale britannica",
         platforms: ["netflix"],
-        genre: "Drama",
+        genre: "Drama/History",
         rating: 8.7
+    },
+    {
+        title: "Andor",
+        description: "Prequel di Rogue One nell'universo di Star Wars",
+        platforms: ["disney"],
+        genre: "Sci-Fi/Action",
+        rating: 8.7
+    },
+    {
+        title: "The Boys",
+        description: "Supereroi corrotti contro vigilanti",
+        platforms: ["prime"],
+        genre: "Action/Drama",
+        rating: 8.7
+    },
+    {
+        title: "Wednesday",
+        description: "Le avventure di Mercoledì Addams alla Nevermore Academy",
+        platforms: ["netflix"],
+        genre: "Comedy/Fantasy",
+        rating: 8.2
+    },
+    {
+        title: "The White Lotus",
+        description: "Intrighi e drammi in un resort di lusso",
+        platforms: ["hbo", "max"],
+        genre: "Drama/Comedy",
+        rating: 8.2
+    },
+    {
+        title: "Only Murders in the Building",
+        description: "Tre vicini indagano su un omicidio nel loro palazzo",
+        platforms: ["disney", "hulu"],
+        genre: "Comedy/Mystery",
+        rating: 8.1
+    },
+    {
+        title: "Severance",
+        description: "Impiegati con memoria divisa tra lavoro e vita privata",
+        platforms: ["apple"],
+        genre: "Sci-Fi/Thriller",
+        rating: 8.7
+    },
+    {
+        title: "The Morning Show",
+        description: "Drama ambientato nel mondo del giornalismo televisivo",
+        platforms: ["apple"],
+        genre: "Drama",
+        rating: 8.2
+    },
+    {
+        title: "Hijack",
+        description: "Un negoziatore affronta un dirottamento aereo in tempo reale",
+        platforms: ["apple"],
+        genre: "Thriller/Drama",
+        rating: 7.9
+    },
+    {
+        title: "Slow Horses",
+        description: "Agenti dell'MI5 caduti in disgrazia gestiscono casi complessi",
+        platforms: ["apple"],
+        genre: "Thriller/Drama",
+        rating: 8.2
+    },
+    {
+        title: "For All Mankind",
+        description: "Storia alternativa della corsa allo spazio",
+        platforms: ["apple"],
+        genre: "Sci-Fi/Drama",
+        rating: 8.1
+    },
+    {
+        title: "Silo",
+        description: "La vita in un silo sotterraneo nasconde oscuri segreti",
+        platforms: ["apple"],
+        genre: "Sci-Fi/Drama",
+        rating: 8.1
+    },
+    {
+        title: "Foundation",
+        description: "Adattamento della saga di Asimov sul crollo di un impero galattico",
+        platforms: ["apple"],
+        genre: "Sci-Fi/Drama",
+        rating: 7.9
+    },
+    {
+        title: "Monarch: Legacy of Monsters",
+        description: "Serie ambientata nel MonsterVerse di Godzilla",
+        platforms: ["apple"],
+        genre: "Sci-Fi/Action",
+        rating: 7.7
+    },
+    {
+        title: "Masters of the Air",
+        description: "La storia della 100ª Divisione Bombardieri durante la Seconda Guerra Mondiale",
+        platforms: ["apple"],
+        genre: "War/Drama",
+        rating: 8.5
+    },
+    {
+        title: "True Detective: Night Country",
+        description: "Investigatrici indagano su misteriose sparizioni in Alaska",
+        platforms: ["hbo", "max"],
+        genre: "Crime/Mystery",
+        rating: 8.2
+    },
+    {
+        title: "The Gilded Age",
+        description: "Drammi e intrighi nella New York di fine '800",
+        platforms: ["hbo", "max"],
+        genre: "Drama/History",
+        rating: 8.0
+    },
+    {
+        title: "House of Cards",
+        description: "Intrighi politici a Washington D.C.",
+        platforms: ["netflix"],
+        genre: "Drama/Political",
+        rating: 8.7
+    },
+    {
+        title: "Black Mirror",
+        description: "Antologia sulla tecnologia e le sue conseguenze",
+        platforms: ["netflix"],
+        genre: "Sci-Fi/Drama",
+        rating: 8.8
+    },
+    {
+        title: "The Witcher",
+        description: "Le avventure dello strigo Geralt di Rivia",
+        platforms: ["netflix"],
+        genre: "Fantasy/Action",
+        rating: 8.1
+    },
+    {
+        title: "Bridgerton",
+        description: "Romance e scandali nell'alta società londinese",
+        platforms: ["netflix"],
+        genre: "Drama/Romance",
+        rating: 7.9
+    },
+    {
+        title: "The Diplomat",
+        description: "Una diplomatica americana affronta crisi internazionali",
+        platforms: ["netflix"],
+        genre: "Drama/Political",
+        rating: 7.8
+    },
+    {
+        title: "Il problema dei 3 corpi",
+        description: "Adattamento del romanzo di fantascienza di Liu Cixin",
+        platforms: ["netflix"],
+        genre: "Sci-Fi/Drama",
+        rating: 8.2
+    },
+    {
+        title: "Avatar: The Last Airbender",
+        description: "Adattamento live-action della serie animata sul giovane Avatar Aang",
+        platforms: ["netflix"],
+        genre: "Fantasy/Adventure",
+        rating: 8.1
+    },
+    {
+        title: "One Piece",
+        description: "Adattamento live-action del famoso manga sulla ciurma di pirati di Cappello di Paglia",
+        platforms: ["netflix"],
+        genre: "Adventure/Fantasy",
+        rating: 8.4
+    },
+    {
+        title: "Reacher",
+        description: "Un ex investigatore militare risolve casi complessi",
+        platforms: ["prime"],
+        genre: "Action/Crime",
+        rating: 8.2
+    },
+    {
+        title: "The Marvelous Mrs. Maisel",
+        description: "Una casalinga diventa comica stand-up",
+        platforms: ["prime"],
+        genre: "Comedy/Drama",
+        rating: 8.7
+    },
+    {
+        title: "Fleabag",
+        description: "Una donna alle prese con la vita a Londra",
+        platforms: ["prime"],
+        genre: "Comedy/Drama",
+        rating: 8.7
+    },
+    {
+        title: "Good Omens",
+        description: "Un angelo e un demone cercano di prevenire l'Apocalisse",
+        platforms: ["prime"],
+        genre: "Comedy/Fantasy",
+        rating: 8.1
+    },
+    {
+        title: "The Wheel of Time",
+        description: "Fantasy epico basato sui romanzi di Robert Jordan",
+        platforms: ["prime"],
+        genre: "Fantasy/Adventure",
+        rating: 7.1
+    },
+    {
+        title: "Invincible",
+        description: "Serie animata su un giovane supereroe",
+        platforms: ["prime"],
+        genre: "Animation/Action",
+        rating: 8.7
+    },
+    {
+        title: "The Rings of Power",
+        description: "Serie ambientata nella Seconda Era della Terra di Mezzo",
+        platforms: ["prime"],
+        genre: "Fantasy/Adventure",
+        rating: 7.0
+    },
+    {
+        title: "Ahsoka",
+        description: "Le avventure della Jedi Ahsoka Tano",
+        platforms: ["disney"],
+        genre: "Sci-Fi/Action",
+        rating: 7.8
+    },
+    {
+        title: "Loki",
+        description: "Le avventure del dio dell'inganno attraverso il multiverso",
+        platforms: ["disney"],
+        genre: "Sci-Fi/Fantasy",
+        rating: 8.2
+    },
+    {
+        title: "Percy Jackson e gli dei dell'Olimpo",
+        description: "Le avventure di un semidio moderno",
+        platforms: ["disney"],
+        genre: "Fantasy/Adventure",
+        rating: 7.6
+    },
+    {
+        title: "The Handmaid's Tale",
+        description: "Distopia in cui le donne sono private dei diritti",
+        platforms: ["hulu"],
+        genre: "Drama/Sci-Fi",
+        rating: 8.4
+    },
+    {
+        title: "Fargo",
+        description: "Antologia crime ispirata al film dei fratelli Coen",
+        platforms: ["hulu", "netflix"],
+        genre: "Crime/Drama",
+        rating: 8.9
+    },
+    {
+        title: "The Great",
+        description: "Storia satirica dell'ascesa di Caterina la Grande",
+        platforms: ["hulu"],
+        genre: "Comedy/Drama",
+        rating: 8.2
+    },
+    {
+        title: "Squid Game",
+        description: "Giochi mortali per un premio in denaro",
+        platforms: ["netflix"],
+        genre: "Drama/Thriller",
+        rating: 8.7
+    },
+    {
+        title: "Dark",
+        description: "Misteri e viaggi nel tempo in una piccola città tedesca",
+        platforms: ["netflix"],
+        genre: "Sci-Fi/Mystery",
+        rating: 8.8
+    },
+    {
+        title: "Money Heist",
+        description: "Un gruppo di rapinatori pianifica colpi elaborati",
+        platforms: ["netflix"],
+        genre: "Crime/Thriller",
+        rating: 8.3
     },
     {
         title: "The Office (US)",
@@ -116,149 +434,30 @@ const seriesData = [
     {
         title: "Friends",
         description: "Le avventure di sei amici a New York",
-        platforms: ["hbo", "netflix"],
+        platforms: ["netflix", "max"],
         genre: "Comedy",
         rating: 8.9
-    },
-    {
-        title: "The Witcher",
-        description: "Le avventure di un cacciatore di mostri",
-        platforms: ["netflix"],
-        genre: "Fantasy",
-        rating: 8.2
     },
     {
         title: "WandaVision",
         description: "Wanda e Visione vivono in una realtà alternativa di sitcom",
         platforms: ["disney"],
-        genre: "MCU/Sci-Fi",
+        genre: "Sci-Fi/Drama",
         rating: 8.0
-    },
-    {
-        title: "The Falcon and the Winter Soldier",
-        description: "Sam Wilson e Bucky Barnes affrontano nuove minacce",
-        platforms: ["disney"],
-        genre: "MCU/Action",
-        rating: 7.8
     },
     {
         title: "Moon Knight",
         description: "Un vigilante con disturbo dissociativo dell'identità",
         platforms: ["disney"],
-        genre: "MCU/Action",
+        genre: "Action/Fantasy",
         rating: 7.9
     },
     {
-        title: "Ms. Marvel",
-        description: "Le avventure della giovane supereroina Kamala Khan",
-        platforms: ["disney"],
-        genre: "MCU/Action",
-        rating: 7.5
-    },
-    {
-        title: "She-Hulk: Attorney at Law",
-        description: "Un'avvocata diventa una supereroina verde",
-        platforms: ["disney"],
-        genre: "MCU/Comedy",
-        rating: 6.8
-    },
-    {
-        title: "Secret Invasion",
-        description: "Nick Fury combatte un'invasione aliena segreta",
-        platforms: ["disney"],
-        genre: "MCU/Sci-Fi",
-        rating: 7.0
-    },
-    {
-        title: "Bridgerton",
-        description: "Romance e scandali nell'alta società londinese",
+        title: "Arcane",
+        description: "Serie animata basata sul gioco League of Legends",
         platforms: ["netflix"],
-        genre: "Drama/Romance",
-        rating: 8.3
-    },
-    {
-        title: "The Crown",
-        description: "La storia della famiglia reale britannica",
-        platforms: ["netflix"],
-        genre: "Drama/History",
-        rating: 8.7
-    },
-    {
-        title: "Squid Game",
-        description: "Giochi mortali per un premio in denaro",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 8.7
-    },
-    {
-        title: "The Rings of Power",
-        description: "Prequel del Signore degli Anelli",
-        platforms: ["prime"],
-        genre: "Fantasy",
-        rating: 7.8
-    },
-    {
-        title: "Ted Lasso",
-        description: "Un allenatore americano di football allena una squadra di calcio inglese",
-        platforms: ["apple"],
-        genre: "Comedy",
-        rating: 8.9
-    },
-    {
-        title: "The Morning Show",
-        description: "Drama ambientato nel mondo del giornalismo televisivo",
-        platforms: ["apple"],
-        genre: "Drama",
-        rating: 8.2
-    },
-    {
-        title: "The Handmaid's Tale",
-        description: "Distopia in cui le donne sono private dei diritti",
-        platforms: ["hulu"],
-        genre: "Drama",
-        rating: 8.4
-    },
-    {
-        title: "Only Murders in the Building",
-        description: "Tre vicini indagano su un omicidio nel loro palazzo",
-        platforms: ["hulu", "disney"],
-        genre: "Comedy/Mystery",
-        rating: 8.1
-    },
-    {
-        title: "Andor",
-        description: "Prequel di Rogue One nell'universo di Star Wars",
-        platforms: ["disney"],
-        genre: "Sci-Fi",
-        rating: 8.7
-    },
-    {
-        title: "The Bear",
-        description: "Un chef torna a gestire il ristorante di famiglia",
-        platforms: ["hulu", "disney"],
-        genre: "Drama",
-        rating: 8.7
-    },
-    {
-        title: "Severance",
-        description: "Impiegati con memoria divisa tra lavoro e vita privata",
-        platforms: ["apple"],
-        genre: "Sci-Fi/Thriller",
-        rating: 8.7
-    },
-    {
-        title: "What If...?",
-        description: "Storie alternative dell'universo Marvel",
-        platforms: ["disney"],
-        genre: "MCU/Animation",
-        rating: 7.4
-    },
-    {
-        title: "Hawkeye",
-        description: "Le avventure natalizie di Clint Barton",
-        platforms: ["disney"],
-        genre: "MCU/Action",
-        rating: 7.6
+        genre: "Animation/Fantasy",
+        rating: 9.0
     },
     {
         title: "The Last Kingdom",
@@ -271,36 +470,15 @@ const seriesData = [
         title: "Shadow and Bone",
         description: "Fantasy basato sui romanzi di Leigh Bardugo",
         platforms: ["netflix"],
-        genre: "Fantasy",
+        genre: "Fantasy/Adventure",
         rating: 7.7
-    },
-    {
-        title: "The Wheel of Time",
-        description: "Fantasy epico basato sui romanzi di Robert Jordan",
-        platforms: ["prime"],
-        genre: "Fantasy",
-        rating: 7.1
-    },
-    {
-        title: "Money Heist",
-        description: "Un gruppo di rapinatori pianifica colpi elaborati",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 8.3
     },
     {
         title: "Ozark",
         description: "Una famiglia coinvolta nel riciclaggio di denaro",
         platforms: ["netflix"],
-        genre: "Drama/Crime",
+        genre: "Crime/Drama",
         rating: 8.5
-    },
-    {
-        title: "Narcos",
-        description: "La storia dei cartelli della droga colombiani",
-        platforms: ["netflix"],
-        genre: "Drama/Crime",
-        rating: 8.8
     },
     {
         title: "The Umbrella Academy",
@@ -308,20 +486,6 @@ const seriesData = [
         platforms: ["netflix"],
         genre: "Sci-Fi/Action",
         rating: 7.9
-    },
-    {
-        title: "Lucifer",
-        description: "Il diavolo gestisce un night club a Los Angeles",
-        platforms: ["netflix"],
-        genre: "Fantasy/Crime",
-        rating: 8.1
-    },
-    {
-        title: "Emily in Paris",
-        description: "Un'americana si trasferisce a Parigi per lavoro",
-        platforms: ["netflix"],
-        genre: "Comedy/Romance",
-        rating: 7.0
     },
     {
         title: "Queen's Gambit",
@@ -345,158 +509,32 @@ const seriesData = [
         rating: 8.3
     },
     {
-        title: "Loki",
-        description: "Le avventure del dio dell'inganno",
-        platforms: ["disney"],
-        genre: "MCU/Action",
-        rating: 8.2
-    },
-    {
-        title: "The Boys",
-        description: "Supereroi corrotti contro vigilanti",
-        platforms: ["prime"],
-        genre: "Action/Drama",
-        rating: 8.7
-    },
-    {
-        title: "The Marvelous Mrs. Maisel",
-        description: "Una casalinga diventa comica stand-up",
-        platforms: ["prime"],
-        genre: "Comedy/Drama",
-        rating: 8.7
-    },
-    {
-        title: "Jack Ryan",
-        description: "Un analista CIA in missioni globali",
-        platforms: ["prime"],
-        genre: "Action/Thriller",
-        rating: 8.0
-    },
-    {
-        title: "Fleabag",
-        description: "Una donna alle prese con la vita a Londra",
-        platforms: ["prime"],
-        genre: "Comedy/Drama",
-        rating: 8.7
-    },
-    {
-        title: "Sherlock",
-        description: "Moderna interpretazione del detective",
-        platforms: ["netflix", "prime"],
-        genre: "Crime/Drama",
-        rating: 9.1
-    },
-    {
-        title: "The Walking Dead",
-        description: "Sopravvivenza in un'apocalisse zombie",
-        platforms: ["netflix", "amc"],
-        genre: "Horror/Drama",
-        rating: 8.2
-    },
-    {
         title: "The Sopranos",
         description: "Un boss mafioso in terapia",
-        platforms: ["hbo"],
+        platforms: ["hbo", "max"],
         genre: "Crime/Drama",
         rating: 9.2
     },
     {
-        title: "Better Call Saul",
-        description: "L'origine dell'avvocato Saul Goodman",
-        platforms: ["netflix", "amc"],
-        genre: "Crime/Drama",
-        rating: 8.9
-    },
-    {
-        title: "Lost",
-        description: "Sopravvissuti di un incidente aereo su un'isola misteriosa",
-        platforms: ["hulu"],
-        genre: "Drama/Mystery",
-        rating: 8.3
-    },
-    {
         title: "Westworld",
         description: "Un parco a tema futuristico con robot senzienti",
-        platforms: ["hbo"],
+        platforms: ["hbo", "max"],
         genre: "Sci-Fi/Drama",
         rating: 8.6
     },
     {
-        title: "The OA",
-        description: "Una donna ritorna dopo sette anni di scomparsa con abilità misteriose",
-        platforms: ["netflix"],
-        genre: "Mystery/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Dark",
-        description: "Misteri e viaggi nel tempo in una piccola città tedesca",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Mystery",
-        rating: 8.8
-    },
-    {
-        title: "Narcos: Mexico",
-        description: "L'ascesa dei cartelli della droga messicani",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 8.4
-    },
-    {
-        title: "The Good Place",
-        description: "Una donna si ritrova per errore nel paradiso",
-        platforms: ["netflix"],
-        genre: "Comedy/Fantasy",
-        rating: 8.2
-    },
-    {
-        title: "Russian Doll",
-        description: "Una donna rivive ripetutamente il giorno della sua morte",
-        platforms: ["netflix"],
-        genre: "Comedy/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Love, Death & Robots",
-        description: "Antologia animata di storie sci-fi",
-        platforms: ["netflix"],
-        genre: "Animation/Sci-Fi",
-        rating: 8.4
-    },
-    {
-        title: "Dead to Me",
-        description: "Due donne legate da un oscuro segreto",
-        platforms: ["netflix"],
-        genre: "Comedy/Drama",
-        rating: 8.0
-    },
-    {
-        title: "After Life",
-        description: "Un uomo affronta la vita dopo la morte della moglie",
-        platforms: ["netflix"],
+        title: "Barry",
+        description: "Un sicario che sogna di diventare attore",
+        platforms: ["hbo", "max"],
         genre: "Comedy/Drama",
         rating: 8.4
     },
     {
-        title: "The End of the F***ing World",
-        description: "Due adolescenti problematici in fuga",
-        platforms: ["netflix"],
-        genre: "Comedy/Drama",
-        rating: 8.1
-    },
-    {
-        title: "Cobra Kai",
-        description: "Continuazione della saga di Karate Kid",
-        platforms: ["netflix"],
-        genre: "Action/Drama",
-        rating: 8.5
-    },
-    {
-        title: "The Big Bang Theory",
-        description: "Un gruppo di fisici nerd e la loro vicina aspirante attrice affrontano la vita, l'amore e la scienza",
-        platforms: ["hbo", "netflix", "prime"],
-        genre: "Comedy",
-        rating: 8.2
+        title: "Euphoria",
+        description: "Le difficoltà dell'adolescenza moderna",
+        platforms: ["hbo", "max"],
+        genre: "Drama",
+        rating: 8.4
     },
     {
         title: "The Book of Boba Fett",
@@ -506,368 +544,46 @@ const seriesData = [
         rating: 7.3
     },
     {
-        title: "Mighty Ducks: Game Changers",
-        description: "Una nuova generazione di giovani giocatori di hockey",
+        title: "Ms. Marvel",
+        description: "Le avventure della giovane supereroina Kamala Khan",
         platforms: ["disney"],
-        genre: "Family/Sport",
-        rating: 7.3
-    },
-    {
-        title: "Big Shot",
-        description: "Un allenatore di basket in una scuola femminile",
-        platforms: ["disney"],
-        genre: "Drama/Sport",
-        rating: 7.3
-    },
-    {
-        title: "The Santa Clauses",
-        description: "Continuazione della saga di Santa Clause",
-        platforms: ["disney"],
-        genre: "Family/Comedy",
-        rating: 7.0
-    },
-    {
-        title: "The Night Manager",
-        description: "Un ex soldato si infiltra in un'organizzazione criminale",
-        platforms: ["prime"],
-        genre: "Drama/Thriller",
-        rating: 8.1
-    },
-    {
-        title: "Goliath",
-        description: "Un avvocato cerca redenzione",
-        platforms: ["prime"],
-        genre: "Drama/Legal",
-        rating: 8.2
-    },
-    {
-        title: "Tales from the Loop",
-        description: "Storie interconnesse in una città con strani fenomeni",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Drama",
-        rating: 7.5
-    },
-    {
-        title: "The West Wing",
-        description: "Dietro le quinte della Casa Bianca",
-        platforms: ["hbo"],
-        genre: "Drama/Politics",
-        rating: 8.9
-    },
-    {
-        title: "Parks and Recreation",
-        description: "Le avventure del dipartimento parchi di una città",
-        platforms: ["netflix", "prime"],
-        genre: "Comedy",
-        rating: 8.6
-    },
-    {
-        title: "Mad Men",
-        description: "La vita in un'agenzia pubblicitaria negli anni '60",
-        platforms: ["prime"],
-        genre: "Drama",
-        rating: 8.7
-    },
-    {
-        title: "Brooklyn Nine-Nine",
-        description: "Le avventure di un distretto di polizia di New York",
-        platforms: ["netflix", "hulu"],
-        genre: "Comedy",
-        rating: 8.4
-    },
-    {
-        title: "Sons of Anarchy",
-        description: "Un club di motociclisti in California",
-        platforms: ["hulu"],
-        genre: "Drama/Crime",
-        rating: 8.6
-    },
-    {
-        title: "Daredevil",
-        description: "Un avvocato cieco combatte il crimine",
-        platforms: ["netflix", "disney"],
-        genre: "Action/Crime",
-        rating: 8.6
-    },
-    {
-        title: "Arrow",
-        description: "Un miliardario diventa un vigilante",
-        platforms: ["netflix"],
         genre: "Action/Adventure",
         rating: 7.5
     },
     {
-        title: "Supernatural",
-        description: "Due fratelli cacciano creature soprannaturali",
-        platforms: ["prime", "netflix"],
-        genre: "Fantasy/Horror",
-        rating: 8.4
+        title: "Secret Invasion",
+        description: "Nick Fury combatte un'invasione aliena segreta",
+        platforms: ["disney"],
+        genre: "Sci-Fi/Action",
+        rating: 7.0
     },
     {
-        title: "Arcane",
-        description: "Serie animata basata sul gioco League of Legends",
-        platforms: ["netflix"],
-        genre: "Animation/Fantasy",
-        rating: 9.0
-    },
-    {
-        title: "Rick and Morty",
-        description: "Le avventure intergalattiche di uno scienziato e suo nipote",
-        platforms: ["netflix", "hbo"],
+        title: "What If...?",
+        description: "Storie alternative dell'universo Marvel",
+        platforms: ["disney"],
         genre: "Animation/Sci-Fi",
-        rating: 9.2
-    },
-    {
-        title: "Alias",
-        description: "Un'agente segreta combatte contro organizzazioni criminali",
-        platforms: ["prime"],
-        genre: "Action/Drama",
-        rating: 7.6
-    },
-    {
-        title: "24",
-        description: "Un agente antiterrorismo affronta minacce in tempo reale",
-        platforms: ["hulu"],
-        genre: "Action/Thriller",
-        rating: 8.3
-    },
-    {
-        title: "Prison Break",
-        description: "Un uomo cerca di far evadere il fratello dal carcere",
-        platforms: ["hulu", "disney"],
-        genre: "Action/Drama",
-        rating: 8.3
-    },
-    {
-        title: "Homeland",
-        description: "Un'agente CIA indaga su minacce terroristiche",
-        platforms: ["hulu"],
-        genre: "Drama/Thriller",
-        rating: 8.3
-    },
-    {
-        title: "Fringe",
-        description: "Indagini su fenomeni scientifici misteriosi",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Mystery",
-        rating: 8.4
-    },
-    {
-        title: "Vikings",
-        description: "Le avventure dei vichinghi nell'era medievale",
-        platforms: ["netflix", "prime"],
-        genre: "Action/Drama",
-        rating: 8.5
-    },
-    {
-        title: "The Blacklist",
-        description: "Un criminale collabora con l'FBI",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 8.0
-    },
-    {
-        title: "Orphan Black",
-        description: "Una donna scopre di essere un clone",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Thriller",
-        rating: 8.3
-    },
-    {
-        title: "Succession",
-        description: "Lotte di potere in una famiglia mediatica",
-        platforms: ["hbo"],
-        genre: "Drama",
-        rating: 8.9
-    },
-    {
-        title: "Euphoria",
-        description: "Le difficoltà dell'adolescenza moderna",
-        platforms: ["hbo"],
-        genre: "Drama",
-        rating: 8.4
-    },
-    {
-        title: "Barry",
-        description: "Un sicario che sogna di diventare attore",
-        platforms: ["hbo"],
-        genre: "Comedy/Drama",
-        rating: 8.4
-    },
-    {
-        title: "True Detective",
-        description: "Indagini su crimini complessi",
-        platforms: ["hbo"],
-        genre: "Crime/Drama",
-        rating: 8.9
-    },
-    {
-        title: "Grey's Anatomy",
-        description: "Le vite personali e professionali di medici",
-        platforms: ["netflix", "hulu"],
-        genre: "Drama/Medical",
-        rating: 7.6
-    },
-    {
-        title: "Suits",
-        description: "Un avvocato fraudolento in uno studio legale d'elite",
-        platforms: ["netflix"],
-        genre: "Drama/Legal",
-        rating: 8.4
-    },
-    {
-        title: "White Collar",
-        description: "Un truffatore aiuta l'FBI",
-        platforms: ["hulu"],
-        genre: "Crime/Drama",
-        rating: 8.2
-    },
-    {
-        title: "Burn Notice",
-        description: "Una spia licenziata cerca di scoprire chi l'ha incastrata",
-        platforms: ["hulu"],
-        genre: "Action/Drama",
-        rating: 8.0
-    },
-    {
-        title: "Angel",
-        description: "Spin-off di Buffy: un vampiro con un'anima combatte il male a Los Angeles",
-        platforms: ["hulu"],
-        genre: "Fantasy/Drama",
-        rating: 8.0
-    },
-    {
-        title: "Buffy the Vampire Slayer",
-        description: "Una teenager combatte vampiri e forze soprannaturali",
-        platforms: ["hulu"],
-        genre: "Fantasy/Drama",
-        rating: 8.2
-    },
-    {
-        title: "Roswell",
-        description: "Alieni adolescenti nascosti tra gli umani",
-        platforms: ["hulu"],
-        genre: "Sci-Fi/Drama",
-        rating: 7.5
-    },
-    {
-        title: "Alias Grace",
-        description: "Adattamento del romanzo di Margaret Atwood",
-        platforms: ["netflix"],
-        genre: "Drama",
-        rating: 7.8
-    },
-    {
-        title: "A Series of Unfortunate Events",
-        description: "Le disavventure degli orfani Baudelaire",
-        platforms: ["netflix"],
-        genre: "Drama/Comedy",
-        rating: 7.8
-    },
-    {
-        title: "Maniac",
-        description: "Due estranei partecipano a un misterioso test farmaceutico",
-        platforms: ["netflix"],
-        genre: "Drama/Sci-Fi",
-        rating: 7.7
-    },
-    {
-        title: "Sense8",
-        description: "Otto persone connesse mentalmente",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.3
-    },
-    {
-        title: "Black Mirror",
-        description: "Antologia sulla tecnologia e le sue conseguenze",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.8
-    },
-    {
-        title: "The Twilight Zone (originale)",
-        description: "Serie antologica di storie soprannaturali",
-        platforms: ["hulu"],
-        genre: "Sci-Fi/Horror",
-        rating: 9.0
-    },
-    {
-        title: "The Twilight Zone (2019)",
-        description: "Reboot della classica serie antologica",
-        platforms: ["hulu"],
-        genre: "Sci-Fi/Horror",
-        rating: 7.2
-    },
-    {
-        title: "Galavant",
-        description: "Musical comedy medievale",
-        platforms: ["hulu"],
-        genre: "Comedy/Musical",
-        rating: 7.8
-    },
-    {
-        title: "The Haunting of Bly Manor",
-        description: "Una governante americana si prende cura di due bambini orfani in una tenuta inglese infestata",
-        platforms: ["netflix"],
-        genre: "Horror/Drama",
         rating: 7.4
     },
     {
-        title: "Midnight Mass",
-        description: "Misteriosi eventi soprannaturali in una piccola comunità isolata",
-        platforms: ["netflix"],
-        genre: "Horror/Drama",
-        rating: 7.7
-    },
-    {
-        title: "La Caduta della Casa degli Usher",
-        description: "Adattamento moderno del racconto di Edgar Allan Poe",
-        platforms: ["netflix"],
-        genre: "Horror/Drama",
+        title: "The Falcon and the Winter Soldier",
+        description: "Sam Wilson e Bucky Barnes affrontano nuove minacce",
+        platforms: ["disney"],
+        genre: "Action/Adventure",
         rating: 7.8
     },
     {
-        title: "Anthracite",
-        description: "Un'investigazione su una setta misteriosa nelle Alpi francesi",
-        platforms: ["netflix"],
-        genre: "Mystery/Thriller",
-        rating: 6.8
+        title: "Hawkeye",
+        description: "Le avventure natalizie di Clint Barton",
+        platforms: ["disney"],
+        genre: "Action/Adventure",
+        rating: 7.6
     },
     {
-        title: "Ripley",
-        description: "Un truffatore assume l'identità di un ricco ereditiere",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 7.9
-    },
-    {
-        title: "Baby Reindeer",
-        description: "Storia vera di uno stalking ossessivo",
-        platforms: ["netflix"],
-        genre: "Drama",
-        rating: 8.1
-    },
-    {
-        title: "Briganti",
-        description: "Serie storica sul brigantaggio nell'Italia meridionale",
-        platforms: ["netflix"],
-        genre: "Drama/History",
-        rating: 6.9
-    },
-    {
-        title: "Transatlantic",
-        description: "Storia vera del salvataggio di rifugiati durante la Seconda Guerra Mondiale",
-        platforms: ["netflix"],
-        genre: "Drama/History",
-        rating: 7.4
-    },
-    {
-        title: "Ossessione",
-        description: "Un affair proibito che minaccia di distruggere due famiglie",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 6.5
+        title: "Daredevil",
+        description: "Un avvocato cieco combatte il crimine",
+        platforms: ["disney"],
+        genre: "Action/Crime",
+        rating: 8.6
     },
     {
         title: "The Night Agent",
@@ -877,118 +593,901 @@ const seriesData = [
         rating: 7.7
     },
     {
-        title: "Lo scontro (Beef)",
-        description: "Un incidente stradale porta a una faida crescente tra due estranei",
+        title: "Berlino",
+        description: "Spin-off de La Casa di Carta incentrato sul personaggio di Berlino",
         platforms: ["netflix"],
+        genre: "Crime/Drama",
+        rating: 7.2
+    },
+    {
+        title: "Griselda",
+        description: "La storia vera della 'Madrina della Cocaina' Griselda Blanco",
+        platforms: ["netflix"],
+        genre: "Crime/Drama",
+        rating: 7.8
+    },
+    {
+        title: "Tutta la luce che non vediamo",
+        description: "Adattamento del romanzo premio Pulitzer durante la Seconda Guerra Mondiale",
+        platforms: ["netflix"],
+        genre: "Drama/War",
+        rating: 7.6
+    },
+    {
+        title: "Bodies",
+        description: "Quattro detective in diverse epoche indagano sullo stesso omicidio",
+        platforms: ["netflix"],
+        genre: "Mystery/Thriller",
+        rating: 7.7
+    },
+    {
+        title: "The Fall of the House of Usher",
+        description: "Adattamento moderno di Edgar Allan Poe",
+        platforms: ["netflix"],
+        genre: "Horror/Drama",
+        rating: 7.8
+    },
+    {
+        title: "Kaleidoscope",
+        description: "Serie non lineare su una rapina elaborata",
+        platforms: ["netflix"],
+        genre: "Crime/Thriller",
+        rating: 7.1
+    },
+    {
+        title: "The Sandman",
+        description: "Adattamento del fumetto di Neil Gaiman sul Signore dei Sogni",
+        platforms: ["netflix"],
+        genre: "Fantasy/Drama",
+        rating: 7.8
+    },
+    {
+        title: "Heartstopper",
+        description: "Storia d'amore tra due studenti delle superiori",
+        platforms: ["netflix"],
+        genre: "Drama/Romance",
+        rating: 8.7
+    },
+    {
+        title: "The Lincoln Lawyer",
+        description: "Un avvocato di Los Angeles gestisce il suo studio legale da una Lincoln",
+        platforms: ["netflix"],
+        genre: "Drama/Legal",
+        rating: 7.7
+    },
+    {
+        title: "Outer Banks",
+        description: "Un gruppo di adolescenti cerca un tesoro leggendario",
+        platforms: ["netflix"],
+        genre: "Adventure/Drama",
+        rating: 7.6
+    },
+    {
+        title: "Vikings: Valhalla",
+        description: "Spin-off di Vikings ambientato 100 anni dopo",
+        platforms: ["netflix"],
+        genre: "Action/Drama",
+        rating: 7.8
+    },
+    {
+        title: "The Witcher: Blood Origin",
+        description: "Prequel di The Witcher sulla creazione del primo Witcher",
+        platforms: ["netflix"],
+        genre: "Fantasy/Action",
+        rating: 7.0
+    },
+    {
+        title: "Gen V",
+        description: "Spin-off di The Boys ambientato in un'università per supereroi",
+        platforms: ["prime"],
+        genre: "Action/Drama",
+        rating: 7.8
+    },
+    {
+        title: "Citadel",
+        description: "Spie con memoria cancellata devono ricordare il loro passato",
+        platforms: ["prime"],
+        genre: "Action/Thriller",
+        rating: 7.2
+    },
+    {
+        title: "The Continental",
+        description: "Prequel di John Wick sul famoso hotel per assassini",
+        platforms: ["prime"],
+        genre: "Action/Crime",
+        rating: 7.4
+    },
+    {
+        title: "Fallout",
+        description: "Adattamento della famosa serie di videogiochi post-apocalittici",
+        platforms: ["prime"],
+        genre: "Sci-Fi/Adventure",
+        rating: 8.5
+    },
+    {
+        title: "Mr. & Mrs. Smith",
+        description: "Due spie sotto copertura come coppia sposata",
+        platforms: ["prime"],
+        genre: "Action/Comedy",
+        rating: 7.5
+    },
+    {
+        title: "Transformers: Prime",
+        description: "Gli Autobot proteggono la Terra dai Decepticon in questa serie animata",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 8.5
+    },
+    {
+        title: "Transformers: Robots in Disguise",
+        description: "Bumblebee guida un nuovo team di Autobot per catturare i Decepticon fuggiti",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.8
+    },
+    {
+        title: "Transformers: Cyberverse",
+        description: "Le avventure di Bumblebee e Windblade nell'universo dei Transformers",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.6
+    },
+    {
+        title: "Transformers: Rescue Bots",
+        description: "Gli Autobot aiutano gli umani in situazioni di emergenza",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.4
+    },
+    {
+        title: "Transformers: War for Cybertron",
+        description: "La guerra civile tra Autobot e Decepticon sul loro pianeta natale",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.9
+    },
+    {
+        title: "Transformers: EarthSpark",
+        description: "Una nuova generazione di Transformers nati sulla Terra",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.7
+    },
+    {
+        title: "Transformers: Beast Wars",
+        description: "Gli eredi degli Autobot e Decepticon combattono in forma di animali",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 8.2
+    },
+    {
+        title: "Transformers: Animated",
+        description: "Gli Autobot proteggono Detroit dai Decepticon in uno stile animato unico",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.8
+    },
+    {
+        title: "Transformers: Energon",
+        description: "La guerra continua tra Autobot e Decepticon per il controllo dell'Energon",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.3
+    },
+    {
+        title: "Transformers: Armada",
+        description: "Gli Autobot e i Mini-Con combattono contro i Decepticon",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.5
+    },
+    {
+        title: "Transformers: Cybertron",
+        description: "Gli Autobot cercano le chiavi del Cyber Planet per salvare l'universo",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.4
+    },
+    {
+        title: "Transformers: The Last Knight",
+        description: "Film live-action che esplora la storia segreta dei Transformers sulla Terra",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.2
+    },
+    {
+        title: "Transformers: Bumblebee",
+        description: "Le origini di Bumblebee e il suo legame con una giovane ragazza",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.7
+    },
+    {
+        title: "Transformers: Rise of the Beasts",
+        description: "Gli Autobot si alleano con i Maximals per combattere una minaccia cosmica",
+        platforms: ["paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.1
+    },
+    {
+        title: "Transformers: Age of Extinction",
+        description: "Gli Autobot sono braccati da un'unità governativa segreta",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.6
+    },
+    {
+        title: "Transformers: Dark of the Moon",
+        description: "Gli Autobot scoprono un segreto nascosto sulla Luna",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.2
+    },
+    {
+        title: "Transformers: Revenge of the Fallen",
+        description: "Gli Autobot combattono contro un antico nemico risvegliato",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.9
+    },
+    {
+        title: "Transformers (2007)",
+        description: "Il primo film live-action che introduce i Transformers al mondo",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: The Movie (1986)",
+        description: "Film d'animazione classico che segna la morte di Optimus Prime",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.3
+    },
+    {
+        title: "Transformers: Generation 1",
+        description: "La serie animata originale che ha lanciato il franchise",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.8
+    },
+    {
+        title: "Transformers: Headmasters",
+        description: "Spin-off di Generation 1 che introduce i Transformers con teste umane",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.2
+    },
+    {
+        title: "Transformers: Masterforce",
+        description: "Serie che introduce i Pretenders, Transformers che si travestono da umani",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.1
+    },
+    {
+        title: "Transformers: Victory",
+        description: "L'ultima serie della Generation 1 giapponese",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Zone",
+        description: "Serie OVA che conclude la saga della Generation 1 giapponese",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.9
+    },
+    {
+        title: "Transformers: Beast Machines",
+        description: "Sequel di Beast Wars che esplora il ritorno su Cybertron",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.5
+    },
+    {
+        title: "Transformers: Robots in Disguise (2001)",
+        description: "Serie che introduce i Vehicon e il concetto di Transformers che si trasformano in veicoli",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.2
+    },
+    {
+        title: "Transformers: Universe",
+        description: "Serie che unisce personaggi di diverse continuity dei Transformers",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.8
+    },
+    {
+        title: "Transformers: Combiner Wars",
+        description: "Serie che esplora i Combiner, Transformers che si uniscono per formare esseri più potenti",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.1
+    },
+    {
+        title: "Transformers: Titans Return",
+        description: "Sequel di Combiner Wars che introduce i Titan Masters",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Power of the Primes",
+        description: "Conclusione della trilogia che introduce i Prime Masters",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 6.9
+    },
+    {
+        title: "Transformers: Cyberverse Adventures",
+        description: "Serie di cortometraggi che accompagna Transformers: Cyberverse",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.2
+    },
+    {
+        title: "Transformers: BotBots",
+        description: "Serie comica sui Transformers più piccoli e goffi",
+        platforms: ["netflix"],
+        genre: "Animation/Comedy",
+        rating: 6.8
+    },
+    {
+        title: "Transformers: Rescue Bots Academy",
+        description: "Spin-off di Rescue Bots che segue i giovani Rescue Bots in addestramento",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: War for Cybertron - Siege",
+        description: "Prima parte della trilogia che esplora la guerra civile su Cybertron",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.8
+    },
+    {
+        title: "Transformers: War for Cybertron - Earthrise",
+        description: "Seconda parte della trilogia che segue gli Autobot sulla Terra",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.7
+    },
+    {
+        title: "Transformers: War for Cybertron - Kingdom",
+        description: "Conclusione della trilogia che unisce Autobot, Decepticon e Maximals",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.9
+    },
+    {
+        title: "Transformers: BotBots - Mission to Earth",
+        description: "Film speciale che segue i BotBots in una missione sulla Terra",
+        platforms: ["netflix"],
+        genre: "Animation/Comedy",
+        rating: 6.5
+    },
+    {
+        title: "Transformers: Cyberverse - The Movie",
+        description: "Film speciale che conclude la serie Cyberverse",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.6
+    },
+    {
+        title: "Transformers: Prime - Beast Hunters",
+        description: "Terza stagione di Prime che introduce i Predacons",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 8.3
+    },
+    {
+        title: "Transformers: Prime - The Game",
+        description: "Adattamento videoludico della serie Prime",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.2
+    },
+    {
+        title: "Transformers: Rescue Bots - The Movie",
+        description: "Film speciale che unisce i Rescue Bots con i Transformers classici",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.1
+    },
+    {
+        title: "Transformers: The Last Knight - Prequel",
+        description: "Cortometraggi che precedono gli eventi di The Last Knight",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.8
+    },
+    {
+        title: "Transformers: Bumblebee - Prequel",
+        description: "Cortometraggi che precedono gli eventi di Bumblebee",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.5
+    },
+    {
+        title: "Transformers: Rise of the Beasts - Prequel",
+        description: "Cortometraggi che precedono gli eventi di Rise of the Beasts",
+        platforms: ["paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.0
+    },
+    {
+        title: "Transformers: Age of Extinction - Prequel",
+        description: "Cortometraggi che precedono gli eventi di Age of Extinction",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.7
+    },
+    {
+        title: "Transformers: Dark of the Moon - Prequel",
+        description: "Cortometraggi che precedono gli eventi di Dark of the Moon",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.0
+    },
+    {
+        title: "Transformers: Revenge of the Fallen - Prequel",
+        description: "Cortometraggi che precedono gli eventi di Revenge of the Fallen",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 5.8
+    },
+    {
+        title: "Transformers (2007) - Prequel",
+        description: "Cortometraggi che precedono gli eventi del primo film",
+        platforms: ["netflix", "paramount"],
+        genre: "Action/Sci-Fi",
+        rating: 6.8
+    },
+    {
+        title: "Transformers: The Movie (1986) - Prequel",
+        description: "Cortometraggi che precedono gli eventi del film d'animazione del 1986",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Generation 1 - The Movie Prequel",
+        description: "Cortometraggi che collegano la serie TV al film del 1986",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.2
+    },
+    {
+        title: "Transformers: Headmasters - Prequel",
+        description: "Cortometraggi che introducono i concetti dei Headmasters",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Masterforce - Prequel",
+        description: "Cortometraggi che introducono i concetti dei Pretenders",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.9
+    },
+    {
+        title: "Transformers: Victory - Prequel",
+        description: "Cortometraggi che introducono i personaggi di Victory",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.8
+    },
+    {
+        title: "Transformers: Zone - Prequel",
+        description: "Cortometraggi che introducono i concetti di Zone",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.7
+    },
+    {
+        title: "Transformers: Beast Machines - Prequel",
+        description: "Cortometraggi che collegano Beast Wars a Beast Machines",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.3
+    },
+    {
+        title: "Transformers: Robots in Disguise (2001) - Prequel",
+        description: "Cortometraggi che introducono i Vehicon",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Universe - Prequel",
+        description: "Cortometraggi che introducono il concetto di multiverso dei Transformers",
+        platforms: ["netflix", "paramount"],
+        genre: "Animation/Action",
+        rating: 6.7
+    },
+    {
+        title: "Transformers: Combiner Wars - Prequel",
+        description: "Cortometraggi che introducono i Combiner",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Titans Return - Prequel",
+        description: "Cortometraggi che introducono i Titan Masters",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 6.9
+    },
+    {
+        title: "Transformers: Power of the Primes - Prequel",
+        description: "Cortometraggi che introducono i Prime Masters",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 6.8
+    },
+    {
+        title: "Transformers: Cyberverse Adventures - Prequel",
+        description: "Cortometraggi che introducono i personaggi di Cyberverse",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: BotBots - Prequel",
+        description: "Cortometraggi che introducono i BotBots",
+        platforms: ["netflix"],
+        genre: "Animation/Comedy",
+        rating: 6.6
+    },
+    {
+        title: "Transformers: Rescue Bots Academy - Prequel",
+        description: "Cortometraggi che introducono i giovani Rescue Bots",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 6.9
+    },
+    {
+        title: "Transformers: War for Cybertron - Siege - Prequel",
+        description: "Cortometraggi che introducono la guerra civile su Cybertron",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.6
+    },
+    {
+        title: "Transformers: War for Cybertron - Earthrise - Prequel",
+        description: "Cortometraggi che introducono l'arrivo degli Autobot sulla Terra",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.5
+    },
+    {
+        title: "Transformers: War for Cybertron - Kingdom - Prequel",
+        description: "Cortometraggi che introducono l'incontro con i Maximals",
+        platforms: ["netflix"],
+        genre: "Animation/Action",
+        rating: 7.7
+    },
+    {
+        title: "Transformers: BotBots - Mission to Earth - Prequel",
+        description: "Cortometraggi che introducono la missione dei BotBots sulla Terra",
+        platforms: ["netflix"],
+        genre: "Animation/Comedy",
+        rating: 6.4
+    },
+    {
+        title: "Transformers: Cyberverse - The Movie - Prequel",
+        description: "Cortometraggi che introducono gli eventi del film Cyberverse",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.4
+    },
+    {
+        title: "Transformers: Prime - Beast Hunters - Prequel",
+        description: "Cortometraggi che introducono i Predacons",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 8.1
+    },
+    {
+        title: "Transformers: Prime - The Game - Prequel",
+        description: "Cortometraggi che introducono gli eventi del videogioco",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Transformers: Rescue Bots - The Movie - Prequel",
+        description: "Cortometraggi che introducono l'incontro con i Transformers classici",
+        platforms: ["netflix", "disney"],
+        genre: "Animation/Action",
+        rating: 7.0
+    },
+    {
+        title: "Yellowjackets",
+        description: "Sopravvissute a un incidente aereo si confrontano con il loro passato",
+        platforms: ["paramount", "showtime"],
+        genre: "Drama/Mystery",
+        rating: 8.1
+    },
+    {
+        title: "Tulsa King",
+        description: "Un mafioso di New York inizia una nuova vita a Tulsa",
+        platforms: ["paramount"],
+        genre: "Crime/Drama",
+        rating: 7.8
+    },
+    {
+        title: "1923",
+        description: "Prequel di Yellowstone ambientato nel Montana del 1923",
+        platforms: ["paramount"],
+        genre: "Drama/Western",
+        rating: 8.2
+    },
+    {
+        title: "1883",
+        description: "Prequel di Yellowstone sulla famiglia Dutton",
+        platforms: ["paramount"],
+        genre: "Drama/Western",
+        rating: 8.3
+    },
+    {
+        title: "Mayor of Kingstown",
+        description: "Una famiglia gestisce il business delle carceri in Michigan",
+        platforms: ["paramount"],
+        genre: "Crime/Drama",
+        rating: 7.9
+    },
+    {
+        title: "Evil",
+        description: "Un team investiga fenomeni soprannaturali",
+        platforms: ["paramount", "netflix"],
+        genre: "Horror/Mystery",
+        rating: 7.8
+    },
+    {
+        title: "Star Trek: Strange New Worlds",
+        description: "Le avventure dell'Enterprise prima di Star Trek: The Original Series",
+        platforms: ["paramount"],
+        genre: "Sci-Fi/Adventure",
+        rating: 8.4
+    },
+    {
+        title: "Star Trek: Discovery",
+        description: "Una nuova serie Star Trek ambientata nel futuro",
+        platforms: ["paramount"],
+        genre: "Sci-Fi/Adventure",
+        rating: 7.8
+    },
+    {
+        title: "Star Trek: Picard",
+        description: "Jean-Luc Picard torna all'avventura",
+        platforms: ["paramount"],
+        genre: "Sci-Fi/Adventure",
+        rating: 7.9
+    },
+    {
+        title: "Halo",
+        description: "Adattamento della serie di videogiochi",
+        platforms: ["paramount"],
+        genre: "Sci-Fi/Action",
+        rating: 7.5
+    },
+    {
+        title: "The Good Fight",
+        description: "Spin-off di The Good Wife su una società legale",
+        platforms: ["paramount"],
+        genre: "Drama/Legal",
+        rating: 8.2
+    },
+    {
+        title: "The Offer",
+        description: "La storia dietro la realizzazione de Il Padrino",
+        platforms: ["paramount"],
+        genre: "Drama/Biography",
+        rating: 7.8
+    },
+    {
+        title: "SEAL Team",
+        description: "Le missioni di un team delle forze speciali",
+        platforms: ["paramount", "netflix"],
+        genre: "Action/Drama",
+        rating: 7.9
+    },
+    {
+        title: "NCIS",
+        description: "Indagini della Naval Criminal Investigative Service",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.7
+    },
+    {
+        title: "NCIS: Los Angeles",
+        description: "Spin-off di NCIS ambientato a Los Angeles",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.5
+    },
+    {
+        title: "NCIS: New Orleans",
+        description: "Spin-off di NCIS ambientato a New Orleans",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.4
+    },
+    {
+        title: "Criminal Minds",
+        description: "Un team dell'FBI analizza la mente dei criminali",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 8.1
+    },
+    {
+        title: "Criminal Minds: Evolution",
+        description: "Continuazione di Criminal Minds",
+        platforms: ["paramount"],
+        genre: "Crime/Drama",
+        rating: 7.8
+    },
+    {
+        title: "FBI",
+        description: "Le indagini dell'FBI a New York",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.6
+    },
+    {
+        title: "FBI: Most Wanted",
+        description: "Spin-off di FBI sulla caccia ai criminali più ricercati",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.5
+    },
+    {
+        title: "FBI: International",
+        description: "Spin-off di FBI ambientato in Europa",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.4
+    },
+    {
+        title: "Blue Bloods",
+        description: "Una famiglia di poliziotti a New York",
+        platforms: ["paramount", "netflix"],
+        genre: "Crime/Drama",
+        rating: 7.8
+    },
+    {
+        title: "The Equalizer",
+        description: "Un ex agente della CIA aiuta persone in difficoltà",
+        platforms: ["paramount", "netflix"],
+        genre: "Action/Crime",
+        rating: 7.3
+    },
+    {
+        title: "Young Sheldon",
+        description: "Spin-off prequel di The Big Bang Theory",
+        platforms: ["paramount", "netflix", "max"],
+        genre: "Comedy",
+        rating: 7.9
+    },
+    {
+        title: "Ghosts",
+        description: "Una coppia eredita una casa infestata",
+        platforms: ["paramount", "netflix"],
+        genre: "Comedy/Fantasy",
+        rating: 7.8
+    },
+    {
+        title: "iCarly",
+        description: "Reboot della serie originale",
+        platforms: ["paramount", "netflix"],
+        genre: "Comedy",
+        rating: 7.2
+    },
+    {
+        title: "The Game",
+        description: "Reboot della serie originale",
+        platforms: ["paramount"],
+        genre: "Comedy/Drama",
+        rating: 7.0
+    },
+    {
+        title: "Dexter: New Blood",
+        description: "Continuazione della serie Dexter",
+        platforms: ["paramount", "showtime"],
+        genre: "Crime/Drama",
+        rating: 7.8
+    },
+    {
+        title: "Billions",
+        description: "Guerra di potere tra un procuratore e un miliardario",
+        platforms: ["paramount", "showtime"],
+        genre: "Drama",
+        rating: 8.3
+    },
+    {
+        title: "Shameless",
+        description: "La vita disfunzionale della famiglia Gallagher",
+        platforms: ["paramount", "showtime", "netflix"],
+        genre: "Comedy/Drama",
+        rating: 8.6
+    },
+    {
+        title: "House of the Dragon",
+        description: "Prequel di Game of Thrones sulla famiglia Targaryen",
+        platforms: ["hbo", "max"],
+        genre: "Fantasy/Drama",
+        rating: 8.5
+    },
+    {
+        title: "The Last of Us",
+        description: "Un contrabbandiere e una ragazza attraversano un'America post-apocalittica",
+        platforms: ["hbo", "max"],
+        genre: "Drama/Horror",
+        rating: 8.8
+    },
+    {
+        title: "Succession",
+        description: "Lotte di potere in una famiglia mediatica",
+        platforms: ["hbo", "max"],
+        genre: "Drama",
+        rating: 9.0
+    },
+    {
+        title: "The White Lotus",
+        description: "Intrighi e drammi in un resort di lusso",
+        platforms: ["hbo", "max"],
         genre: "Drama/Comedy",
         rating: 8.2
     },
     {
-        title: "La legge di Lidia Poët",
-        description: "Storia della prima avvocatessa d'Italia",
-        platforms: ["netflix"],
+        title: "True Detective: Night Country",
+        description: "Investigatrici indagano su misteriose sparizioni in Alaska",
+        platforms: ["hbo", "max"],
+        genre: "Crime/Mystery",
+        rating: 8.2
+    },
+    {
+        title: "The Gilded Age",
+        description: "Drammi e intrighi nella New York di fine '800",
+        platforms: ["hbo", "max"],
         genre: "Drama/History",
-        rating: 7.3
+        rating: 8.0
     },
     {
-        title: "Dead Boy Detectives",
-        description: "Due fantasmi adolescenti risolvono misteri soprannaturali",
-        platforms: ["netflix"],
-        genre: "Mystery/Fantasy",
-        rating: 7.5
+        title: "The Sopranos",
+        description: "Un boss mafioso in terapia",
+        platforms: ["hbo", "max"],
+        genre: "Crime/Drama",
+        rating: 9.2
     },
     {
-        title: "Copycat Killer",
-        description: "Un serial killer che ricrea famosi omicidi letterari",
-        platforms: ["netflix"],
-        genre: "Crime/Thriller",
-        rating: 7.2
-    },
-    {
-        title: "The Recruit",
-        description: "Un giovane avvocato della CIA si trova coinvolto in pericolose missioni",
-        platforms: ["netflix"],
-        genre: "Action/Thriller",
-        rating: 7.5
-    },
-    {
-        title: "The Fabulous",
-        description: "Quattro amici nel mondo della moda di Seoul",
-        platforms: ["netflix"],
-        genre: "Drama/Romance",
-        rating: 7.0
-    },
-    {
-        title: "The Glory",
-        description: "Una donna cerca vendetta contro i suoi ex bulli",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 8.1
-    },
-    {
-        title: "Black Knight",
-        description: "In un futuro post-apocalittico, i corrieri sono essenziali per la sopravvivenza",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Action",
-        rating: 7.2
-    },
-    {
-        title: "XO, Kitty",
-        description: "Spin-off di To All the Boys I've Loved Before",
-        platforms: ["netflix"],
-        genre: "Comedy/Romance",
-        rating: 7.0
-    },
-    {
-        title: "Love to Hate You",
-        description: "Una avvocatessa e un attore superano i loro pregiudizi sull'amore",
-        platforms: ["netflix"],
-        genre: "Romance/Comedy",
-        rating: 7.3
-    },
-    {
-        title: "Dr. Cha",
-        description: "Una casalinga torna a praticare medicina dopo 20 anni",
-        platforms: ["netflix"],
-        genre: "Drama/Medical",
-        rating: 7.4
-    },
-    {
-        title: "King the Land",
-        description: "Romance nel mondo dell'hospitality di lusso",
-        platforms: ["netflix"],
-        genre: "Romance/Comedy",
-        rating: 7.6
-    },
-    {
-        title: "The Good Bad Mother",
-        description: "Un procuratore rigido torna bambino dopo un incidente",
-        platforms: ["netflix"],
-        genre: "Drama/Comedy",
-        rating: 7.5
-    },
-    {
-        title: "Duty After School",
-        description: "Studenti combattono una minaccia aliena",
-        platforms: ["netflix"],
+        title: "Westworld",
+        description: "Un parco a tema futuristico con robot senzienti",
+        platforms: ["hbo", "max"],
         genre: "Sci-Fi/Drama",
-        rating: 7.1
+        rating: 8.6
     },
     {
-        title: "A Time Called You",
-        description: "Una donna viaggia nel tempo per ritrovare il suo amore perduto",
-        platforms: ["netflix"],
-        genre: "Romance/Fantasy",
-        rating: 7.2
-    },
-    {
-        title: "Fisk",
-        description: "Una avvocatessa ricomincia in uno studio legale eccentrico",
-        platforms: ["netflix"],
+        title: "Barry",
+        description: "Un sicario che sogna di diventare attore",
+        platforms: ["hbo", "max"],
         genre: "Comedy/Drama",
-        rating: 7.4
+        rating: 8.4
     },
-    // ... inserisci qui tutti i dati delle serie TV che hai fornito ...
+    {
+        title: "Euphoria",
+        description: "Le difficoltà dell'adolescenza moderna",
+        platforms: ["hbo", "max"],
+        genre: "Drama",
+        rating: 8.4
+    }
 ];
 
 // Get unique genres and platforms
@@ -1043,7 +1542,11 @@ function populateFilters() {
     platforms.forEach(platform => {
         const option = document.createElement('option');
         option.value = platform;
-        option.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+        if (platform === 'hbo') {
+            option.textContent = 'HBO';
+        } else {
+            option.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+        }
         platformFilter.appendChild(option);
     });
 }
@@ -1126,7 +1629,9 @@ function getPlatformIcon(platform) {
         'disney': 'Disney+',
         'amc': 'AMC',
         'apple': 'Apple TV+',
-        'hulu': 'Hulu'
+        'hulu': 'Hulu',
+        'max': 'Max',
+        'paramount': 'Paramount+'
     };
 
     return `
@@ -1145,6 +1650,23 @@ function renderSeries(series) {
     
     console.log(`Showing series from index ${startIndex} to ${endIndex}`);
     console.log(`Total series: ${series.length}, Current page: ${cache.currentPage}`);
+    
+    // Aggiungo il contatore delle serie trovate sopra la lista
+    const resultsCounter = document.querySelector('.results-counter') || document.createElement('div');
+    resultsCounter.className = 'results-counter';
+    resultsCounter.innerHTML = `
+        <div class="counter-container">
+            <h2 class="counter-text">
+                <span class="counter-number">${series.length}</span> serie trovate
+            </h2>
+        </div>
+    `;
+    
+    // Inserisco il contatore prima della lista delle serie
+    const searchContainer = document.querySelector('.search-container');
+    if (searchContainer && !document.querySelector('.results-counter')) {
+        searchContainer.after(resultsCounter);
+    }
     
     if (series.length === 0) {
         seriesList.innerHTML = `
@@ -1241,16 +1763,28 @@ function updatePagination(totalItems) {
 window.handlePageChange = function(page) {
     console.log('Changing to page:', page);
     
+    // Mantieni i filtri correnti
+    const searchTerm = cache.filters.search;
+    const selectedGenre = document.getElementById('genreFilter')?.value || '';
+    const selectedPlatform = document.getElementById('platformFilter')?.value || '';
+    const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
+    
     const filteredSeries = seriesData.filter(show => {
-        const showGenres = show.genre.split(/[\/\s]+/); // Split su slash e spazi
-        const searchTerm = cache.filters.search.toLowerCase();
-        const matchesSearch = !searchTerm || 
-            show.title.toLowerCase().includes(searchTerm) ||
-            show.description.toLowerCase().includes(searchTerm);
+        if (!show || typeof show !== 'object') return false;
         
-        const matchesGenre = !cache.filters.genre || showGenres.includes(cache.filters.genre);
-        const matchesPlatform = !cache.filters.platform || show.platforms.includes(cache.filters.platform);
-        const matchesRating = !cache.filters.rating || show.rating >= cache.filters.rating;
+        const showTitle = (show.title || '').toLowerCase();
+        const showDescription = (show.description || '').toLowerCase();
+        const showGenres = (show.genre || '').split(/[\/\s]+/);
+        const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
+        const showRating = parseFloat(show.rating) || 0;
+        
+        const matchesSearch = !searchTerm || 
+            showTitle.includes(searchTerm) ||
+            showDescription.includes(searchTerm);
+        
+        const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
+        const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
+        const matchesRating = !selectedRating || showRating >= selectedRating;
         
         return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
     });
@@ -1385,57 +1919,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterAndRenderSeries();
             });
         }
-    }
-
-    // Filter series based on all criteria
-    function filterAndRenderSeries() {
-        const searchTerm = cache.filters.search;
-        const selectedGenre = document.getElementById('genreFilter')?.value || '';
-        const selectedPlatform = document.getElementById('platformFilter')?.value || '';
-        const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
-
-        // Show loading state
-        const seriesList = document.getElementById('seriesList');
-        if (seriesList) {
-            seriesList.innerHTML = '<div class="loading">Ricerca in corso...</div>';
-        }
-
-        // Use requestAnimationFrame for smooth UI updates
-        requestAnimationFrame(() => {
-            const filteredSeries = seriesData.filter(show => {
-                if (!show || typeof show !== 'object') return false;
-                
-                const showTitle = (show.title || '').toLowerCase();
-                const showDescription = (show.description || '').toLowerCase();
-                const showGenres = (show.genre || '').split(/[\/\s]+/);
-                const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
-                const showRating = parseFloat(show.rating) || 0;
-                
-                const matchesSearch = !searchTerm || 
-                    showTitle.includes(searchTerm) ||
-                    showDescription.includes(searchTerm);
-                
-                const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
-                const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
-                const matchesRating = !selectedRating || showRating >= selectedRating;
-                
-                return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
-            });
-            
-            // Sort and render results
-            const sortedSeries = sortSeriesAlphabetically(filteredSeries);
-            renderSeries(sortedSeries);
-            
-            // Update no results message
-            const noResults = document.getElementById('noResults');
-            if (noResults) {
-                noResults.style.display = sortedSeries.length === 0 ? 'block' : 'none';
-            }
-
-            // Remove loading state
-            const searchContainer = document.querySelector('.search-container');
-            searchContainer.classList.remove('searching');
-        });
     }
 
     // Set up other event listeners
