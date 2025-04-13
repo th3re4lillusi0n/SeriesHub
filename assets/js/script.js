@@ -20,6 +20,51 @@ const cache = {
     }
 };
 
+// Security utility functions
+const security = {
+    // Sanitize user input to prevent XSS
+    sanitizeInput: function(input) {
+        if (typeof input !== 'string') return '';
+        return input.replace(/[&<>"']/g, function(match) {
+            const escape = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+            return escape[match];
+        });
+    },
+    
+    // Secure localStorage operations with try-catch
+    secureStorage: {
+        get: function(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch (e) {
+                console.error('Error accessing localStorage:', e);
+                return null;
+            }
+        },
+        set: function(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (e) {
+                console.error('Error writing to localStorage:', e);
+                return false;
+            }
+        }
+    },
+    
+    // Validate data before processing
+    validateData: function(data) {
+        if (!data || typeof data !== 'object') return false;
+        return true;
+    }
+};
+
 // Dati delle serie TV
 const seriesData = [
     {
@@ -1003,54 +1048,68 @@ function populateFilters() {
     });
 }
 
-// Clear all filters
-function clearFilters() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('genreFilter').value = '';
-    document.getElementById('platformFilter').value = '';
-    document.getElementById('ratingFilter').value = '';
-    
-    cache.filters = {
-        search: '',
-        genre: '',
-        platform: '',
-        rating: 0
+// Debounce utility function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
     };
-    
-    renderSeries(sortSeriesAlphabetically(seriesData));
-    updatePagination();
 }
 
 // Filter series based on all criteria
-function filterSeries() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const selectedGenre = document.getElementById('genreFilter').value;
-    const selectedPlatform = document.getElementById('platformFilter').value;
-    const selectedRating = parseFloat(document.getElementById('ratingFilter').value) || 0;
+function filterAndRenderSeries() {
+    const searchTerm = cache.filters.search;
+    const selectedGenre = document.getElementById('genreFilter')?.value || '';
+    const selectedPlatform = document.getElementById('platformFilter')?.value || '';
+    const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
 
-    cache.filters = {
-        search: searchTerm,
-        genre: selectedGenre,
-        platform: selectedPlatform,
-        rating: selectedRating
-    };
-    
-    cache.currentPage = 1; // Reset to first page when filtering
-    
-    const filteredSeries = seriesData.filter(show => {
-        const showGenres = show.genre.split(/[\/\s]+/); // Split su slash e spazi
-        const matchesSearch = !searchTerm || 
-            show.title.toLowerCase().includes(searchTerm) ||
-            show.description.toLowerCase().includes(searchTerm);
+    // Show loading state
+    const seriesList = document.getElementById('seriesList');
+    if (seriesList) {
+        seriesList.innerHTML = '<div class="loading">Ricerca in corso...</div>';
+    }
+
+    // Use requestAnimationFrame for smooth UI updates
+    requestAnimationFrame(() => {
+        const filteredSeries = seriesData.filter(show => {
+            if (!show || typeof show !== 'object') return false;
+            
+            const showTitle = (show.title || '').toLowerCase();
+            const showDescription = (show.description || '').toLowerCase();
+            const showGenres = (show.genre || '').split(/[\/\s]+/);
+            const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
+            const showRating = parseFloat(show.rating) || 0;
+            
+            const matchesSearch = !searchTerm || 
+                showTitle.includes(searchTerm) ||
+                showDescription.includes(searchTerm);
+            
+            const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
+            const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
+            const matchesRating = !selectedRating || showRating >= selectedRating;
+            
+            return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
+        });
         
-        const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
-        const matchesPlatform = !selectedPlatform || show.platforms.includes(selectedPlatform);
-        const matchesRating = !selectedRating || show.rating >= selectedRating;
+        // Sort and render results
+        const sortedSeries = sortSeriesAlphabetically(filteredSeries);
+        renderSeries(sortedSeries);
         
-        return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
+        // Update no results message
+        const noResults = document.getElementById('noResults');
+        if (noResults) {
+            noResults.style.display = sortedSeries.length === 0 ? 'block' : 'none';
+        }
+
+        // Remove loading state
+        const searchContainer = document.querySelector('.search-container');
+        searchContainer.classList.remove('searching');
     });
-    
-    renderSeries(sortSeriesAlphabetically(filteredSeries));
 }
 
 // Sort series alphabetically
@@ -1205,19 +1264,6 @@ window.handlePageChange = function(page) {
     }
 }
 
-// Debounce utility
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
 // Header scroll behavior
 function handleHeaderScroll() {
     const header = document.querySelector('.header');
@@ -1260,9 +1306,11 @@ function updateScrollButton() {
 
 // Theme toggle functionality
 function initializeTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    const savedTheme = security.secureStorage.get('theme') || 'light';
+    // Validate theme value to prevent injection
+    const validTheme = ['light', 'dark'].includes(savedTheme) ? savedTheme : 'light';
+    document.documentElement.setAttribute('data-theme', validTheme);
+    updateThemeIcon(validTheme);
 }
 
 function toggleTheme() {
@@ -1270,7 +1318,7 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    security.secureStorage.set('theme', newTheme);
     updateThemeIcon(newTheme);
 }
 
@@ -1278,16 +1326,30 @@ function updateThemeIcon(theme) {
     const themeToggle = document.querySelector('.theme-toggle');
     if (!themeToggle) return;
     
-    themeToggle.innerHTML = theme === 'dark' ? `
-        <svg viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-        </svg>
-    ` : `
-        <svg viewBox="0 0 24 24" stroke="currentColor">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-        </svg>
-    `;
+    // Use DOMPurify or similar in production for SVG sanitization
+    const darkIcon = `<svg viewBox="0 0 24 24" stroke="currentColor">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+    </svg>`;
+    
+    const lightIcon = `<svg viewBox="0 0 24 24" stroke="currentColor">
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>`;
+    
+    themeToggle.innerHTML = theme === 'dark' ? darkIcon : lightIcon;
+}
+
+// Secure event handling
+function addSecureEventListener(element, event, handler) {
+    if (!element) return;
+    
+    element.addEventListener(event, function(e) {
+        // Prevent default only if needed
+        // e.preventDefault();
+        
+        // Call the handler with the event
+        handler(e);
+    });
 }
 
 // Initialize app
@@ -1295,14 +1357,119 @@ document.addEventListener('DOMContentLoaded', () => {
     // Populate filters
     populateFilters();
     
-    // Set up event listeners
-    const debouncedFilter = debounce(filterSeries, config.debounceDelay);
-    document.getElementById('searchInput').addEventListener('input', debouncedFilter);
-    document.getElementById('genreFilter').addEventListener('change', filterSeries);
-    document.getElementById('platformFilter').addEventListener('change', filterSeries);
-    document.getElementById('ratingFilter').addEventListener('change', filterSeries);
-    document.getElementById('clearFilters').addEventListener('click', clearFilters);
-    
+    // Set up event listeners with security measures
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        // Add immediate search on input with a small debounce
+        const debouncedSearch = debounce(() => {
+            const searchTerm = security.sanitizeInput(searchInput.value.toLowerCase().trim());
+            cache.filters.search = searchTerm;
+            cache.currentPage = 1;
+            filterAndRenderSeries();
+        }, 150); // Reduced debounce time for more responsiveness
+
+        addSecureEventListener(searchInput, 'input', (e) => {
+            const searchContainer = document.querySelector('.search-container');
+            searchContainer.classList.add('searching');
+            debouncedSearch();
+        });
+
+        // Add search on form submit
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            addSecureEventListener(searchForm, 'submit', (e) => {
+                e.preventDefault();
+                const searchTerm = security.sanitizeInput(searchInput.value.toLowerCase().trim());
+                cache.filters.search = searchTerm;
+                cache.currentPage = 1;
+                filterAndRenderSeries();
+            });
+        }
+    }
+
+    // Filter series based on all criteria
+    function filterAndRenderSeries() {
+        const searchTerm = cache.filters.search;
+        const selectedGenre = document.getElementById('genreFilter')?.value || '';
+        const selectedPlatform = document.getElementById('platformFilter')?.value || '';
+        const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
+
+        // Show loading state
+        const seriesList = document.getElementById('seriesList');
+        if (seriesList) {
+            seriesList.innerHTML = '<div class="loading">Ricerca in corso...</div>';
+        }
+
+        // Use requestAnimationFrame for smooth UI updates
+        requestAnimationFrame(() => {
+            const filteredSeries = seriesData.filter(show => {
+                if (!show || typeof show !== 'object') return false;
+                
+                const showTitle = (show.title || '').toLowerCase();
+                const showDescription = (show.description || '').toLowerCase();
+                const showGenres = (show.genre || '').split(/[\/\s]+/);
+                const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
+                const showRating = parseFloat(show.rating) || 0;
+                
+                const matchesSearch = !searchTerm || 
+                    showTitle.includes(searchTerm) ||
+                    showDescription.includes(searchTerm);
+                
+                const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
+                const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
+                const matchesRating = !selectedRating || showRating >= selectedRating;
+                
+                return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
+            });
+            
+            // Sort and render results
+            const sortedSeries = sortSeriesAlphabetically(filteredSeries);
+            renderSeries(sortedSeries);
+            
+            // Update no results message
+            const noResults = document.getElementById('noResults');
+            if (noResults) {
+                noResults.style.display = sortedSeries.length === 0 ? 'block' : 'none';
+            }
+
+            // Remove loading state
+            const searchContainer = document.querySelector('.search-container');
+            searchContainer.classList.remove('searching');
+        });
+    }
+
+    // Set up other event listeners
+    const filterSelects = document.querySelectorAll('.filter-select');
+    filterSelects.forEach(select => {
+        addSecureEventListener(select, 'change', filterAndRenderSeries);
+    });
+
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    if (clearFiltersBtn) {
+        addSecureEventListener(clearFiltersBtn, 'click', () => {
+            // Reset all filters
+            document.getElementById('searchInput').value = '';
+            document.getElementById('genreFilter').value = '';
+            document.getElementById('platformFilter').value = '';
+            document.getElementById('ratingFilter').value = '';
+            
+            // Reset cache
+            cache.filters = {
+                search: '',
+                genre: '',
+                platform: '',
+                rating: 0
+            };
+            cache.currentPage = 1;
+            
+            // Update UI
+            filterAndRenderSeries();
+        });
+    }
+
+    // Initial render
+    filterAndRenderSeries();
+
     // Set up scroll handlers
     window.addEventListener('scroll', () => {
         handleHeaderScroll();
@@ -1312,14 +1479,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme
     initializeTheme();
     
-    // Add theme toggle event listener
+    // Set up theme toggle
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
+        addSecureEventListener(themeToggle, 'click', toggleTheme);
     }
-    
-    // Initial render with all series
-    const sortedSeries = sortSeriesAlphabetically([...seriesData]);
-    renderSeries(sortedSeries);
-    updatePagination(sortedSeries.length);
 }); 

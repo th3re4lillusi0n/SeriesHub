@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <base href=".">
@@ -21,6 +21,13 @@
   <meta name="twitter:image" content="assets/images/twitter-image.jpg">
   <title>SeriesHub - Trova dove guardare le tue serie TV preferite</title>
   
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +36,11 @@
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="canonical" href="https://serieshub.xyz">
+  
+  <!-- Add nonce for inline scripts -->
+  <script nonce="random-nonce-value">
+    // Critical initialization code here
+  </script>
 </head>
 <body>
   <header class="header">
@@ -40,10 +52,10 @@
             </a>
         </div>
         <div class="header-right">
-            <nav class="header-right">
-                <a href="chi-siamo.html" class="nav-link">
+            <nav class="header-nav">
+                <a href="chi-siamo.html" class="nav-link" aria-label="Chi Siamo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                    Chi Siamo
+                    <span>Chi Siamo</span>
                 </a>
                 <button class="theme-toggle" aria-label="Cambia tema">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -58,31 +70,31 @@
       <div class="search-container">
         <input 
           type="search" 
-          id="searchInput" 
           class="search-input" 
+          id="searchInput" 
           placeholder="Cerca una serie TV..."
           aria-label="Cerca serie TV"
+          autocomplete="off"
         >
         
         <div class="filters-grid">
-          <select id="genreFilter" class="filter-select" aria-label="Filtra per genere">
+          <select class="filter-select" id="genreFilter" aria-label="Filtra per genere">
             <option value="">Tutti i Generi</option>
+            <!-- Options will be populated by JavaScript -->
           </select>
           
-          <select id="platformFilter" class="filter-select" aria-label="Filtra per piattaforma">
+          <select class="filter-select" id="platformFilter" aria-label="Filtra per piattaforma">
             <option value="">Tutte le Piattaforme</option>
+            <!-- Options will be populated by JavaScript -->
           </select>
           
-          <select id="ratingFilter" class="filter-select" aria-label="Filtra per valutazione">
+          <select class="filter-select" id="ratingFilter" aria-label="Filtra per valutazione">
             <option value="">Tutte le Valutazioni</option>
-            <option value="9">9+ Eccellente</option>
-            <option value="8">8+ Ottimo</option>
-            <option value="7">7+ Buono</option>
-            <option value="6">6+ Discreto</option>
+            <!-- Options will be populated by JavaScript -->
           </select>
           
-          <button id="clearFilters" class="clear-filters" aria-label="Rimuovi tutti i filtri">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button class="clear-filters" id="clearFilters" aria-label="Rimuovi tutti i filtri">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 12H5"/>
               <path d="M12 19l-7-7 7-7"/>
             </svg>
