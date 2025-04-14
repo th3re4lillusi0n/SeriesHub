@@ -1913,4 +1913,188 @@ body {
 
 [data-theme='dark'] .counter-number {
     color: var(--accent-color-dark);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    /* Layout Base */
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Header */
+    .header-container {
+        padding: 10px 0;
+    }
+
+    .header-nav {
+        gap: 15px;
+    }
+
+    .nav-link span {
+        display: none;
+    }
+
+    /* Search e Filtri */
+    .search-container {
+        padding: 15px;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    /* Griglia Serie */
+    .series-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .series-card {
+        margin: 0;
+    }
+
+    .series-card img {
+        height: 200px;
+    }
+
+    .series-info {
+        padding: 10px;
+    }
+
+    .series-title {
+        font-size: 1rem;
+    }
+
+    .series-meta {
+        font-size: 0.8rem;
+    }
+
+    .series-description {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 3;
+    }
+
+    /* Featured e Updates */
+    .featured-content .container,
+    .latest-updates .container {
+        padding: 20px 15px;
+    }
+
+    .features-grid,
+    .updates-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .feature-card,
+    .update-card {
+        padding: 15px;
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .footer-section {
+        text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    /* Scroll Button */
+    .scroll-bottom-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+    }
+
+    /* About Page */
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-container {
+        padding: 1rem;
+    }
+
+    .features-grid,
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Contact Page */
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .form {
+        padding: 1.5rem;
+    }
+
+    /* Guide Page */
+    .guide-category {
+        padding: 1.5rem;
+    }
+
+    .guide-step {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .guide-content {
+        padding-left: 0;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .guide-step h4 {
+        font-size: 1.2rem;
+    }
+
+    .guide-content p,
+    .guide-content ul,
+    .guide-content ol {
+        font-size: 1rem;
+    }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .series-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .features-grid,
+    .updates-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
 } 
