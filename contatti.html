@@ -60,8 +60,6 @@
 
     <main class="about-container">
         <section class="about-hero">
-            <h1>Contatti</h1>
-            <p class="subtitle">Siamo qui per aiutarti</p>
         </section>
 
         <section class="about-content">
@@ -88,7 +86,7 @@
                         <label for="message">Messaggio</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="submit-button">
+                    <button type="submit" class="submit-button theme-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 2L11 13"></path>
                             <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
@@ -239,7 +237,13 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("6XBE0hoJysYUOcvoB");
+        })();
+
         // Theme toggle functionality
         const themeToggle = document.querySelector('.theme-toggle');
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -262,8 +266,16 @@
         });
 
         // Form submission handling
-        function handleSubmit(event) {
+        const contactForm = document.getElementById('contactForm');
+        
+        contactForm.addEventListener('submit', function(event) {
             event.preventDefault();
+            
+            // Mostra un indicatore di caricamento
+            const submitButton = contactForm.querySelector('.submit-button');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.innerHTML = '<span>Invio in corso...</span>';
+            submitButton.disabled = true;
             
             // Recupera i dati dal form
             const formData = {
@@ -273,15 +285,32 @@
                 message: document.getElementById('message').value
             };
 
-            // Mostra un messaggio di conferma
-            alert('Grazie per averci contattato! Ti risponderemo il prima possibile.');
-            
-            // Resetta il form
-            document.getElementById('contactForm').reset();
-
-            // In un'implementazione reale, qui andrebbe aggiunto il codice per inviare i dati a un server
-            console.log('Dati del form:', formData);
-        }
+            // Invia l'email principalmente all'admin con l'utente in CC
+            emailjs.send('service_bawo0cs', 'template_aw80zyh', {
+                from_name: formData.name,
+                from_email: formData.email,
+                subject: 'SeriesHub | ' + formData.subject,
+                message: formData.message,
+                to_email: 'serieshub.info@gmail.com',  // Email va principalmente all'admin
+                cc_email: formData.email,  // Utente riceve una copia
+                reply_to: 'serieshub.info@gmail.com'  // Risposte vanno all'admin che poi può inoltrare
+            })
+            .then(function() {
+                // Successo
+                alert('Grazie per averci contattato! Ti risponderemo il prima possibile.');
+                contactForm.reset();
+            })
+            .catch(function(error) {
+                // Errore
+                console.error('Errore:', error);
+                alert('Si è verificato un errore durante l\'invio del messaggio. Per favore, riprova più tardi.');
+            })
+            .finally(function() {
+                // Ripristina il pulsante
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+            });
+        });
     </script>
 </body>
 </html> 

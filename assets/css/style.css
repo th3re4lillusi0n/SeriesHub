@@ -1532,29 +1532,43 @@ body {
     color: var(--text-secondary);
 }
 
-.submit-btn {
+.submit-button {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: var(--primary-color);
+    background-color: var(--accent-primary);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
+    border-radius: var(--radius);
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: all var(--transition);
+    width: 100%;
+    margin-top: 1rem;
 }
 
-.submit-btn:hover {
-    background: var(--accent-color);
+.submit-button:hover {
+    background-color: var(--accent-secondary);
     transform: translateY(-1px);
 }
 
-.submit-btn svg {
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.submit-button svg {
     width: 20px;
     height: 20px;
+}
+
+[data-theme="dark"] .submit-button {
+    background-color: var(--accent-primary);
+}
+
+[data-theme="dark"] .submit-button:hover {
+    background-color: var(--accent-secondary);
 }
 
 .faq-section {
