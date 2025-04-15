@@ -1,28 +1,25 @@
-// Configurazione
+// Configurazione base
 const config = {
-    itemsPerPage: 24,
-    debounceDelay: 300,
-    maxPagesShown: 5
+    itemsPerPage: 20,
+    debounceDelay: 300
 };
 
-// Cache per i dati e lo stato
-const cache = {
-    allSeries: [],
-    filteredSeries: [],
-    genres: new Set(),
-    platforms: new Set(),
+// Stato dell'interfaccia
+const uiState = {
+    shows: [],
     currentPage: 1,
     filters: {
         search: '',
         genre: '',
-        platform: '',
-        rating: 0
+        status: '',
+        language: '',
+        rating: 0,
+        year: ''
     }
 };
 
 // Security utility functions
 const security = {
-    // Sanitize user input to prevent XSS
     sanitizeInput: function(input) {
         if (typeof input !== 'string') return '';
         return input.replace(/[&<>"']/g, function(match) {
@@ -37,7 +34,6 @@ const security = {
         });
     },
     
-    // Secure localStorage operations with try-catch
     secureStorage: {
         get: function(key) {
             try {
@@ -50,1298 +46,14 @@ const security = {
         set: function(key, value) {
             try {
                 localStorage.setItem(key, value);
-                return true;
             } catch (e) {
-                console.error('Error writing to localStorage:', e);
-                return false;
+                console.error('Error setting localStorage:', e);
             }
         }
-    },
-    
-    // Validate data before processing
-    validateData: function(data) {
-        if (!data || typeof data !== 'object') return false;
-        return true;
     }
 };
 
-// Dati delle serie TV
-const seriesData = [
-    {
-        title: "Breaking Bad",
-        description: "Un professore di chimica diventa un signore della droga",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 9.5
-    },
-    {
-        title: "Game of Thrones",
-        description: "Lotte di potere in un mondo fantasy",
-        platforms: ["max"],
-        genre: "Fantasy/Drama",
-        rating: 9.2
-    },
-    {
-        title: "The Mandalorian",
-        description: "Un cacciatore di taglie galattico protegge un bambino speciale",
-        platforms: ["disney"],
-        genre: "Sci-Fi/Action",
-        rating: 8.7
-    },
-    {
-        title: "Stranger Things",
-        description: "Misteriosi eventi soprannaturali in una piccola città dell'Indiana",
-        platforms: ["netflix"],
-        genre: "Horror/Sci-Fi",
-        rating: 8.7
-    },
-    {
-        title: "The Last of Us",
-        description: "Un contrabbandiere e una ragazza attraversano un'America post-apocalittica",
-        platforms: ["max"],
-        genre: "Drama/Horror",
-        rating: 8.8
-    },
-    {
-        title: "House of the Dragon",
-        description: "La storia della casa Targaryen, 200 anni prima di Game of Thrones",
-        platforms: ["max"],
-        genre: "Fantasy/Drama",
-        rating: 8.5
-    },
-    {
-        title: "Succession",
-        description: "Lotte di potere in una famiglia mediatica",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 9.0
-    },
-    {
-        title: "Ted Lasso",
-        description: "Un allenatore americano di football allena una squadra di calcio inglese",
-        platforms: ["apple"],
-        genre: "Comedy/Drama",
-        rating: 8.9
-    },
-    {
-        title: "The Bear",
-        description: "Un chef torna a gestire il ristorante di famiglia",
-        platforms: ["disney"],
-        genre: "Drama/Comedy",
-        rating: 8.8
-    },
-    {
-        title: "Better Call Saul",
-        description: "L'origine dell'avvocato Saul Goodman",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 9.0
-    },
-    {
-        title: "The Crown",
-        description: "La storia della famiglia reale britannica",
-        platforms: ["netflix"],
-        genre: "Drama/History",
-        rating: 8.7
-    },
-    {
-        title: "Andor",
-        description: "Prequel di Rogue One nell'universo di Star Wars",
-        platforms: ["disney"],
-        genre: "Sci-Fi/Action",
-        rating: 8.7
-    },
-    {
-        title: "The Boys",
-        description: "Supereroi corrotti contro vigilanti",
-        platforms: ["prime"],
-        genre: "Action/Drama",
-        rating: 8.7
-    },
-    {
-        title: "Wednesday",
-        description: "Le avventure di Mercoledì Addams alla Nevermore Academy",
-        platforms: ["netflix"],
-        genre: "Fantasy/Comedy",
-        rating: 8.2
-    },
-    {
-        title: "The White Lotus",
-        description: "Intrighi e drammi in un resort di lusso",
-        platforms: ["max"],
-        genre: "Drama/Comedy",
-        rating: 8.2
-    },
-    {
-        title: "Only Murders in the Building",
-        description: "Tre vicini indagano su un omicidio nel loro palazzo",
-        platforms: ["disney"],
-        genre: "Comedy/Mystery",
-        rating: 8.1
-    },
-    {
-        title: "Severance",
-        description: "Impiegati con memoria divisa tra lavoro e vita privata",
-        platforms: ["apple"],
-        genre: "Sci-Fi/Thriller",
-        rating: 8.7
-    },
-    {
-        title: "The Morning Show",
-        description: "Drama ambientato nel mondo del giornalismo televisivo",
-        platforms: ["apple"],
-        genre: "Drama",
-        rating: 8.2
-    },
-    {
-        title: "Hijack",
-        description: "Un negoziatore affronta un dirottamento aereo in tempo reale",
-        platforms: ["apple"],
-        genre: "Thriller/Drama",
-        rating: 7.9
-    },
-    {
-        title: "Slow Horses",
-        description: "Agenti dell'MI5 caduti in disgrazia gestiscono casi complessi",
-        platforms: ["apple"],
-        genre: "Thriller/Drama",
-        rating: 8.2
-    },
-    {
-        title: "The Witcher",
-        description: "Le avventure dello strigo Geralt di Rivia",
-        platforms: ["netflix"],
-        genre: "Fantasy/Action",
-        rating: 8.1
-    },
-    {
-        title: "The Last Kingdom",
-        description: "Guerre e politica nell'Inghilterra medievale",
-        platforms: ["netflix"],
-        genre: "Action/Drama",
-        rating: 8.5
-    },
-    {
-        title: "The Umbrella Academy",
-        description: "Fratelli supereroi riuniti per salvare il mondo",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Action",
-        rating: 7.9
-    },
-    {
-        title: "Queen's Gambit",
-        description: "Una giovane prodigio degli scacchi",
-        platforms: ["netflix"],
-        genre: "Drama",
-        rating: 8.6
-    },
-    {
-        title: "The Haunting of Hill House",
-        description: "Una famiglia perseguitata da ricordi soprannaturali",
-        platforms: ["netflix"],
-        genre: "Horror/Drama",
-        rating: 8.6
-    },
-    {
-        title: "Sex Education",
-        description: "Le avventure di studenti alle prese con la sessualità",
-        platforms: ["netflix"],
-        genre: "Comedy/Drama",
-        rating: 8.3
-    },
-    {
-        title: "The Sopranos",
-        description: "Un boss mafioso in terapia",
-        platforms: ["max"],
-        genre: "Crime/Drama",
-        rating: 9.2
-    },
-    {
-        title: "Westworld",
-        description: "Un parco a tema futuristico con robot senzienti",
-        platforms: ["max"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.6
-    },
-    {
-        title: "Barry",
-        description: "Un sicario che sogna di diventare attore",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 8.4
-    },
-    {
-        title: "Euphoria",
-        description: "Le difficoltà dell'adolescenza moderna",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 8.4
-    },
-    {
-        title: "The Book of Boba Fett",
-        description: "Le avventure del cacciatore di taglie di Star Wars",
-        platforms: ["disney"],
-        genre: "Sci-Fi/Action",
-        rating: 7.3
-    },
-    {
-        title: "Ms. Marvel",
-        description: "Le avventure della giovane supereroina Kamala Khan",
-        platforms: ["disney"],
-        genre: "Action/Adventure",
-        rating: 7.5
-    },
-    {
-        title: "Secret Invasion",
-        description: "Nick Fury combatte un'invasione aliena segreta",
-        platforms: ["disney"],
-        genre: "Sci-Fi/Action",
-        rating: 7.0
-    },
-    {
-        title: "What If...?",
-        description: "Storie alternative dell'universo Marvel",
-        platforms: ["disney"],
-        genre: "Animation/Sci-Fi",
-        rating: 7.4
-    },
-    {
-        title: "The Falcon and the Winter Soldier",
-        description: "Sam Wilson e Bucky Barnes affrontano nuove minacce",
-        platforms: ["disney"],
-        genre: "Action/Adventure",
-        rating: 7.8
-    },
-    {
-        title: "Hawkeye",
-        description: "Le avventure natalizie di Clint Barton",
-        platforms: ["disney"],
-        genre: "Action/Adventure",
-        rating: 7.6
-    },
-    {
-        title: "Daredevil",
-        description: "Un avvocato cieco combatte il crimine",
-        platforms: ["disney"],
-        genre: "Action/Crime",
-        rating: 8.6
-    },
-    {
-        title: "The Night Agent",
-        description: "Un agente FBI scopre una cospirazione che arriva fino alla Casa Bianca",
-        platforms: ["netflix"],
-        genre: "Action/Thriller",
-        rating: 7.7
-    },
-    {
-        title: "Berlino",
-        description: "Spin-off de La Casa di Carta incentrato sul personaggio di Berlino",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 7.2
-    },
-    {
-        title: "Griselda",
-        description: "La storia vera della 'Madrina della Cocaina' Griselda Blanco",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Tutta la luce che non vediamo",
-        description: "Adattamento del romanzo premio Pulitzer durante la Seconda Guerra Mondiale",
-        platforms: ["netflix"],
-        genre: "Drama/War",
-        rating: 7.6
-    },
-    {
-        title: "Bodies",
-        description: "Quattro detective in diverse epoche indagano sullo stesso omicidio",
-        platforms: ["netflix"],
-        genre: "Mystery/Thriller",
-        rating: 7.7
-    },
-    {
-        title: "The Fall of the House of Usher",
-        description: "Adattamento moderno di Edgar Allan Poe",
-        platforms: ["netflix"],
-        genre: "Horror/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Kaleidoscope",
-        description: "Serie non lineare su una rapina elaborata",
-        platforms: ["netflix"],
-        genre: "Crime/Thriller",
-        rating: 7.1
-    },
-    {
-        title: "The Sandman",
-        description: "Adattamento del fumetto di Neil Gaiman sul Signore dei Sogni",
-        platforms: ["netflix"],
-        genre: "Fantasy/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Heartstopper",
-        description: "Storia d'amore tra due studenti delle superiori",
-        platforms: ["netflix"],
-        genre: "Drama/Romance",
-        rating: 8.7
-    },
-    {
-        title: "The Lincoln Lawyer",
-        description: "Un avvocato di Los Angeles gestisce il suo studio legale da una Lincoln",
-        platforms: ["netflix"],
-        genre: "Drama/Legal",
-        rating: 7.7
-    },
-    {
-        title: "Outer Banks",
-        description: "Un gruppo di adolescenti cerca un tesoro leggendario",
-        platforms: ["netflix"],
-        genre: "Adventure/Drama",
-        rating: 7.6
-    },
-    {
-        title: "Vikings: Valhalla",
-        description: "Spin-off di Vikings ambientato 100 anni dopo",
-        platforms: ["netflix"],
-        genre: "Action/Drama",
-        rating: 7.8
-    },
-    {
-        title: "The Witcher: Blood Origin",
-        description: "Prequel di The Witcher sulla creazione del primo Witcher",
-        platforms: ["netflix"],
-        genre: "Fantasy/Action",
-        rating: 7.0
-    },
-    {
-        title: "Gen V",
-        description: "Spin-off di The Boys ambientato in un'università per supereroi",
-        platforms: ["prime"],
-        genre: "Action/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Citadel",
-        description: "Spie con memoria cancellata devono ricordare il loro passato",
-        platforms: ["prime"],
-        genre: "Action/Thriller",
-        rating: 7.2
-    },
-    {
-        title: "The Continental",
-        description: "Prequel di John Wick sul famoso hotel per assassini",
-        platforms: ["prime"],
-        genre: "Action/Crime",
-        rating: 7.4
-    },
-    {
-        title: "Fallout",
-        description: "Adattamento della famosa serie di videogiochi post-apocalittici",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Adventure",
-        rating: 8.5
-    },
-    {
-        title: "Mr. & Mrs. Smith",
-        description: "Due spie sotto copertura come coppia sposata",
-        platforms: ["prime"],
-        genre: "Action/Comedy",
-        rating: 7.5
-    },
-    {
-        title: "Survivor",
-        description: "Reality show di sopravvivenza",
-        platforms: ["paramount"],
-        genre: "Reality/Adventure",
-        rating: 7.7
-    },
-    {
-        title: "Transformers: Prime",
-        description: "La guerra tra Autobot e Decepticon continua sulla Terra",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 8.0
-    },
-    {
-        title: "Transformers: EarthSpark",
-        description: "Nuova generazione di Transformers nati sulla Terra",
-        platforms: ["paramount"],
-        genre: "Animation/Adventure",
-        rating: 7.2
-    },
-    {
-        title: "Transformers: Cyberverse",
-        description: "Bumblebee cerca di recuperare la memoria e salvare i suoi amici",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 7.0
-    },
-    {
-        title: "Transformers: Robots in Disguise",
-        description: "Bumblebee guida una nuova squadra di Autobot sulla Terra",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 6.9
-    },
-    {
-        title: "Transformers: Animated",
-        description: "Gli Autobot proteggono Detroit nel futuro",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 7.5
-    },
-    {
-        title: "Transformers: Beast Wars",
-        description: "Maximals e Predacons combattono sulla Terra preistorica",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 8.2
-    },
-    {
-        title: "Transformers: Beast Machines",
-        description: "Il seguito di Beast Wars ambientato su Cybertron",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 7.1
-    },
-    {
-        title: "Transformers: Generation 1",
-        description: "La serie originale che ha dato inizio alla saga dei Transformers",
-        platforms: ["paramount"],
-        genre: "Animation/Action",
-        rating: 8.0
-    },
-    {
-        title: "Transformers: Rescue Bots",
-        description: "Autobot specializzati in operazioni di soccorso collaborano con gli umani",
-        platforms: ["paramount"],
-        genre: "Animation/Adventure",
-        rating: 7.0
-    },
-    {
-        title: "Transformers: War for Cybertron Trilogy",
-        description: "La guerra civile su Cybertron che porta all'esodo verso la Terra",
-        platforms: ["netflix"],
-        genre: "Animation/Action",
-        rating: 7.8
-    },
-    {
-        title: "Yellowstone",
-        description: "La famiglia Dutton difende il proprio ranch nel Montana",
-        platforms: ["paramount"],
-        genre: "Drama/Western",
-        rating: 8.7
-    },
-    {
-        title: "South Park",
-        description: "Serie animata satirica ambientata in Colorado",
-        platforms: ["paramount"],
-        genre: "Animation/Comedy",
-        rating: 8.7
-    },
-    {
-        title: "Special Ops: Lioness",
-        description: "Un'agente della CIA si infiltra in un'organizzazione terroristica",
-        platforms: ["paramount"],
-        genre: "Action/Drama",
-        rating: 7.5
-    },
-    {
-        title: "Star Trek: Lower Decks",
-        description: "Serie animata comica ambientata nell'universo di Star Trek",
-        platforms: ["paramount"],
-        genre: "Animation/Comedy",
-        rating: 8.0
-    },
-    {
-        title: "Star Trek: Prodigy",
-        description: "Giovani alieni scoprono una nave abbandonata della Flotta Stellare",
-        platforms: ["paramount"],
-        genre: "Animation/Adventure",
-        rating: 7.8
-    },
-    {
-        title: "Teen Wolf",
-        description: "Un adolescente viene morso da un lupo mannaro",
-        platforms: ["paramount"],
-        genre: "Drama/Fantasy",
-        rating: 7.6
-    },
-    {
-        title: "Wolf Pack",
-        description: "Adolescenti uniti da un misterioso incendio e un lupo mannaro",
-        platforms: ["paramount"],
-        genre: "Drama/Fantasy",
-        rating: 6.4
-    },
-    {
-        title: "School Spirits",
-        description: "Una studentessa indaga sulla propria morte",
-        platforms: ["paramount"],
-        genre: "Drama/Mystery",
-        rating: 7.4
-    },
-    {
-        title: "Rabbit Hole",
-        description: "Un esperto di spionaggio aziendale viene incastrato per omicidio",
-        platforms: ["paramount"],
-        genre: "Thriller/Drama",
-        rating: 7.1
-    },
-    {
-        title: "Fatal Attraction",
-        description: "Remake della serie basata sul film 'Attrazione Fatale'",
-        platforms: ["paramount"],
-        genre: "Thriller/Drama",
-        rating: 6.9
-    },
-    {
-        title: "Grease: Rise of the Pink Ladies",
-        description: "Prequel del musical Grease",
-        platforms: ["paramount"],
-        genre: "Musical/Drama",
-        rating: 6.2
-    },
-    {
-        title: "Fire Country",
-        description: "Un detenuto partecipa a un programma di riabilitazione come vigile del fuoco",
-        platforms: ["paramount"],
-        genre: "Drama/Action",
-        rating: 7.4
-    },
-    {
-        title: "CSI: Vegas",
-        description: "Reboot della serie CSI ambientato a Las Vegas",
-        platforms: ["paramount"],
-        genre: "Crime/Drama",
-        rating: 7.4
-    },
-    {
-        title: "SWAT",
-        description: "Le operazioni di una squadra SWAT a Los Angeles",
-        platforms: ["paramount"],
-        genre: "Action/Crime",
-        rating: 7.6
-    },
-    {
-        title: "The Wire",
-        description: "Indagine sulla criminalità organizzata a Baltimora",
-        platforms: ["max"],
-        genre: "Crime/Drama",
-        rating: 9.3
-    },
-    {
-        title: "The Shield",
-        description: "Un detective corrotto guida una squadra speciale di poliziotti",
-        platforms: ["prime"],
-        genre: "Crime/Drama",
-        rating: 8.7
-    },
-    {
-        title: "Deadwood",
-        description: "La vita violenta in una città mineraria del Dakota del Sud",
-        platforms: ["max"],
-        genre: "Western/Drama",
-        rating: 8.7
-    },
-    {
-        title: "Six Feet Under",
-        description: "La vita di una famiglia che gestisce un'impresa di pompe funebri",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 8.8
-    },
-    {
-        title: "The Leftovers",
-        description: "Il mondo dopo la misteriosa scomparsa del 2% della popolazione",
-        platforms: ["max"],
-        genre: "Drama/Mystery",
-        rating: 8.3
-    },
-    {
-        title: "Chernobyl",
-        description: "La storia del disastro nucleare di Chernobyl del 1986",
-        platforms: ["max"],
-        genre: "Drama/History",
-        rating: 9.4
-    },
-    {
-        title: "Band of Brothers",
-        description: "La storia della Easy Company durante la Seconda Guerra Mondiale",
-        platforms: ["max"],
-        genre: "War/Drama",
-        rating: 9.5
-    },
-    {
-        title: "The Pacific",
-        description: "La guerra nel Pacifico durante la Seconda Guerra Mondiale",
-        platforms: ["max"],
-        genre: "War/Drama",
-        rating: 8.5
-    },
-    {
-        title: "Rome",
-        description: "La storia dell'ascesa e caduta dell'impero romano",
-        platforms: ["max"],
-        genre: "Drama/History",
-        rating: 8.7
-    },
-    {
-        title: "Boardwalk Empire",
-        description: "La vita del gangster Nucky Thompson durante il proibizionismo",
-        platforms: ["max"],
-        genre: "Crime/Drama",
-        rating: 8.5
-    },
-    {
-        title: "True Blood",
-        description: "Vampiri e altre creature soprannaturali vivono tra gli umani",
-        platforms: ["max"],
-        genre: "Fantasy/Horror",
-        rating: 7.9
-    },
-    {
-        title: "Big Love",
-        description: "La vita di una famiglia poligama nello Utah",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 7.8
-    },
-    {
-        title: "In Treatment",
-        description: "Le sessioni di terapia di uno psichiatra",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 8.0
-    },
-    {
-        title: "Treme",
-        description: "La vita a New Orleans dopo l'uragano Katrina",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 8.2
-    },
-    {
-        title: "Generation Kill",
-        description: "La prima fase dell'invasione dell'Iraq nel 2003",
-        platforms: ["max"],
-        genre: "War/Drama",
-        rating: 8.5
-    },
-    {
-        title: "The Deuce",
-        description: "La nascita dell'industria pornografica a New York negli anni '70",
-        platforms: ["max"],
-        genre: "Drama",
-        rating: 8.2
-    },
-    {
-        title: "The Night Of",
-        description: "Un giovane viene accusato di omicidio",
-        platforms: ["max"],
-        genre: "Crime/Drama",
-        rating: 8.5
-    },
-    {
-        title: "Veep",
-        description: "Le vicende di una vicepresidente degli Stati Uniti",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.3
-    },
-    {
-        title: "Silicon Valley",
-        description: "Un gruppo di programmatori cerca di creare una startup di successo",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.5
-    },
-    {
-        title: "Curb Your Enthusiasm",
-        description: "Le vicende comiche di Larry David",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.7
-    },
-    {
-        title: "Entourage",
-        description: "La vita di un giovane attore a Hollywood",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 8.2
-    },
-    {
-        title: "Girls",
-        description: "Le vicende di quattro amiche a New York",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.3
-    },
-    {
-        title: "Looking",
-        description: "La vita di tre amici gay a San Francisco",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.5
-    },
-    {
-        title: "Divorce",
-        description: "Una donna cerca di ricostruire la sua vita dopo il divorzio",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.2
-    },
-    {
-        title: "Insecure",
-        description: "Le vicende di due amiche afroamericane a Los Angeles",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.8
-    },
-    {
-        title: "Ballers",
-        description: "Un ex giocatore di football diventa agente sportivo",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.5
-    },
-    {
-        title: "Vice Principals",
-        description: "Due vice presidi competono per il ruolo di preside",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.4
-    },
-    {
-        title: "Eastbound & Down",
-        description: "Un ex campione di baseball torna nella sua città natale",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.6
-    },
-    {
-        title: "Flight of the Conchords",
-        description: "Due musicisti neozelandesi cercano di sfondare a New York",
-        platforms: ["max"],
-        genre: "Comedy/Musical",
-        rating: 8.2
-    },
-    {
-        title: "Bored to Death",
-        description: "Uno scrittore diventa detective privato per caso",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.5
-    },
-    {
-        title: "Enlightened",
-        description: "Una donna torna al lavoro dopo un esaurimento nervoso",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.7
-    },
-    {
-        title: "Togetherness",
-        description: "Quattro amici cercano di mantenere viva la loro amicizia",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.3
-    },
-    {
-        title: "Getting On",
-        description: "La vita in un reparto di geriatria",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.2
-    },
-    {
-        title: "The Brink",
-        description: "Una crisi internazionale vista da diversi punti di vista",
-        platforms: ["max"],
-        genre: "Comedy/Drama",
-        rating: 7.1
-    },
-    {
-        title: "The Comeback",
-        description: "Un'ex star della TV cerca di tornare alla fama",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.4
-    },
-    {
-        title: "Hello Ladies",
-        description: "Un inglese goffo cerca l'amore a Los Angeles",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.2
-    },
-    {
-        title: "Family Tree",
-        description: "Un uomo inizia a indagare sulla sua famiglia",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.3
-    },
-    {
-        title: "The Ricky Gervais Show",
-        description: "Serie animata basata sui podcast di Ricky Gervais",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.5
-    },
-    {
-        title: "Life's Too Short",
-        description: "Le vicende di un nano attore che cerca di sfondare",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.4
-    },
-    {
-        title: "Extras",
-        description: "Un comparsa cerca di diventare attore",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 7.8
-    },
-    {
-        title: "The Office (UK)",
-        description: "La versione originale britannica di The Office",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.2
-    },
-    {
-        title: "Peep Show",
-        description: "La vita di due coinquilini attraverso i loro pensieri",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.7
-    },
-    {
-        title: "The Thick of It",
-        description: "La vita caotica in un ministero britannico",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.5
-    },
-    {
-        title: "The IT Crowd",
-        description: "Le vicende del reparto IT di un'azienda",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.5
-    },
-    {
-        title: "Black Books",
-        description: "Un libraio misantropo e i suoi amici",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.3
-    },
-    {
-        title: "Spaced",
-        description: "Due amici fingono di essere una coppia per affittare un appartamento",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.4
-    },
-    {
-        title: "Father Ted",
-        description: "Le vicende di tre preti irlandesi su un'isola remota",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.6
-    },
-    {
-        title: "Fawlty Towers",
-        description: "Le vicende di un albergatore goffo e sua moglie",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.7
-    },
-    {
-        title: "Monty Python's Flying Circus",
-        description: "Serie comica rivoluzionaria con sketch surreali",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.8
-    },
-    {
-        title: "Absolutely Fabulous",
-        description: "Le vicende di due amiche che cercano di rimanere giovani",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 7.9
-    },
-    {
-        title: "The Young Ones",
-        description: "La vita di quattro studenti universitari in una casa condivisa",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 7.8
-    },
-    {
-        title: "Red Dwarf",
-        description: "Un uomo si sveglia tre milioni di anni nel futuro",
-        platforms: ["netflix"],
-        genre: "Comedy/Sci-Fi",
-        rating: 8.2
-    },
-    {
-        title: "Blackadder",
-        description: "Le vicende di Edmund Blackadder in diverse epoche storiche",
-        platforms: ["netflix"],
-        genre: "Comedy/History",
-        rating: 8.6
-    },
-    {
-        title: "The Mighty Boosh",
-        description: "Le avventure surreali di due amici che lavorano in un negozio di dischi",
-        platforms: ["netflix"],
-        genre: "Comedy/Fantasy",
-        rating: 8.1
-    },
-    {
-        title: "Garth Marenghi's Darkplace",
-        description: "Una parodia di serie horror degli anni '80",
-        platforms: ["netflix"],
-        genre: "Comedy/Horror",
-        rating: 7.9
-    },
-    {
-        title: "The League of Gentlemen",
-        description: "Serie comica dark ambientata in una città remota",
-        platforms: ["netflix"],
-        genre: "Comedy/Horror",
-        rating: 8.3
-    },
-    {
-        title: "Green Wing",
-        description: "La vita in un ospedale britannico",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.0
-    },
-    {
-        title: "The Inbetweeners",
-        description: "Le vicende di quattro amici adolescenti goffi",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.2
-    },
-    {
-        title: "Gavin & Stacey",
-        description: "La storia d'amore tra un gallese e un'inglese",
-        platforms: ["netflix"],
-        genre: "Comedy/Romance",
-        rating: 8.4
-    },
-    {
-        title: "The Expanse",
-        description: "Umanità colonizza il sistema solare in un futuro non troppo lontano",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.5
-    },
-    {
-        title: "The Man in the High Castle",
-        description: "Storia alternativa in cui le potenze dell'Asse hanno vinto la Seconda Guerra Mondiale",
-        platforms: ["prime"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.1
-    },
-    {
-        title: "The Marvelous Mrs. Maisel",
-        description: "Una casalinga degli anni '50 diventa una comica stand-up",
-        platforms: ["prime"],
-        genre: "Comedy/Drama",
-        rating: 8.7
-    },
-    {
-        title: "The Wheel of Time",
-        description: "Una giovane donna scopre di essere la prescelta in un mondo di magia",
-        platforms: ["prime"],
-        genre: "Fantasy/Adventure",
-        rating: 7.5
-    },
-    {
-        title: "The Rings of Power",
-        description: "Serie ambientata nella Seconda Era della Terra di Mezzo",
-        platforms: ["prime"],
-        genre: "Fantasy/Adventure",
-        rating: 7.0
-    },
-    {
-        title: "The Handmaid's Tale",
-        description: "Distopia in cui le donne sono private dei diritti",
-        platforms: ["paramount"],
-        genre: "Drama/Sci-Fi",
-        rating: 8.4
-    },
-    {
-        title: "Fargo",
-        description: "Antologia crime ispirata al film dei fratelli Coen",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 8.9
-    },
-    {
-        title: "The Great",
-        description: "Storia satirica dell'ascesa di Caterina la Grande",
-        platforms: ["disney"],
-        genre: "Comedy/Drama",
-        rating: 8.2
-    },
-    {
-        title: "Squid Game",
-        description: "Giochi mortali per un premio in denaro",
-        platforms: ["netflix"],
-        genre: "Drama/Thriller",
-        rating: 8.7
-    },
-    {
-        title: "Dark",
-        description: "Misteri e viaggi nel tempo in una piccola città tedesca",
-        platforms: ["netflix"],
-        genre: "Sci-Fi/Mystery",
-        rating: 8.8
-    },
-    {
-        title: "Money Heist",
-        description: "Un gruppo di rapinatori pianifica colpi elaborati",
-        platforms: ["netflix"],
-        genre: "Crime/Thriller",
-        rating: 8.3
-    },
-    {
-        title: "The Office (US)",
-        description: "La vita quotidiana in un ufficio di Scranton",
-        platforms: ["netflix"],
-        genre: "Comedy",
-        rating: 8.9
-    },
-    {
-        title: "Friends",
-        description: "Le avventure di sei amici a New York",
-        platforms: ["max"],
-        genre: "Comedy",
-        rating: 8.9
-    },
-    {
-        title: "WandaVision",
-        description: "Wanda e Visione vivono in una realtà alternativa di sitcom",
-        platforms: ["disney"],
-        genre: "Sci-Fi/Drama",
-        rating: 8.0
-    },
-    {
-        title: "Moon Knight",
-        description: "Un vigilante con disturbo dissociativo dell'identità",
-        platforms: ["disney"],
-        genre: "Action/Fantasy",
-        rating: 7.9
-    },
-    {
-        title: "Arcane",
-        description: "Serie animata basata sul gioco League of Legends",
-        platforms: ["netflix"],
-        genre: "Animation/Fantasy",
-        rating: 9.0
-    },
-    {
-        title: "Shadow and Bone",
-        description: "Fantasy basato sui romanzi di Leigh Bardugo",
-        platforms: ["netflix"],
-        genre: "Fantasy/Adventure",
-        rating: 7.7
-    },
-    {
-        title: "Ozark",
-        description: "Una famiglia coinvolta nel riciclaggio di denaro",
-        platforms: ["netflix"],
-        genre: "Crime/Drama",
-        rating: 8.5
-    },
-    {
-        title: "RuPaul's Drag Race",
-        description: "Competizione tra drag queen",
-        platforms: ["paramount"],
-        genre: "Reality/Entertainment",
-        rating: 8.5
-    },
-    {
-        title: "The Challenge",
-        description: "Reality show di competizione fisica",
-        platforms: ["paramount"],
-        genre: "Reality/Competition",
-        rating: 7.5
-    },
-    {
-        title: "The Good Wife",
-        description: "Una moglie torna alla sua carriera legale dopo uno scandalo",
-        platforms: ["paramount"],
-        genre: "Drama/Legal",
-        rating: 8.3
-    },
-    {
-        title: "Frasier (2023)",
-        description: "Revival della famosa sitcom con Kelsey Grammer",
-        platforms: ["paramount"],
-        genre: "Comedy",
-        rating: 7.4
-    },
-    {
-        title: "Lawmen: Bass Reeves",
-        description: "La storia vera del primo marshal nero del West",
-        platforms: ["paramount"],
-        genre: "Western/Drama",
-        rating: 8.2
-    },
-    {
-        title: "Star Trek: Lower Decks",
-        description: "Serie animata comica ambientata nell'universo di Star Trek",
-        platforms: ["paramount"],
-        genre: "Animation/Comedy",
-        rating: 8.0
-    },
-    {
-        title: "Star Trek: Prodigy",
-        description: "Giovani alieni scoprono una nave abbandonata della Flotta Stellare",
-        platforms: ["paramount"],
-        genre: "Animation/Adventure",
-        rating: 7.8
-    },
-    {
-        title: "Teen Wolf",
-        description: "Un adolescente viene morso da un lupo mannaro",
-        platforms: ["paramount"],
-        genre: "Drama/Fantasy",
-        rating: 7.6
-    },
-    {
-        title: "Wolf Pack",
-        description: "Adolescenti uniti da un misterioso incendio e un lupo mannaro",
-        platforms: ["paramount"],
-        genre: "Drama/Fantasy",
-        rating: 6.4
-    },
-    {
-        title: "School Spirits",
-        description: "Una studentessa indaga sulla propria morte",
-        platforms: ["paramount"],
-        genre: "Drama/Mystery",
-        rating: 7.4
-    },
-    {
-        title: "Rabbit Hole",
-        description: "Un esperto di spionaggio aziendale viene incastrato per omicidio",
-        platforms: ["paramount"],
-        genre: "Thriller/Drama",
-        rating: 7.1
-    },
-    {
-        title: "Fatal Attraction",
-        description: "Remake della serie basata sul film 'Attrazione Fatale'",
-        platforms: ["paramount"],
-        genre: "Thriller/Drama",
-        rating: 6.9
-    },
-    {
-        title: "Grease: Rise of the Pink Ladies",
-        description: "Prequel del musical Grease",
-        platforms: ["paramount"],
-        genre: "Musical/Drama",
-        rating: 6.2
-    },
-    {
-        title: "Fire Country",
-        description: "Un detenuto partecipa a un programma di riabilitazione come vigile del fuoco",
-        platforms: ["paramount"],
-        genre: "Drama/Action",
-        rating: 7.4
-    },
-    {
-        title: "CSI: Vegas",
-        description: "Reboot della serie CSI ambientato a Las Vegas",
-        platforms: ["paramount"],
-        genre: "Crime/Drama",
-        rating: 7.4
-    },
-    {
-        title: "SWAT",
-        description: "Le operazioni di una squadra SWAT a Los Angeles",
-        platforms: ["paramount"],
-        genre: "Action/Crime",
-        rating: 7.6
-    }
-];
-
-// Get unique genres and platforms
-function getUniqueValues(array, key) {
-    if (key === 'platforms') {
-        return [...new Set(array.flatMap(item => item[key]))];
-    }
-    if (key === 'genre') {
-        // Estrae tutti i generi base dalle stringhe di genere
-        const baseGenres = new Set();
-        array.forEach(item => {
-            const genres = item[key].split(/[\/\s]+/); // Split su slash e spazi
-            genres.forEach(genre => {
-                // Esclude generi specifici come "MCU"
-                if (!['MCU'].includes(genre)) {
-                    baseGenres.add(genre);
-                }
-            });
-        });
-        return [...baseGenres].sort();
-    }
-    return [...new Set(array.map(item => item[key]))];
-}
-
-// Populate filter dropdowns
-function populateFilters() {
-    const genres = getUniqueValues(seriesData, 'genre');
-    const platforms = getUniqueValues(seriesData, 'platforms');
-    
-    const genreFilter = document.getElementById('genreFilter');
-    const platformFilter = document.getElementById('platformFilter');
-    const ratingFilter = document.getElementById('ratingFilter');
-    
-    // Clear existing options
-    genreFilter.innerHTML = '<option value="">Tutti i Generi</option>';
-    platformFilter.innerHTML = '<option value="">Tutte le Piattaforme</option>';
-    ratingFilter.innerHTML = `
-        <option value="">Tutte le Valutazioni</option>
-        <option value="9">Eccezionale (9+)</option>
-        <option value="8">Ottimo (8+)</option>
-        <option value="7">Buono (7+)</option>
-        <option value="6">Sufficiente (6+)</option>
-    `;
-    
-    genres.forEach(genre => {
-        const option = document.createElement('option');
-        option.value = genre;
-        option.textContent = genre;
-        genreFilter.appendChild(option);
-    });
-    
-    platforms.forEach(platform => {
-        const option = document.createElement('option');
-        option.value = platform;
-        if (platform === 'hbo') {
-            option.textContent = 'HBO';
-        } else {
-            option.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
-        }
-        platformFilter.appendChild(option);
-    });
-}
-
-// Debounce utility function
+// Funzioni di utilità
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -1354,407 +66,784 @@ function debounce(func, wait) {
     };
 }
 
-// Filter series based on all criteria
-function filterAndRenderSeries() {
-    const searchTerm = cache.filters.search;
-    const selectedGenre = document.getElementById('genreFilter')?.value || '';
-    const selectedPlatform = document.getElementById('platformFilter')?.value || '';
-    const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
-
-    // Show loading state
-    const seriesList = document.getElementById('seriesList');
-    if (seriesList) {
-        seriesList.innerHTML = '<div class="loading">Ricerca in corso...</div>';
-    }
-
-    // Use requestAnimationFrame for smooth UI updates
-    requestAnimationFrame(() => {
-        const filteredSeries = seriesData.filter(show => {
-            if (!show || typeof show !== 'object') return false;
-            
-            const showTitle = (show.title || '').toLowerCase();
-            const showDescription = (show.description || '').toLowerCase();
-            const showGenres = (show.genre || '').split(/[\/\s]+/);
-            const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
-            const showRating = parseFloat(show.rating) || 0;
-            
-            const matchesSearch = !searchTerm || 
-                showTitle.includes(searchTerm) ||
-                showDescription.includes(searchTerm);
-            
-            const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
-            const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
-            const matchesRating = !selectedRating || showRating >= selectedRating;
-            
-            return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
-        });
-        
-        // Sort and render results
-        const sortedSeries = sortSeriesAlphabetically(filteredSeries);
-        renderSeries(sortedSeries);
-        
-        // Update no results message
-        const noResults = document.getElementById('noResults');
-        if (noResults) {
-            noResults.style.display = sortedSeries.length === 0 ? 'block' : 'none';
-        }
-
-        // Remove loading state
-        const searchContainer = document.querySelector('.search-container');
-        searchContainer.classList.remove('searching');
-    });
-}
-
-// Sort series alphabetically
-function sortSeriesAlphabetically(series) {
-    return series.sort((a, b) => a.title.localeCompare(b.title));
-}
-
-// Get platform icon
-function getPlatformIcon(platform) {
-    const platformNames = {
-        'netflix': 'Netflix',
-        'prime': 'Prime Video',
-        'hbo': 'HBO',
-        'disney': 'Disney+',
-        'amc': 'AMC',
-        'apple': 'Apple TV+',
-        'hulu': 'Hulu',
-        'max': 'Max',
-        'paramount': 'Paramount+'
-    };
-
-    return `
-        <div class="platform-icon" title="${platformNames[platform] || platform}">
-            <img src="assets/images/${platform}.png" alt="${platformNames[platform] || platform}" loading="lazy">
-        </div>
-    `;
-}
-
-// Render series cards
-function renderSeries(series) {
-    const seriesList = document.getElementById('seriesList');
-    const startIndex = (cache.currentPage - 1) * config.itemsPerPage;
-    const endIndex = startIndex + config.itemsPerPage;
-    const seriesToShow = series.slice(startIndex, endIndex);
-    
-    console.log(`Showing series from index ${startIndex} to ${endIndex}`);
-    console.log(`Total series: ${series.length}, Current page: ${cache.currentPage}`);
-    
-    // Aggiungo il contatore delle serie trovate sopra la lista
-    const resultsCounter = document.querySelector('.results-counter') || document.createElement('div');
-    resultsCounter.className = 'results-counter';
-    resultsCounter.innerHTML = `
-        <div class="counter-container">
-            <h2 class="counter-text">
-                <span class="counter-number">${series.length}</span> serie trovate
-            </h2>
-        </div>
-    `;
-    
-    // Inserisco il contatore prima della lista delle serie
-    const searchContainer = document.querySelector('.search-container');
-    if (searchContainer && !document.querySelector('.results-counter')) {
-        searchContainer.after(resultsCounter);
-    }
-    
-    if (series.length === 0) {
-        seriesList.innerHTML = `
-            <div class="no-results">
-                <h3>Nessuna serie trovata</h3>
-                <p>Prova a modificare i filtri di ricerca</p>
-            </div>
-        `;
-        return;
-    }
-    
-    seriesList.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-    
-    seriesToShow.forEach((show, index) => {
-        const seriesCard = document.createElement('div');
-        seriesCard.className = 'series-card';
-        seriesCard.style.animationDelay = `${Math.min(index * 0.1, 1)}s`;
-        
-        // Sostituisce gli slash con il simbolo |
-        const formattedGenre = show.genre.replace(/\//g, ' | ');
-        
-        seriesCard.innerHTML = `
-            <div class="series-info">
-                <h3>${show.title}</h3>
-                <div class="rating">
-                    <span class="stars">${"★".repeat(Math.round(show.rating/2))}</span>
-                    <span class="rating-number">${show.rating}/10</span>
-                </div>
-                <p class="description">${show.description}</p>
-                <p class="genre">${formattedGenre}</p>
-            </div>
-            <div class="platforms">
-                ${show.platforms.map(platform => getPlatformIcon(platform)).join('')}
-            </div>
-        `;
-        
-        fragment.appendChild(seriesCard);
-    });
-    
-    seriesList.appendChild(fragment);
-    updatePagination(series.length);
-}
-
-// Update pagination
-function updatePagination(totalItems) {
-    const totalPages = Math.ceil(totalItems / config.itemsPerPage);
-    const pagination = document.getElementById('pagination');
-    
-    console.log(`Total items: ${totalItems}, Total pages: ${totalPages}`);
-    
-    if (totalPages <= 1) {
-        pagination.innerHTML = '';
-        return;
-    }
-    
-    let paginationHTML = '';
-    
-    // Previous button
-    paginationHTML += `
-        <button class="page-btn prev" ${cache.currentPage === 1 ? 'disabled' : ''} 
-                onclick="handlePageChange(${cache.currentPage - 1})">
-            ←
-        </button>
-    `;
-    
-    // Page numbers
-    for (let i = 1; i <= totalPages; i++) {
-        if (i === 1 || i === totalPages || 
-            (i >= cache.currentPage - 2 && i <= cache.currentPage + 2)) {
-            paginationHTML += `
-                <button class="page-btn ${i === cache.currentPage ? 'active' : ''}"
-                        onclick="handlePageChange(${i})">
-                    ${i}
-                </button>
-            `;
-        } else if (i === cache.currentPage - 3 || i === cache.currentPage + 3) {
-            paginationHTML += '<span class="page-dots">...</span>';
-        }
-    }
-    
-    // Next button
-    paginationHTML += `
-        <button class="page-btn next" ${cache.currentPage === totalPages ? 'disabled' : ''} 
-                onclick="handlePageChange(${cache.currentPage + 1})">
-            →
-        </button>
-    `;
-    
-    pagination.innerHTML = paginationHTML;
-}
-
-// Change page
-window.handlePageChange = function(page) {
-    console.log('Changing to page:', page);
-    
-    // Mantieni i filtri correnti
-    const searchTerm = cache.filters.search;
-    const selectedGenre = document.getElementById('genreFilter')?.value || '';
-    const selectedPlatform = document.getElementById('platformFilter')?.value || '';
-    const selectedRating = parseFloat(document.getElementById('ratingFilter')?.value) || 0;
-    
-    const filteredSeries = seriesData.filter(show => {
-        if (!show || typeof show !== 'object') return false;
-        
-        const showTitle = (show.title || '').toLowerCase();
-        const showDescription = (show.description || '').toLowerCase();
-        const showGenres = (show.genre || '').split(/[\/\s]+/);
-        const showPlatforms = Array.isArray(show.platforms) ? show.platforms : [];
-        const showRating = parseFloat(show.rating) || 0;
-        
-        const matchesSearch = !searchTerm || 
-            showTitle.includes(searchTerm) ||
-            showDescription.includes(searchTerm);
-        
-        const matchesGenre = !selectedGenre || showGenres.includes(selectedGenre);
-        const matchesPlatform = !selectedPlatform || showPlatforms.includes(selectedPlatform);
-        const matchesRating = !selectedRating || showRating >= selectedRating;
-        
-        return matchesSearch && matchesGenre && matchesPlatform && matchesRating;
-    });
-    
-    const totalPages = Math.ceil(filteredSeries.length / config.itemsPerPage);
-    
-    if (page >= 1 && page <= totalPages) {
-        cache.currentPage = page;
-        renderSeries(sortSeriesAlphabetically(filteredSeries));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-// Header scroll behavior
-function handleHeaderScroll() {
-    const header = document.querySelector('.header');
-    const scrollY = window.scrollY;
-    
-    if (scrollY > 50) {
-        header.classList.add('compact');
-    } else {
-        header.classList.remove('compact');
-    }
-}
-
-// Scroll button behavior
-function updateScrollButton() {
-    const scrollButton = document.querySelector('.scroll-bottom-btn');
-    if (!scrollButton) return;
-    
-    const footer = document.querySelector('.footer');
-    const footerPosition = footer.getBoundingClientRect().top;
-    const windowHeight = window.innerHeight;
-    
-    if (footerPosition <= windowHeight) {
-        scrollButton.innerHTML = `
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/>
-            </svg>
-            Torna in alto
-        `;
-        scrollButton.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-        scrollButton.innerHTML = `
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
-            </svg>
-            Scorri in basso
-        `;
-        scrollButton.onclick = () => footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-
-// Theme toggle functionality
+// Gestione del tema
 function initializeTheme() {
     const savedTheme = security.secureStorage.get('theme') || 'light';
-    // Validate theme value to prevent injection
-    const validTheme = ['light', 'dark'].includes(savedTheme) ? savedTheme : 'light';
-    document.documentElement.setAttribute('data-theme', validTheme);
-    updateThemeIcon(validTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
 }
 
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', newTheme);
     security.secureStorage.set('theme', newTheme);
     updateThemeIcon(newTheme);
 }
 
 function updateThemeIcon(theme) {
-    const themeToggle = document.querySelector('.theme-toggle');
-    if (!themeToggle) return;
-    
-    // Use DOMPurify or similar in production for SVG sanitization
-    const darkIcon = `<svg viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-    </svg>`;
-    
-    const lightIcon = `<svg viewBox="0 0 24 24" stroke="currentColor">
-        <circle cx="12" cy="12" r="5"/>
-        <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>`;
-    
-    themeToggle.innerHTML = theme === 'dark' ? darkIcon : lightIcon;
+    const lightIcon = document.querySelector('.theme-toggle-light');
+    const darkIcon = document.querySelector('.theme-toggle-dark');
+    if (lightIcon && darkIcon) {
+        lightIcon.style.display = theme === 'light' ? 'none' : 'block';
+        darkIcon.style.display = theme === 'dark' ? 'none' : 'block';
+    }
 }
 
-// Secure event handling
-function addSecureEventListener(element, event, handler) {
-    if (!element) return;
-    
-    element.addEventListener(event, function(e) {
-        // Prevent default only if needed
-        // e.preventDefault();
+// Funzioni per la gestione delle serie TV
+async function loadSeries() {
+    try {
+        console.log('Starting to load series...');
         
-        // Call the handler with the event
-        handler(e);
-    });
+        if (typeof window.TVMazeAPI === 'undefined') {
+            console.error('TVMazeAPI is not defined');
+            showError('Errore di inizializzazione. Ricarica la pagina.');
+            return;
+        }
+
+        const container = document.getElementById('seriesContainer');
+        if (!container) {
+            console.error('Container not found');
+            return;
+        }
+
+        showLoading();
+        const shows = await TVMazeAPI.updateCatalog();
+        
+        if (!shows || shows.length === 0) {
+            throw new Error('Nessuna serie TV trovata');
+        }
+
+        console.log('Serie caricate:', shows.length);
+        console.log('Prima serie:', shows[0]);
+        
+        uiState.shows = shows;
+        updateFilterOptions(shows);
+        renderSeries(shows);
+        updatePagination(shows.length);
+
+    } catch (error) {
+        console.error('Error loading series:', error);
+        showError(`Errore nel caricamento delle serie TV: ${error.message}`);
+    }
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', () => {
-    // Populate filters
-    populateFilters();
+function showLoading() {
+    const container = document.getElementById('seriesContainer');
+    if (container) {
+        container.classList.remove('has-results');
+        container.innerHTML = `
+            <div class="loading-container">
+                <div class="loading">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="2" x2="12" y2="6"/>
+                        <line x1="12" y1="18" x2="12" y2="22"/>
+                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                        <line x1="2" y1="12" x2="6" y2="12"/>
+                        <line x1="18" y1="12" x2="22" y2="12"/>
+                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                    </svg>
+                    <p>Caricamento del catalogo in corso...</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Traduzioni complete per TVMaze
+const translations = {
+    // Stati delle serie
+    status: {
+        'Running': 'In corso',
+        'Ended': 'Terminata',
+        'To Be Determined': 'Da determinare',
+        'In Development': 'In sviluppo',
+        'Canceled': 'Cancellata',
+        'Pilot': 'Pilot'
+    },
     
-    // Set up event listeners with security measures
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        // Add immediate search on input with a small debounce
-        const debouncedSearch = debounce(() => {
-            const searchTerm = security.sanitizeInput(searchInput.value.toLowerCase().trim());
-            cache.filters.search = searchTerm;
-            cache.currentPage = 1;
-            filterAndRenderSeries();
-        }, 150); // Reduced debounce time for more responsiveness
+    // Generi
+    genres: {
+        'Action': 'Azione',
+        'Adventure': 'Avventura',
+        'Animation': 'Animazione',
+        'Anime': 'Anime',
+        'Comedy': 'Commedia',
+        'Crime': 'Crime',
+        'Documentary': 'Documentario',
+        'Drama': 'Dramma',
+        'Family': 'Famiglia',
+        'Fantasy': 'Fantasy',
+        'Game Show': 'Game Show',
+        'History': 'Storico',
+        'Horror': 'Horror',
+        'Kids': 'Bambini',
+        'Music': 'Musica',
+        'Mystery': 'Mistero',
+        'News': 'Notizie',
+        'Reality': 'Reality',
+        'Romance': 'Romantico',
+        'Science-Fiction': 'Fantascienza',
+        'Soap': 'Soap Opera',
+        'Sports': 'Sport',
+        'Supernatural': 'Soprannaturale',
+        'Talk Show': 'Talk Show',
+        'Thriller': 'Thriller',
+        'War': 'Guerra',
+        'Western': 'Western'
+    },
+    
+    // Messaggi di sistema
+    messages: {
+        'loading': 'Caricamento del catalogo in corso...',
+        'noResults': 'Nessun risultato trovato',
+        'error': 'Si è verificato un errore',
+        'clearFilters': 'Cancella filtri',
+        'allGenres': 'Tutti i generi',
+        'allStatus': 'Tutti gli stati',
+        'allYears': 'Tutti gli anni',
+        'allRatings': 'Tutte le valutazioni',
+        'streaming': 'Streaming',
+        'rent': 'Noleggio',
+        'buy': 'Acquisto',
+        'whereToWatch': 'Dove guardare',
+        'plot': 'Trama',
+        'rating': 'Valutazione',
+        'premiered': 'Prima TV',
+        'status': 'Stato',
+        'genres': 'Generi',
+        'noStreamingInfo': 'Informazioni sulla disponibilità non disponibili'
+    }
+};
 
-        addSecureEventListener(searchInput, 'input', (e) => {
-            const searchContainer = document.querySelector('.search-container');
-            searchContainer.classList.add('searching');
-            debouncedSearch();
-        });
+function updateFilterOptions(shows) {
+    // Raccogli tutti i generi unici
+    const genres = new Set();
+    const statuses = new Set();
+    const years = new Set();
 
-        // Add search on form submit
-        const searchForm = document.getElementById('searchForm');
-        if (searchForm) {
-            addSecureEventListener(searchForm, 'submit', (e) => {
-                e.preventDefault();
-                const searchTerm = security.sanitizeInput(searchInput.value.toLowerCase().trim());
-                cache.filters.search = searchTerm;
-                cache.currentPage = 1;
-                filterAndRenderSeries();
+    shows.forEach(show => {
+        if (show.genres && Array.isArray(show.genres)) {
+            show.genres.forEach(genre => {
+                genres.add(genre);
             });
+        }
+        if (show.status) {
+            statuses.add(show.status);
+        }
+        if (show.premiered) {
+            const year = new Date(show.premiered).getFullYear();
+            years.add(year);
+        }
+    });
+
+    // Aggiorna i select dei filtri con le traduzioni
+    updateFilterSelect('genreFilter', Array.from(genres).sort(), translations.genres);
+    updateFilterSelect('statusFilter', Array.from(statuses).sort(), translations.status);
+    updateFilterSelect('yearFilter', Array.from(years).sort((a, b) => b - a));
+}
+
+function updateFilterSelect(id, options, translations = null) {
+    const select = document.getElementById(id);
+    if (select) {
+        const currentValue = select.value;
+        let defaultOption = '';
+        
+        switch(id) {
+            case 'genreFilter':
+                defaultOption = 'Tutti i generi';
+                break;
+            case 'statusFilter':
+                defaultOption = 'Tutti gli stati';
+                break;
+            case 'yearFilter':
+                defaultOption = 'Tutti gli anni';
+                break;
+            default:
+                defaultOption = 'Tutti';
+        }
+        
+        select.innerHTML = `<option value="">${defaultOption}</option>` +
+            options.map(option => {
+                const displayValue = translations ? (translations[option] || option) : option;
+                return `<option value="${option}" ${option === currentValue ? 'selected' : ''}>
+                    ${displayValue}
+                </option>`;
+            }).join('');
+    }
+}
+
+function normalizeString(str) {
+    return str.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '') // Rimuove caratteri speciali
+        .replace(/\s+/g, ' ') // Normalizza gli spazi
+        .trim();
+}
+
+function getAcronym(str) {
+    return str.split(/\s+/).map(word => word[0]).join('').toLowerCase();
+}
+
+function calculateLevenshteinDistance(a, b) {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+
+    const matrix = [];
+
+    for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j] + 1
+                );
+            }
         }
     }
 
-    // Set up other event listeners
-    const filterSelects = document.querySelectorAll('.filter-select');
-    filterSelects.forEach(select => {
-        addSecureEventListener(select, 'change', filterAndRenderSeries);
+    return matrix[b.length][a.length];
+}
+
+function calculateSimilarity(str1, str2) {
+    const maxLength = Math.max(str1.length, str2.length);
+    if (maxLength === 0) return 1.0;
+    const distance = calculateLevenshteinDistance(str1, str2);
+    return 1 - (distance / maxLength);
+}
+
+function filterSeries(series) {
+    const searchTerm = uiState.filters.search.toLowerCase();
+    const normalizedSearchTerm = normalizeString(searchTerm);
+    const searchTermWords = normalizedSearchTerm.split(' ').filter(word => word.length > 1);
+    const searchAcronym = getAcronym(uiState.filters.search);
+    
+    // Filtra le serie in base ai criteri
+    const filteredSeries = series.filter(show => {
+        const normalizedName = normalizeString(show.name);
+        const normalizedSummary = show.summary ? normalizeString(show.summary) : '';
+        const showAcronym = getAcronym(show.name);
+
+        // Logica di ricerca
+            const matchesSearch = !searchTerm || 
+            normalizedName.includes(normalizedSearchTerm) ||
+            normalizedSummary.includes(normalizedSearchTerm) ||
+            (searchAcronym.length > 1 && showAcronym === searchAcronym) ||
+            searchTermWords.some(word => 
+                normalizedName.includes(word) || 
+                normalizedSummary.includes(word)
+            );
+        
+        const matchesGenre = !uiState.filters.genre || 
+            (show.genres && show.genres.includes(uiState.filters.genre));
+        
+        const matchesStatus = !uiState.filters.status || 
+            show.status === uiState.filters.status;
+        
+        const matchesRating = !uiState.filters.rating || 
+            (show.rating?.average && show.rating.average >= uiState.filters.rating);
+        
+        const matchesYear = !uiState.filters.year || 
+            (show.premiered && show.premiered.startsWith(uiState.filters.year));
+
+        return matchesSearch && matchesGenre && matchesStatus && 
+               matchesRating && matchesYear;
     });
 
+    // Calcola il punteggio di rilevanza per ogni serie
+    const scoredSeries = filteredSeries.map(show => {
+        let score = 0;
+
+        // Punteggio base dalla popolarità (weight)
+        score += (show.weight || 0) * 2;
+
+        // Punteggio dal rating
+        if (show.rating?.average) {
+            score += show.rating.average * 10;
+        }
+
+        // Bonus per serie in corso
+        if (show.status === 'Running') {
+            score += 20;
+        }
+
+        // Bonus per serie in inglese
+        if (show.language === 'English') {
+            score += 10;
+        }
+
+        // Bonus per serie recenti
+        if (show.premiered) {
+            const year = new Date(show.premiered).getFullYear();
+            const currentYear = new Date().getFullYear();
+            const yearDiff = currentYear - year;
+            if (yearDiff <= 1) {
+                score += 30;
+            } else if (yearDiff <= 3) {
+                score += 20;
+            } else if (yearDiff <= 5) {
+                score += 10;
+            }
+        }
+
+        // Se c'è una ricerca testuale, aggiungi punteggio di rilevanza
+        if (searchTerm) {
+            const normalizedName = normalizeString(show.name);
+            const normalizedSummary = show.summary ? normalizeString(show.summary) : '';
+            const showAcronym = getAcronym(show.name);
+
+            // Match esatto del titolo
+            if (normalizedName === normalizedSearchTerm) {
+                score += 100;
+            }
+            // Match dell'acronimo
+            else if (searchAcronym.length > 1 && showAcronym === searchAcronym) {
+                score += 80;
+            }
+            // Il titolo inizia con il termine di ricerca
+            else if (normalizedName.startsWith(normalizedSearchTerm)) {
+                score += 60;
+            }
+            // Match parziale nel titolo
+            else {
+                const titleSimilarity = calculateSimilarity(normalizedName, normalizedSearchTerm);
+                score += titleSimilarity * 40;
+            }
+
+            // Match nella descrizione
+            if (normalizedSummary) {
+                searchTermWords.forEach(word => {
+                    if (normalizedSummary.includes(word)) {
+                        score += 5;
+                    }
+                });
+            }
+        }
+
+        return { show, score };
+    });
+
+    // Ordina per punteggio e restituisci solo le serie
+    return scoredSeries
+        .sort((a, b) => b.score - a.score)
+        .map(({ show }) => show);
+}
+
+function clearFilters() {
+    uiState.filters = {
+        search: '',
+        genre: '',
+        status: '',
+        rating: 0,
+        year: ''
+    };
+
+    // Reset all filter inputs
+    document.getElementById('searchInput').value = '';
+    document.getElementById('genreFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('ratingFilter').value = '0';
+    document.getElementById('yearFilter').value = '';
+
+    // Re-render the series
+    renderSeries(uiState.shows);
+}
+
+function renderSeries(series) {
+    const container = document.getElementById('seriesContainer');
+    if (!container) return;
+
+    const filteredSeries = filterSeries(series);
+    const startIndex = (uiState.currentPage - 1) * config.itemsPerPage;
+    const endIndex = startIndex + config.itemsPerPage;
+    const paginatedSeries = filteredSeries.slice(startIndex, endIndex);
+
+    if (filteredSeries.length === 0) {
+        container.classList.remove('has-results');
+        container.innerHTML = `
+            <div class="loading-container">
+            <div class="no-results">
+                    <p>Nessun risultato trovato</p>
+                    <button onclick="clearFilters()" class="clear-filters">Cancella filtri</button>
+                </div>
+            </div>
+        `;
+        updatePagination(0);
+        return;
+    }
+    
+    container.classList.add('has-results');
+    
+    container.innerHTML = paginatedSeries.map(show => `
+        <div class="series-card" onclick="showSeriesDetails(${show.id})">
+            <div class="series-image">
+                <img src="${show.image?.medium || 'assets/images/placeholder.png'}" 
+                     alt="${security.sanitizeInput(show.name)}"
+                     loading="lazy">
+            </div>
+            <div class="series-info">
+                <h3 class="series-title">${security.sanitizeInput(show.name)}</h3>
+                <div class="series-meta">
+                    <span class="series-rating">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        ${show.rating?.average || 'N/A'}
+                    </span>
+                    <span class="series-genre">${show.genres?.map(genre => translations.genres[genre] || genre).join(', ') || 'N/A'}</span>
+                </div>
+            </div>
+            </div>
+    `).join('');
+
+    updatePagination(filteredSeries.length);
+}
+
+function updatePagination(totalItems) {
+    const paginationContainer = document.getElementById('pagination');
+    if (!paginationContainer) return;
+
+    const totalPages = Math.ceil(totalItems / config.itemsPerPage);
+    
+    // Non mostrare la paginazione se c'è una sola pagina
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '';
+    
+    // Pulsante "Precedente" con icona freccia
+    paginationHTML += `
+        <button class="pagination-button" 
+                ${uiState.currentPage === 1 ? 'disabled' : ''} 
+                onclick="changePage(${uiState.currentPage - 1})"
+                aria-label="Pagina precedente">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+        </button>
+    `;
+    
+    // Calcola quali numeri di pagina mostrare
+    let pagesToShow = [];
+    if (totalPages <= 7) {
+        // Se ci sono 7 o meno pagine, mostra tutte
+        pagesToShow = Array.from({length: totalPages}, (_, i) => i + 1);
+    } else {
+        // Mostra sempre la prima pagina
+        pagesToShow.push(1);
+        
+        if (uiState.currentPage > 3) {
+            pagesToShow.push('...');
+        }
+        
+        // Mostra le pagine intorno alla pagina corrente
+        for (let i = Math.max(2, uiState.currentPage - 1); 
+             i <= Math.min(totalPages - 1, uiState.currentPage + 1); i++) {
+            pagesToShow.push(i);
+        }
+        
+        if (uiState.currentPage < totalPages - 2) {
+            pagesToShow.push('...');
+        }
+        
+        // Mostra sempre l'ultima pagina
+        pagesToShow.push(totalPages);
+    }
+
+    // Crea i pulsanti per ogni numero di pagina
+    pagesToShow.forEach(page => {
+        if (page === '...') {
+            paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+        } else {
+            paginationHTML += `
+                <button class="pagination-button ${uiState.currentPage === page ? 'active' : ''}"
+                        onclick="changePage(${page})"
+                        aria-label="Pagina ${page}">
+                    ${page}
+                </button>
+            `;
+        }
+    });
+    
+    // Pulsante "Successivo" con icona freccia
+    paginationHTML += `
+        <button class="pagination-button" 
+                ${uiState.currentPage === totalPages ? 'disabled' : ''} 
+                onclick="changePage(${uiState.currentPage + 1})"
+                aria-label="Pagina successiva">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+        </button>
+    `;
+    
+    paginationContainer.innerHTML = paginationHTML;
+}
+
+function changePage(page) {
+    // Verifica che la pagina sia valida
+    const totalPages = Math.ceil(filterSeries(uiState.shows).length / config.itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    
+    uiState.currentPage = page;
+    renderSeries(uiState.shows);
+    
+    // Scroll to top of the series container
+    const container = document.getElementById('seriesContainer');
+    if (container) {
+        container.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+async function searchShowOnJustWatch(title) {
+    try {
+        // Cerca lo show su JustWatch
+        const show = await StreamingAPI.searchShow(title);
+        if (!show) return null;
+
+        // Ottieni le informazioni di streaming
+        const streamingInfo = await StreamingAPI.getStreamingInfo(show.id);
+        if (!streamingInfo) return null;
+
+        // Formatta le informazioni per la visualizzazione
+        const result = {
+            streaming: [],
+            rent: [],
+            buy: []
+        };
+
+        // Processa le offerte di streaming (flatrate)
+        if (streamingInfo.offers.flatrate.length > 0) {
+            result.streaming = streamingInfo.offers.flatrate.map(offer => ({
+                name: StreamingAPI.getProviderName(offer.provider_id),
+                logo: StreamingAPI.getProviderLogo(offer.provider_id)
+            }));
+        }
+
+        // Processa le offerte di noleggio
+        if (streamingInfo.offers.rent.length > 0) {
+            result.rent = streamingInfo.offers.rent.map(offer => ({
+                name: StreamingAPI.getProviderName(offer.provider_id),
+                logo: StreamingAPI.getProviderLogo(offer.provider_id)
+            }));
+        }
+
+        // Processa le offerte di acquisto
+        if (streamingInfo.offers.buy.length > 0) {
+            result.buy = streamingInfo.offers.buy.map(offer => ({
+                name: StreamingAPI.getProviderName(offer.provider_id),
+                logo: StreamingAPI.getProviderLogo(offer.provider_id)
+            }));
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error in searchShowOnJustWatch:', error);
+        return null;
+    }
+}
+
+async function showSeriesDetails(showIdOrObject) {
+    try {
+        const showId = typeof showIdOrObject === 'object' ? showIdOrObject.id : showIdOrObject;
+        const details = await TVMazeAPI.getShowDetails(showId);
+        if (!details) throw new Error('Impossibile caricare i dettagli della serie');
+
+        const streamingInfo = await searchShowOnJustWatch(details.name);
+
+        const modalHTML = `
+            <div class="series-modal">
+                <div class="modal-content">
+                    <button class="modal-close" aria-label="Chiudi">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+                    </button>
+                    <div class="modal-header">
+                        <div class="modal-image">
+                            <img src="${details.image?.original || 'assets/images/no-image.png'}" alt="${details.name}">
+                        </div>
+                        <div class="modal-info">
+                            <h2>${details.name}</h2>
+                            <div class="modal-meta">
+                                ${details.rating?.average ? `
+                                    <span class="rating">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+                                        ${details.rating.average}
+                                    </span>` : ''}
+                                ${details.genres?.length ? `
+                                    <span class="genres">${details.genres.map(genre => translations.genres[genre] || genre).join(', ')}</span>` : ''}
+                                ${details.premiered ? `
+                                    <span class="year">${new Date(details.premiered).getFullYear()}</span>` : ''}
+                                ${details.status ? `
+                                    <span class="status ${details.status.toLowerCase()}">${translations.status[details.status] || details.status}</span>` : ''}
+                            </div>
+                            
+                            <div class="streaming-section">
+                                <h3>${translations.messages.whereToWatch}</h3>
+                                ${streamingInfo ? `
+                                    <div class="streaming-providers">
+                                        ${streamingInfo.streaming?.length ? `
+                                            <div class="provider-section">
+                                                <h4>${translations.messages.streaming}</h4>
+                                                <div class="provider-list">
+                                                    ${streamingInfo.streaming.map(provider => `
+                                                        <div class="provider" title="${provider.name}">
+                                                            <img src="${provider.logo}" alt="${provider.name}">
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>` : ''}
+                                        
+                                        ${streamingInfo.rent?.length ? `
+                                            <div class="provider-section">
+                                                <h4>${translations.messages.rent}</h4>
+                                                <div class="provider-list">
+                                                    ${streamingInfo.rent.map(provider => `
+                                                        <div class="provider" title="${provider.name}">
+                                                            <img src="${provider.logo}" alt="${provider.name}">
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>` : ''}
+                                        
+                                        ${streamingInfo.buy?.length ? `
+                                            <div class="provider-section">
+                                                <h4>${translations.messages.buy}</h4>
+                                                <div class="provider-list">
+                                                    ${streamingInfo.buy.map(provider => `
+                                                        <div class="provider" title="${provider.name}">
+                                                            <img src="${provider.logo}" alt="${provider.name}">
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>` : ''}
+                                    </div>` : `
+                                    <p class="no-streaming">${translations.messages.noStreamingInfo}</p>`}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        ${details.summary ? `
+                            <div class="series-description">
+                                <h3>${translations.messages.plot}</h3>
+                                <div class="description-note">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                    <span>La descrizione è disponibile solo in inglese</span>
+                                </div>
+                                ${details.summary}
+                            </div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+
+        // Add modal to DOM
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Add event listeners
+        const modal = document.querySelector('.series-modal');
+        const closeButton = modal.querySelector('.modal-close');
+
+        closeButton.addEventListener('click', () => {
+            modal.remove();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+
+    } catch (error) {
+        console.error('Error showing series details:', error);
+        showError(translations.messages.error);
+    }
+}
+
+function showError(message) {
+    const container = document.getElementById('seriesContainer');
+    if (container) {
+        container.classList.remove('has-results');
+        container.innerHTML = `
+            <div class="loading-container">
+                <div class="error-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="m15 9-6 6"/>
+                        <path d="m9 9 6 6"/>
+                    </svg>
+                    <p>${message}</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Initialize all features
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
+    loadSeries();
+    
+    // Search input with debounce
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(() => {
+            uiState.filters.search = searchInput.value;
+            uiState.currentPage = 1;
+            renderSeries(uiState.shows);
+        }, config.debounceDelay));
+    }
+
+    // Filter change handlers
+    const filterIds = ['genreFilter', 'statusFilter', 'ratingFilter', 'yearFilter'];
+    filterIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', () => {
+                const filterName = id.replace('Filter', '').toLowerCase();
+                uiState.filters[filterName] = element.value;
+                uiState.currentPage = 1;
+                renderSeries(uiState.shows);
+            });
+        }
+    });
+
+    // Clear filters button
     const clearFiltersBtn = document.getElementById('clearFilters');
     if (clearFiltersBtn) {
-        addSecureEventListener(clearFiltersBtn, 'click', () => {
-            // Reset all filters
-            document.getElementById('searchInput').value = '';
-            document.getElementById('genreFilter').value = '';
-            document.getElementById('platformFilter').value = '';
-            document.getElementById('ratingFilter').value = '';
-            
-            // Reset cache
-            cache.filters = {
-                search: '',
-                genre: '',
-                platform: '',
-                rating: 0
-            };
-            cache.currentPage = 1;
-            
-            // Update UI
-            filterAndRenderSeries();
-        });
+        clearFiltersBtn.addEventListener('click', clearFilters);
     }
 
-    // Initial render
-    filterAndRenderSeries();
-
-    // Set up scroll handlers
-    window.addEventListener('scroll', () => {
-        handleHeaderScroll();
-        updateScrollButton();
-    });
-    
-    // Initialize theme
-    initializeTheme();
-    
-    // Set up theme toggle
+    // Theme toggle
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
-        addSecureEventListener(themeToggle, 'click', toggleTheme);
+        themeToggle.addEventListener('click', toggleTheme);
     }
-}); 
+});
+
+// Rendi la funzione changePage globale
+window.changePage = changePage;
+
+// Rendi la funzione showSeriesDetails globale
+window.showSeriesDetails = showSeriesDetails; 

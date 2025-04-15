@@ -22,7 +22,7 @@
   <title>SeriesHub - Trova dove guardare le tue serie TV preferite</title>
   
   <!-- Security Headers -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.tvmaze.com">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -36,6 +36,11 @@
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="canonical" href="https://serieshub.xyz">
+  
+  <!-- Scripts -->
+  <script src="assets/js/tvmaze.js"></script>
+  <script src="assets/js/streaming.js"></script>
+  <script src="assets/js/script.js" defer></script>
   
   <!-- Add nonce for inline scripts -->
   <script nonce="random-nonce-value">
@@ -88,96 +93,107 @@
     </div>
 </header>
 
-  <main class="container">
-    <section class="search-section" aria-label="Ricerca e filtri">
-      <div class="search-container">
-        <input 
-          type="search" 
-          class="search-input" 
-          id="searchInput" 
-          placeholder="Cerca una serie TV..."
-          aria-label="Cerca serie TV"
-          autocomplete="off"
-        >
-        
-        <div class="filters-grid">
-          <select class="filter-select" id="genreFilter" aria-label="Filtra per genere">
-            <option value="">Tutti i Generi</option>
-            <!-- Options will be populated by JavaScript -->
-          </select>
-          
-          <select class="filter-select" id="platformFilter" aria-label="Filtra per piattaforma">
-            <option value="">Tutte le Piattaforme</option>
-            <!-- Options will be populated by JavaScript -->
-          </select>
-          
-          <select class="filter-select" id="ratingFilter" aria-label="Filtra per valutazione">
-            <option value="">Tutte le Valutazioni</option>
-            <!-- Options will be populated by JavaScript -->
-          </select>
-          
-          <button class="clear-filters" id="clearFilters" aria-label="Rimuovi tutti i filtri">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5"/>
-              <path d="M12 19l-7-7 7-7"/>
-            </svg>
-            Rimuovi Filtri
-          </button>
+  <main class="container main-content">
+    <div class="search-section">
+        <div class="search-row">
+            <div class="search-input-container">
+                <input type="text" id="searchInput" placeholder="Cerca serie TV..." aria-label="Cerca serie TV">
+                <button class="search-button" aria-label="Cerca">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="genreFilter">Genere</label>
+                <select id="genreFilter">
+                    <option value="">Tutti i generi</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="statusFilter">Stato</label>
+                <select id="statusFilter">
+                    <option value="">Tutti gli stati</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="yearFilter">Anno</label>
+                <select id="yearFilter">
+                    <option value="">Tutti gli anni</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="ratingFilter">Valutazione minima</label>
+                <select id="ratingFilter">
+                    <option value="0">Tutte le valutazioni</option>
+                    <option value="9">9+ ⭐</option>
+                    <option value="8">8+ ⭐</option>
+                    <option value="7">7+ ⭐</option>
+                    <option value="6">6+ ⭐</option>
+                    <option value="5">5+ ⭐</option>
+                </select>
+            </div>
+            <button id="clearFilters" class="clear-filters" aria-label="Cancella filtri">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Cancella filtri
+            </button>
+        </div>
+    </div>
+
+    <section class="catalog-section" aria-label="Catalogo serie TV">
+      <div class="catalog-grid" id="seriesContainer">
+        <!-- Le serie TV verranno caricate dinamicamente qui -->
       </div>
-    </section>
 
-    <section class="results-section" aria-label="Risultati della ricerca">
-      <div id="seriesList" class="series-grid">
-        <!-- Le serie verranno inserite qui dinamicamente -->
-  </div>
-      
-      <nav id="pagination" class="pagination" aria-label="Navigazione pagine">
-        <!-- La paginazione verrà inserita qui dinamicamente -->
-      </nav>
-
-      <div id="noResults" class="no-results" style="display: none;">
-        <h3>Nessun risultato trovato</h3>
-        <p>Prova a modificare i filtri o cerca qualcos'altro</p>
-  </div>
+      <div class="pagination" id="pagination">
+        <!-- La paginazione verrà generata dinamicamente -->
+      </div>
     </section>
 
     <section class="featured-content">
         <div class="container">
-            <h2>Scopri SeriesHub</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
+            <div class="hero-section">
+                <h2>Scopri SeriesHub</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3>Catalogo Completo</h3>
+                        <p>Esplora il nostro vasto catalogo di serie TV, costantemente aggiornato con le ultime uscite e i classici intramontabili. Ogni serie è accuratamente catalogata e descritta per aiutarti a trovare il tuo prossimo show preferito.</p>
                     </div>
-                    <h3>Catalogo Completo</h3>
-                    <p>Esplora il nostro vasto catalogo di serie TV, costantemente aggiornato con le ultime uscite e i classici intramontabili. Ogni serie è accuratamente catalogata e descritta per aiutarti a trovare il tuo prossimo show preferito.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                        </svg>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </div>
+                        <h3>Personalizzazione Avanzata</h3>
+                        <p>Crea il tuo profilo personalizzato per ricevere suggerimenti basati sui tuoi gusti. Il nostro sistema di raccomandazione analizza le tue preferenze per suggerirti serie TV che potrebbero interessarti, aiutandoti a scoprire nuovi contenuti perfetti per te.</p>
                     </div>
-                    <h3>Personalizzazione Avanzata</h3>
-                    <p>Crea il tuo profilo personalizzato per ricevere suggerimenti basati sui tuoi gusti. Il nostro sistema di raccomandazione analizza le tue preferenze per suggerirti serie TV che potrebbero interessarti, aiutandoti a scoprire nuovi contenuti perfetti per te.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3>Community Attiva</h3>
+                        <p>Unisciti alla nostra community di appassionati di serie TV. Condividi le tue opinioni, leggi recensioni dettagliate, partecipa a discussioni e scopri nuove prospettive sulle tue serie preferite. La nostra piattaforma favorisce lo scambio di idee e la creazione di connessioni tra gli utenti.</p>
                     </div>
-                    <h3>Community Attiva</h3>
-                    <p>Unisciti alla nostra community di appassionati di serie TV. Condividi le tue opinioni, leggi recensioni dettagliate, partecipa a discussioni e scopri nuove prospettive sulle tue serie preferite. La nostra piattaforma favorisce lo scambio di idee e la creazione di connessioni tra gli utenti.</p>
                 </div>
             </div>
         </div>
