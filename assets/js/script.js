@@ -622,7 +622,7 @@ async function showSeriesDetails(showIdOrObject) {
             throw new Error('TVMazeAPI non è disponibile');
         }
 
-        const details = await window.TVMazeAPI.getShowById(showId);
+        const details = await window.TVMazeAPI.getShowDetails(showId);
         if (!details) {
             throw new Error('Impossibile caricare i dettagli della serie');
         }
@@ -669,7 +669,7 @@ async function showSeriesDetails(showIdOrObject) {
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <line x1="12" y1="16" x2="12" y2="12"></line>
                                             <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
+                                        </svg>
                                     </div>
                                     <div class="info-text">
                                         <p>La sezione delle piattaforme streaming sarà presto disponibile!</p>
@@ -688,7 +688,7 @@ async function showSeriesDetails(showIdOrObject) {
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="12" y1="16" x2="12" y2="12"></line>
                                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
+                                    </svg>
                                     <span>La descrizione è disponibile solo in inglese</span>
                                 </div>
                                 ${details.summary}
