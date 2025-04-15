@@ -1,7 +1,8 @@
 // Configurazione base
 const config = {
     itemsPerPage: 20,
-    debounceDelay: 300
+    debounceDelay: 300,
+    loadingThreshold: 0.8 // Soglia per il caricamento progressivo (80% dello scroll)
 };
 
 // Stato dell'interfaccia
@@ -93,62 +94,18 @@ function updateThemeIcon(theme) {
 // Funzioni per la gestione delle serie TV
 async function loadSeries() {
     try {
-        console.log('Starting to load series...');
-        
-        if (typeof window.TVMazeAPI === 'undefined') {
-            console.error('TVMazeAPI is not defined');
-            showError('Errore di inizializzazione. Ricarica la pagina.');
-            return;
+        const series = await TVMazeAPI.updateCatalog();
+        if (series && series.length > 0) {
+            uiState.shows = series;
+            updateFilterOptions(series);
+            renderSeries(series);
+            updatePagination(series.length);
+        } else {
+            showError('Nessuna serie TV trovata');
         }
-
-        const container = document.getElementById('seriesContainer');
-        if (!container) {
-            console.error('Container not found');
-            return;
-        }
-
-        showLoading();
-        const shows = await TVMazeAPI.updateCatalog();
-        
-        if (!shows || shows.length === 0) {
-            throw new Error('Nessuna serie TV trovata');
-        }
-
-        console.log('Serie caricate:', shows.length);
-        console.log('Prima serie:', shows[0]);
-        
-        uiState.shows = shows;
-        updateFilterOptions(shows);
-        renderSeries(shows);
-        updatePagination(shows.length);
-
     } catch (error) {
         console.error('Error loading series:', error);
-        showError(`Errore nel caricamento delle serie TV: ${error.message}`);
-    }
-}
-
-function showLoading() {
-    const container = document.getElementById('seriesContainer');
-    if (container) {
-        container.classList.remove('has-results');
-        container.innerHTML = `
-            <div class="loading-container">
-                <div class="loading">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="2" x2="12" y2="6"/>
-                        <line x1="12" y1="18" x2="12" y2="22"/>
-                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
-                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-                        <line x1="2" y1="12" x2="6" y2="12"/>
-                        <line x1="18" y1="12" x2="22" y2="12"/>
-                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
-                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-                    </svg>
-                    <p>Caricamento del catalogo in corso...</p>
-                </div>
-            </div>
-        `;
+        showError('Errore nel caricamento delle serie TV: ' + error.message);
     }
 }
 
@@ -660,11 +617,17 @@ async function searchShowOnJustWatch(title) {
 async function showSeriesDetails(showIdOrObject) {
     try {
         const showId = typeof showIdOrObject === 'object' ? showIdOrObject.id : showIdOrObject;
-        const details = await TVMazeAPI.getShowDetails(showId);
-        if (!details) throw new Error('Impossibile caricare i dettagli della serie');
+        
+        if (!window.TVMazeAPI) {
+            throw new Error('TVMazeAPI non è disponibile');
+        }
 
-        const streamingInfo = await searchShowOnJustWatch(details.name);
+        const details = await window.TVMazeAPI.getShowById(showId);
+        if (!details) {
+            throw new Error('Impossibile caricare i dettagli della serie');
+        }
 
+        // Crea il contenuto del modal
         const modalHTML = `
             <div class="series-modal">
                 <div class="modal-content">
@@ -672,11 +635,13 @@ async function showSeriesDetails(showIdOrObject) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+                        </svg>
                     </button>
                     <div class="modal-header">
                         <div class="modal-image">
-                            <img src="${details.image?.original || 'assets/images/no-image.png'}" alt="${details.name}">
+                            <img src="${details.image?.original || details.image?.medium || 'assets/images/no-image.png'}" 
+                                 alt="${details.name}"
+                                 loading="lazy">
                         </div>
                         <div class="modal-info">
                             <h2>${details.name}</h2>
@@ -685,7 +650,7 @@ async function showSeriesDetails(showIdOrObject) {
                                     <span class="rating">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
+                                        </svg>
                                         ${details.rating.average}
                                     </span>` : ''}
                                 ${details.genres?.length ? `
@@ -698,45 +663,19 @@ async function showSeriesDetails(showIdOrObject) {
                             
                             <div class="streaming-section">
                                 <h3>${translations.messages.whereToWatch}</h3>
-                                ${streamingInfo ? `
-                                    <div class="streaming-providers">
-                                        ${streamingInfo.streaming?.length ? `
-                                            <div class="provider-section">
-                                                <h4>${translations.messages.streaming}</h4>
-                                                <div class="provider-list">
-                                                    ${streamingInfo.streaming.map(provider => `
-                                                        <div class="provider" title="${provider.name}">
-                                                            <img src="${provider.logo}" alt="${provider.name}">
-                                                        </div>
-                                                    `).join('')}
-                                                </div>
-                                            </div>` : ''}
-                                        
-                                        ${streamingInfo.rent?.length ? `
-                                            <div class="provider-section">
-                                                <h4>${translations.messages.rent}</h4>
-                                                <div class="provider-list">
-                                                    ${streamingInfo.rent.map(provider => `
-                                                        <div class="provider" title="${provider.name}">
-                                                            <img src="${provider.logo}" alt="${provider.name}">
-                                                        </div>
-                                                    `).join('')}
-                                                </div>
-                                            </div>` : ''}
-                                        
-                                        ${streamingInfo.buy?.length ? `
-                                            <div class="provider-section">
-                                                <h4>${translations.messages.buy}</h4>
-                                                <div class="provider-list">
-                                                    ${streamingInfo.buy.map(provider => `
-                                                        <div class="provider" title="${provider.name}">
-                                                            <img src="${provider.logo}" alt="${provider.name}">
-                                                        </div>
-                                                    `).join('')}
-                                                </div>
-                                            </div>` : ''}
-                                    </div>` : `
-                                    <p class="no-streaming">${translations.messages.noStreamingInfo}</p>`}
+                                <div class="streaming-info">
+                                    <div class="info-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+                                    </div>
+                                    <div class="info-text">
+                                        <p>La sezione delle piattaforme streaming sarà presto disponibile!</p>
+                                        <p>Stiamo lavorando per integrare le informazioni su dove guardare questa serie.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -749,7 +688,7 @@ async function showSeriesDetails(showIdOrObject) {
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="12" y1="16" x2="12" y2="12"></line>
                                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                    </svg>
+            </svg>
                                     <span>La descrizione è disponibile solo in inglese</span>
                                 </div>
                                 ${details.summary}
@@ -758,10 +697,16 @@ async function showSeriesDetails(showIdOrObject) {
                 </div>
             </div>`;
 
-        // Add modal to DOM
+        // Rimuovi eventuali modali esistenti
+        const existingModal = document.querySelector('.series-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Aggiungi il nuovo modal al DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Add event listeners
+        // Aggiungi gli event listener
         const modal = document.querySelector('.series-modal');
         const closeButton = modal.querySelector('.modal-close');
 
@@ -772,6 +717,14 @@ async function showSeriesDetails(showIdOrObject) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
+            }
+        });
+
+        // Aggiungi gestione della chiusura con ESC
+        document.addEventListener('keydown', function handleEsc(e) {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', handleEsc);
             }
         });
 
@@ -846,4 +799,14 @@ document.addEventListener('DOMContentLoaded', () => {
 window.changePage = changePage;
 
 // Rendi la funzione showSeriesDetails globale
-window.showSeriesDetails = showSeriesDetails; 
+window.showSeriesDetails = showSeriesDetails;
+
+// Funzione per aggiornare l'interfaccia con nuove serie
+window.updateUI = function(shows) {
+    if (shows && shows.length > 0) {
+        uiState.shows = shows;
+        updateFilterOptions(shows);
+        renderSeries(shows);
+        updatePagination(shows.length);
+    }
+}; 

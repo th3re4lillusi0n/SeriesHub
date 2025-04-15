@@ -20,6 +20,43 @@ const cache = {
     CACHE_DURATION: 24 * 60 * 60 * 1000 // 24 ore
 };
 
+// Funzione per mostrare il messaggio di caricamento
+function showLoadingMessage() {
+    // Verifica se il messaggio è già presente
+    if (document.getElementById('loading-message')) {
+        return;
+    }
+    
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading-message';
+    loadingDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        z-index: 9999;
+    `;
+    loadingDiv.innerHTML = `
+        <h3>Caricamento del catalogo in corso...</h3>
+        <p>Attendi qualche istante per una migliore esperienza.</p>
+        <div class="loading-spinner"></div>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+// Funzione per rimuovere il messaggio di caricamento
+function hideLoadingMessage() {
+    const loadingDiv = document.getElementById('loading-message');
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+}
+
 // Funzione per gestire le richieste API
 async function fetchFromTVMaze(endpoint, params = {}) {
     try {
@@ -118,6 +155,13 @@ async function getShowSeasons(showId) {
 // Funzione per aggiornare il catalogo
 async function updateCatalog() {
     try {
+        // Verifica se c'è già un caricamento in corso
+        if (document.getElementById('loading-message')) {
+            return Array.from(cache.shows.values());
+        }
+        
+        showLoadingMessage(); // Mostra il messaggio di caricamento
+        
         const currentTime = Date.now();
         console.log('Current time:', currentTime);
         console.log('Last update:', cache.lastUpdate);
@@ -127,6 +171,7 @@ async function updateCatalog() {
             console.log('Using cached data');
             const cachedShows = Array.from(cache.shows.values());
             console.log('Cached shows count:', cachedShows.length);
+            hideLoadingMessage(); // Nascondi il messaggio se usiamo la cache
             return cachedShows;
         }
 
@@ -179,11 +224,14 @@ async function updateCatalog() {
             cache.shows = new Map(allShows.map(show => [show.id, show]));
             cache.lastUpdate = currentTime;
             console.log('Catalog updated successfully');
+            hideLoadingMessage(); // Nascondi il messaggio dopo il caricamento
             return allShows;
         } else {
+            hideLoadingMessage(); // Nascondi il messaggio in caso di errore
             throw new Error('No series were fetched successfully');
         }
     } catch (error) {
+        hideLoadingMessage(); // Nascondi il messaggio in caso di errore
         console.error('Error updating catalog:', error);
         throw error;
     }
@@ -200,4 +248,23 @@ window.TVMazeAPI = {
     updateCatalog
 };
 
-console.log('TVMazeAPI initialized'); 
+console.log('TVMazeAPI initialized');
+
+// Aggiungi stile CSS per lo spinner
+const style = document.createElement('style');
+style.textContent = `
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        margin: 20px auto;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style); 
