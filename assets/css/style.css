@@ -1593,6 +1593,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .faq-item:hover {
@@ -1607,6 +1608,8 @@ body {
     padding: 1rem 1.5rem;
     background-color: var(--card-bg);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
 .faq-question h4 {
@@ -1624,6 +1627,8 @@ body {
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .faq-toggle svg {
@@ -1642,11 +1647,13 @@ body {
     overflow: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
     background-color: var(--bg-color);
+    will-change: max-height, padding;
 }
 
 .faq-answer.active {
     padding: 1rem 1.5rem 1.5rem;
     max-height: 500px;
+    overflow-y: auto;
 }
 
 .faq-answer p {
@@ -1670,6 +1677,18 @@ body {
 
     .form {
         padding: 1.5rem;
+    }
+
+    .faq-question {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .faq-toggle {
+        padding: 0.75rem;
+    }
+    
+    .faq-answer.active {
+        padding: 1.25rem 1.5rem 1.5rem;
     }
 }
 

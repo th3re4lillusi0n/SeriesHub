@@ -368,14 +368,29 @@
 
         // FAQ toggle functionality
         document.querySelectorAll('.faq-toggle').forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const faqItem = button.closest('.faq-item');
                 const answer = faqItem.querySelector('.faq-answer');
                 
-                // Toggle the answer visibility
-                answer.classList.toggle('active');
+                // Close other open answers
+                document.querySelectorAll('.faq-answer.active').forEach(activeAnswer => {
+                    if (activeAnswer !== answer) {
+                        activeAnswer.classList.remove('active');
+                        const activeButton = activeAnswer.closest('.faq-item').querySelector('.faq-toggle');
+                        activeButton.classList.remove('active');
+                        activeButton.setAttribute('aria-expanded', 'false');
+                        const activeArrow = activeButton.querySelector('svg');
+                        if (activeArrow) {
+                            activeArrow.style.transform = 'rotate(0)';
+                        }
+                    }
+                });
                 
-                // Toggle the button icon
+                // Toggle the current answer
+                answer.classList.toggle('active');
                 button.classList.toggle('active');
                 
                 // Update ARIA attributes
@@ -392,9 +407,9 @@
         
         // Make the entire question area clickable
         document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
+            question.addEventListener('click', (e) => {
                 const toggle = question.querySelector('.faq-toggle');
-                if (toggle) {
+                if (toggle && !e.target.closest('.faq-toggle')) {
                     toggle.click();
                 }
             });
