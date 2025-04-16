@@ -155,84 +155,79 @@ async function getShowSeasons(showId) {
 // Funzione per aggiornare il catalogo
 async function updateCatalog() {
     try {
-        // Verifica se c'è già un caricamento in corso
-        if (document.getElementById('loading-message')) {
-            return Array.from(cache.shows.values());
-        }
-        
-        showLoadingMessage(); // Mostra il messaggio di caricamento
-        
-        const currentTime = Date.now();
-        console.log('Current time:', currentTime);
-        console.log('Last update:', cache.lastUpdate);
-        console.log('Cache duration:', cache.CACHE_DURATION);
-        
-        if (cache.lastUpdate && (currentTime - cache.lastUpdate) < cache.CACHE_DURATION) {
-            console.log('Using cached data');
-            const cachedShows = Array.from(cache.shows.values());
-            console.log('Cached shows count:', cachedShows.length);
-            hideLoadingMessage(); // Nascondi il messaggio se usiamo la cache
-            return cachedShows;
-        }
-
-        console.log('Updating catalog...');
-        let page = 0;
+        showLoadingMessage();
         let allShows = [];
+        let page = 0;
         let hasMore = true;
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
 
-        while (hasMore && retryCount < MAX_RETRIES) {
-            try {
-                console.log(`Fetching page ${page}...`);
-                const shows = await getAllShows(page);
-                console.log(`Received ${shows.length} shows for page ${page}`);
-                
-                if (shows.length === 0) {
-                    console.log('No more shows to fetch');
-                    hasMore = false;
-                } else {
-                    // Filtra solo le serie TV (esclude i film)
-                    const seriesOnly = shows.filter(show => {
-                        // Verifica che sia una serie TV basandosi su vari criteri
-                        return show.type === 'Scripted' && // Serie sceneggiate
-                               show.status !== 'Movie' && // Non è un film
-                               (show.runtime || 0) <= 120 && // Durata tipica di un episodio (non di un film)
-                               !show.name.toLowerCase().includes('movie') && // Nome non contiene "movie"
-                               show._links && show._links.previousepisode; // Ha episodi precedenti (è una serie)
-                    });
-
-                    allShows = allShows.concat(seriesOnly);
-                    console.log(`Total series so far: ${allShows.length}`);
-                    page++;
-                    retryCount = 0;
-                }
-            } catch (error) {
-                console.error(`Error fetching page ${page}:`, error);
-                retryCount++;
-                if (retryCount >= MAX_RETRIES) {
-                    console.error('Max retries reached, stopping catalog update');
-                    break;
-                }
-                console.log(`Retrying in ${retryCount} seconds...`);
-                await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+        while (hasMore) {
+            const response = await fetch(`${TVMAZE_API.BASE_URL}/shows?page=${page}`);
+            if (!response.ok) {
+                hasMore = false;
+                continue;
             }
-        }
+            
+            const shows = await response.json();
+            if (shows.length === 0) {
+                hasMore = false;
+                continue;
+            }
 
-        if (allShows.length > 0) {
-            console.log(`Caching ${allShows.length} series`);
-            cache.shows = new Map(allShows.map(show => [show.id, show]));
-            cache.lastUpdate = currentTime;
-            console.log('Catalog updated successfully');
-            hideLoadingMessage(); // Nascondi il messaggio dopo il caricamento
-            return allShows;
-        } else {
-            hideLoadingMessage(); // Nascondi il messaggio in caso di errore
-            throw new Error('No series were fetched successfully');
+            allShows = allShows.concat(shows);
+            page++;
         }
+        
+        // Filtra e processa le serie
+        const processedShows = allShows
+            .filter(show => {
+                // Escludi solo film e documentari
+                if (show.type === 'Movie' || show.type === 'Documentary') {
+                    return false;
+                }
+                
+                // Verifica solo i dati essenziali
+                return show.name && show.type;
+            })
+            .map(show => {
+                // Riorganizza i tipi di contenuto
+                let type = show.type;
+                if (type === 'Animation') {
+                    // Se è un'animazione, controlla se è un anime
+                    const isAnime = show.genres && (
+                        show.genres.includes('Anime') ||
+                        show.genres.includes('Japanese Animation') ||
+                        (show.genres.includes('Animation') && (
+                            show.language === 'Japanese' ||
+                            show.network?.country?.code === 'JP' ||
+                            show.webChannel?.country?.code === 'JP' ||
+                            show.name.toLowerCase().includes('anime') ||
+                            show.name.toLowerCase().includes('japanese') ||
+                            (show.summary && (
+                                show.summary.toLowerCase().includes('anime') ||
+                                show.summary.toLowerCase().includes('japanese')
+                            ))
+                        ))
+                    );
+                    if (isAnime) {
+                        type = 'Anime';
+                    }
+                }
+                
+                return {
+                    ...show,
+                    type: type
+                };
+            });
+
+        // Aggiorna la cache
+        cache.shows = new Map(processedShows.map(show => [show.id, show]));
+        cache.lastUpdate = Date.now();
+        
+        hideLoadingMessage();
+        return processedShows;
     } catch (error) {
-        hideLoadingMessage(); // Nascondi il messaggio in caso di errore
         console.error('Error updating catalog:', error);
+        hideLoadingMessage();
         throw error;
     }
 }

@@ -11,6 +11,7 @@ const uiState = {
     currentPage: 1,
     filters: {
         search: '',
+        type: '',
         genre: '',
         status: '',
         language: '',
@@ -294,7 +295,7 @@ function filterSeries(series) {
         const showAcronym = getAcronym(show.name);
 
         // Logica di ricerca
-            const matchesSearch = !searchTerm || 
+        const matchesSearch = !searchTerm || 
             normalizedName.includes(normalizedSearchTerm) ||
             normalizedSummary.includes(normalizedSearchTerm) ||
             (searchAcronym.length > 1 && showAcronym === searchAcronym) ||
@@ -302,6 +303,22 @@ function filterSeries(series) {
                 normalizedName.includes(word) || 
                 normalizedSummary.includes(word)
             );
+
+        // Logica per il tipo di contenuto
+        const matchesType = !uiState.filters.type || (() => {
+            switch(uiState.filters.type) {
+                case 'Scripted':
+                    return show.type === 'Scripted';
+                case 'Animation':
+                    return show.type === 'Animation';
+                case 'Anime':
+                    return show.type === 'Anime';
+                case 'Documentary':
+                    return show.type === 'Documentary';
+                default:
+                    return true;
+            }
+        })();
         
         const matchesGenre = !uiState.filters.genre || 
             (show.genres && show.genres.includes(uiState.filters.genre));
@@ -315,8 +332,8 @@ function filterSeries(series) {
         const matchesYear = !uiState.filters.year || 
             (show.premiered && show.premiered.startsWith(uiState.filters.year));
 
-        return matchesSearch && matchesGenre && matchesStatus && 
-               matchesRating && matchesYear;
+        return matchesSearch && matchesType && matchesGenre && 
+               matchesStatus && matchesRating && matchesYear;
     });
 
     // Calcola il punteggio di rilevanza per ogni serie
@@ -401,6 +418,7 @@ function filterSeries(series) {
 function clearFilters() {
     uiState.filters = {
         search: '',
+        type: '',
         genre: '',
         status: '',
         rating: 0,
@@ -409,6 +427,7 @@ function clearFilters() {
 
     // Reset all filter inputs
     document.getElementById('searchInput').value = '';
+    document.getElementById('typeFilter').value = '';
     document.getElementById('genreFilter').value = '';
     document.getElementById('statusFilter').value = '';
     document.getElementById('ratingFilter').value = '0';
@@ -623,6 +642,8 @@ async function showSeriesDetails(showIdOrObject) {
         }
 
         const details = await window.TVMazeAPI.getShowDetails(showId);
+        const seasons = await window.TVMazeAPI.getShowSeasons(showId);
+        
         if (!details) {
             throw new Error('Impossibile caricare i dettagli della serie');
         }
@@ -659,6 +680,15 @@ async function showSeriesDetails(showIdOrObject) {
                                     <span class="year">${new Date(details.premiered).getFullYear()}</span>` : ''}
                                 ${details.status ? `
                                     <span class="status ${details.status.toLowerCase()}">${translations.status[details.status] || details.status}</span>` : ''}
+                                ${details.type !== 'Movie' ? `
+                                    <span class="seasons">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                                        </svg>
+                                        ${seasons.length} ${seasons.length === 1 ? 'stagione' : 'stagioni'}
+                                    </span>` : ''}
                             </div>
                             
                             <div class="streaming-section">
@@ -769,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Filter change handlers
-    const filterIds = ['genreFilter', 'statusFilter', 'ratingFilter', 'yearFilter'];
+    const filterIds = ['typeFilter', 'genreFilter', 'statusFilter', 'ratingFilter', 'yearFilter'];
     filterIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {

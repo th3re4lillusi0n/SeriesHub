@@ -3535,4 +3535,35 @@ body {
             padding-bottom: env(safe-area-inset-bottom);
         }
     }
-} 
+}
+
+.modal-meta .seasons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.modal-meta .seasons svg {
+    width: 16px;
+    height: 16px;
+    color: var(--accent-primary);
+}
+
+[data-theme="dark"] .modal-meta .seasons {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    backdrop-filter: blur(8px);
+}
+
+[data-theme="dark"] .modal-meta .seasons svg {
+    color: var(--accent-primary);
+}
+  
