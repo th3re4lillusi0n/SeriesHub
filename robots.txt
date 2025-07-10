@@ -8,7 +8,6 @@ Allow: /terminicondizioni.html
 Allow: /cookiepolicy.html
 Allow: /faq.html
 Allow: /guida.html
-Allow: /supporto.html
 Allow: /assets/css/
 Allow: /assets/js/
 Allow: /assets/images/

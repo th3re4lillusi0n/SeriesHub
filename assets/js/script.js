@@ -5,6 +5,8 @@ const config = {
     loadingThreshold: 0.8 // Soglia per il caricamento progressivo (80% dello scroll)
 };
 
+// Assicurato che const config sia dichiarato una sola volta
+
 // Stato dell'interfaccia
 const uiState = {
     shows: [],
@@ -16,7 +18,8 @@ const uiState = {
         status: '',
         language: '',
         rating: 0,
-        year: ''
+        year: '',
+        lang: ''
     }
 };
 
@@ -92,22 +95,62 @@ function updateThemeIcon(theme) {
     }
 }
 
-// Funzioni per la gestione delle serie TV
+// Stato avanzato per caricamento progressivo
+const PAGE_SIZE = 20;
+const TOTAL_PAGES = 1000; // 500 trending + 500 popolari
+let loadedPages = 10; // quante pagine sono già caricate subito
+let allShows = [];
+let loadingAll = false;
+
+// --- MAIN PAGE: SOLO SERIE PIÙ FAMOSE/TRENDING ORDINATE PER POPOLARITÀ ---
 async function loadSeries() {
     try {
-        const series = await TVMazeAPI.updateCatalog();
-        if (series && series.length > 0) {
-            uiState.shows = series;
-            updateFilterOptions(series);
-            renderSeries(series);
-            updatePagination(series.length);
-        } else {
-            showError('Nessuna serie TV trovata');
+        showLoadingBar(0, TOTAL_PAGES);
+        allShows = [];
+        // Carica subito le prime 10 pagine (trending + popolari)
+        for (let page = 1; page <= 10; page++) {
+            const trending = await TMDBAPI.getTrendingShows(page);
+            const popular = await TMDBAPI.getAllShows(page);
+            allShows = allShows.concat(trending, popular);
+            showLoadingBar(page, TOTAL_PAGES);
+        }
+        hideLoadingBar();
+        loadedPages = 10;
+        setAndSortShows(allShows); // deduplica e ordina per popolarità
+        updateFilterOptions(uiState.shows);
+        renderSeries(uiState.shows);
+        updatePagination(TOTAL_PAGES * PAGE_SIZE);
+        // Carica il resto in background
+        if (!loadingAll) {
+            loadingAll = true;
+            setTimeout(loadAllPagesInBackground, 100);
         }
     } catch (error) {
+        hideLoadingBar();
         console.error('Error loading series:', error);
         showError('Errore nel caricamento delle serie TV: ' + error.message);
     }
+}
+
+// Caricamento background di tutte le pagine (senza barra)
+async function loadAllPagesInBackground() {
+    for (let page = 11; page <= 500; page++) {
+        const trending = await TMDBAPI.getTrendingShows(page);
+        const popular = await TMDBAPI.getAllShows(page);
+        allShows = allShows.concat(trending, popular);
+        loadedPages = page;
+    }
+    setAndSortShows(allShows);
+    updateFilterOptions(uiState.shows);
+    renderSeries(uiState.shows);
+    updatePagination(TOTAL_PAGES * PAGE_SIZE);
+}
+
+// Funzione per deduplicare e ordinare per popolarità
+function dedupeAndSort(shows) {
+    const unique = {};
+    shows.forEach(show => { if (show && show.id) unique[show.id] = show; });
+    return Object.values(unique).sort((a, b) => b.popularity - a.popularity);
 }
 
 // Traduzioni complete per TVMaze
@@ -176,31 +219,30 @@ const translations = {
     }
 };
 
+// --- FILTRI ADATTATI E MIGLIORATI ---
 function updateFilterOptions(shows) {
-    // Raccogli tutti i generi unici
-    const genres = new Set();
-    const statuses = new Set();
+    // Raccogli tutti i generi unici (ID)
+    const genreIds = new Set();
     const years = new Set();
-
+    const langs = new Set();
     shows.forEach(show => {
-        if (show.genres && Array.isArray(show.genres)) {
-            show.genres.forEach(genre => {
-                genres.add(genre);
-            });
+        if (show.genre_ids && Array.isArray(show.genre_ids)) {
+            show.genre_ids.forEach(id => genreIds.add(id));
         }
-        if (show.status) {
-            statuses.add(show.status);
+        if (show.first_air_date) {
+            years.add(show.first_air_date.slice(0, 4));
         }
-        if (show.premiered) {
-            const year = new Date(show.premiered).getFullYear();
-            years.add(year);
+        if (show.original_language) {
+            langs.add(show.original_language);
         }
     });
-
-    // Aggiorna i select dei filtri con le traduzioni
-    updateFilterSelect('genreFilter', Array.from(genres).sort(), translations.genres);
-    updateFilterSelect('statusFilter', Array.from(statuses).sort(), translations.status);
+    const genreOptions = Array.from(genreIds)
+        .filter(id => typeof id === 'number' || !isNaN(Number(id)))
+        .map(id => ({ id, name: tmdbGenres[id] ? String(tmdbGenres[id]) : `Genere #${id}` }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    updateGenreSelect('genreFilter', genreOptions);
     updateFilterSelect('yearFilter', Array.from(years).sort((a, b) => b - a));
+    updateFilterSelect('langFilter', Array.from(langs).sort());
 }
 
 function updateFilterSelect(id, options, translations = null) {
@@ -282,137 +324,109 @@ function calculateSimilarity(str1, str2) {
     return 1 - (distance / maxLength);
 }
 
+// --- FILTRAGGIO AVANZATO ---
+const TOP_TITLES = [
+  'Stranger Things',
+  'Arcane',
+  'Loki',
+  'Breaking Bad',
+  'Game of Thrones',
+  'The Witcher',
+  'The Mandalorian',
+  'The Boys',
+  'La Casa di Carta',
+  'Dark',
+  'The Crown',
+  'Peaky Blinders',
+  'Squid Game',
+  'The Last of Us',
+  'Wednesday',
+  'House of the Dragon',
+  'The Umbrella Academy',
+  'Better Call Saul',
+  'Black Mirror',
+  'Westworld',
+  'The Queen\'s Gambit',
+  'Lost',
+  'Sherlock',
+  'Friends',
+  'How I Met Your Mother',
+  'The Office',
+  'Prison Break',
+  'Vikings',
+  'Narcos',
+  'Dexter',
+  'True Detective',
+  'Fargo',
+  'Chernobyl',
+  'Mindhunter',
+  'Stranger',
+  'The Handmaid\'s Tale',
+  'Ozark',
+  'Succession',
+  'The Expanse',
+  'Rick and Morty',
+  'BoJack Horseman',
+  'The Good Place',
+  'Brooklyn Nine-Nine',
+  'The Big Bang Theory',
+  'Modern Family',
+  'Gomorra',
+  'Romanzo Criminale',
+  'Suburra',
+  'SKAM Italia',
+  'Mare Fuori'
+];
+
 function filterSeries(series) {
     const searchTerm = uiState.filters.search.toLowerCase();
     const normalizedSearchTerm = normalizeString(searchTerm);
     const searchTermWords = normalizedSearchTerm.split(' ').filter(word => word.length > 1);
     const searchAcronym = getAcronym(uiState.filters.search);
-    
-    // Filtra le serie in base ai criteri
-    const filteredSeries = series.filter(show => {
-        const normalizedName = normalizeString(show.name);
-        const normalizedSummary = show.summary ? normalizeString(show.summary) : '';
-        const showAcronym = getAcronym(show.name);
-
-        // Logica di ricerca
-        const matchesSearch = !searchTerm || 
-            normalizedName.includes(normalizedSearchTerm) ||
-            normalizedSummary.includes(normalizedSearchTerm) ||
-            (searchAcronym.length > 1 && showAcronym === searchAcronym) ||
-            searchTermWords.some(word => 
-                normalizedName.includes(word) || 
-                normalizedSummary.includes(word)
-            );
-
-        // Logica per il tipo di contenuto
-        const matchesType = !uiState.filters.type || (() => {
-            switch(uiState.filters.type) {
-                case 'Scripted':
-                    return show.type === 'Scripted';
-                case 'Animation':
-                    return show.type === 'Animation';
-                case 'Anime':
-                    return show.type === 'Anime';
-                case 'Documentary':
-                    return show.type === 'Documentary';
-                default:
-                    return true;
-            }
-        })();
-        
-        const matchesGenre = !uiState.filters.genre || 
-            (show.genres && show.genres.includes(uiState.filters.genre));
-        
-        const matchesStatus = !uiState.filters.status || 
-            show.status === uiState.filters.status;
-        
-        const matchesRating = !uiState.filters.rating || 
-            (show.rating?.average && show.rating.average >= uiState.filters.rating);
-        
-        const matchesYear = !uiState.filters.year || 
-            (show.premiered && show.premiered.startsWith(uiState.filters.year));
-
-        return matchesSearch && matchesType && matchesGenre && 
-               matchesStatus && matchesRating && matchesYear;
+    const selectedGenre = uiState.filters.genre;
+    const selectedYear = uiState.filters.year;
+    const selectedRating = parseFloat(uiState.filters.rating) || 0;
+    const selectedLang = uiState.filters.lang || '';
+    const onlyHighRated = document.getElementById('onlyHighRated')?.checked;
+    // Filtro avanzato
+    let filtered = series.filter(show => {
+        // Ricerca testuale
+        const normalizedName = normalizeString(show.name || show.title || '');
+        const matchesSearch = !searchTerm || normalizedName.includes(normalizedSearchTerm) ||
+            (searchAcronym.length > 1 && getAcronym(show.name || show.title || '') === searchAcronym) ||
+            searchTermWords.some(word => normalizedName.includes(word));
+        // Genere
+        const matchesGenre = !selectedGenre || (show.genre_ids && show.genre_ids.includes(Number(selectedGenre)));
+        // Anno
+        const matchesYear = !selectedYear || (show.first_air_date && show.first_air_date.startsWith(selectedYear));
+        // Rating
+        const matchesRating = !selectedRating || (show.vote_average && show.vote_average >= selectedRating);
+        // Lingua
+        const matchesLang = !selectedLang || (show.original_language === selectedLang);
+        // Solo serie top
+        const matchesTop = !onlyHighRated || (
+            show.vote_average >= 7 &&
+            show.vote_count >= 5000 &&
+            show.poster_path &&
+            show.popularity > 100
+        );
+        return matchesSearch && matchesGenre && matchesYear && matchesRating && matchesLang && matchesTop;
     });
-
-    // Calcola il punteggio di rilevanza per ogni serie
-    const scoredSeries = filteredSeries.map(show => {
-        let score = 0;
-
-        // Punteggio base dalla popolarità (weight)
-        score += (show.weight || 0) * 2;
-
-        // Punteggio dal rating
-        if (show.rating?.average) {
-            score += show.rating.average * 10;
-        }
-
-        // Bonus per serie in corso
-        if (show.status === 'Running') {
-            score += 20;
-        }
-
-        // Bonus per serie in inglese
-        if (show.language === 'English') {
-            score += 10;
-        }
-
-        // Bonus per serie recenti
-        if (show.premiered) {
-            const year = new Date(show.premiered).getFullYear();
-            const currentYear = new Date().getFullYear();
-            const yearDiff = currentYear - year;
-            if (yearDiff <= 1) {
-                score += 30;
-            } else if (yearDiff <= 3) {
-                score += 20;
-            } else if (yearDiff <= 5) {
-                score += 10;
+    // Priorità: metti sempre in cima le serie "top" se presenti
+    const topSeries = [];
+    const rest = [];
+    filtered.forEach(show => {
+        const name = (show.name || show.title || '').toLowerCase();
+        if (TOP_TITLES.some(t => name === t.toLowerCase())) {
+            topSeries.push(show);
+        } else {
+            rest.push(show);
             }
-        }
-
-        // Se c'è una ricerca testuale, aggiungi punteggio di rilevanza
-        if (searchTerm) {
-            const normalizedName = normalizeString(show.name);
-            const normalizedSummary = show.summary ? normalizeString(show.summary) : '';
-            const showAcronym = getAcronym(show.name);
-
-            // Match esatto del titolo
-            if (normalizedName === normalizedSearchTerm) {
-                score += 100;
-            }
-            // Match dell'acronimo
-            else if (searchAcronym.length > 1 && showAcronym === searchAcronym) {
-                score += 80;
-            }
-            // Il titolo inizia con il termine di ricerca
-            else if (normalizedName.startsWith(normalizedSearchTerm)) {
-                score += 60;
-            }
-            // Match parziale nel titolo
-            else {
-                const titleSimilarity = calculateSimilarity(normalizedName, normalizedSearchTerm);
-                score += titleSimilarity * 40;
-            }
-
-            // Match nella descrizione
-            if (normalizedSummary) {
-                searchTermWords.forEach(word => {
-                    if (normalizedSummary.includes(word)) {
-                        score += 5;
-                    }
-                });
-            }
-        }
-
-        return { show, score };
     });
-
-    // Ordina per punteggio e restituisci solo le serie
-    return scoredSeries
-        .sort((a, b) => b.score - a.score)
-        .map(({ show }) => show);
+    // Ordina le top per popolarità, poi le altre
+    topSeries.sort((a, b) => b.popularity - a.popularity);
+    rest.sort((a, b) => b.popularity - a.popularity);
+    return [...topSeries, ...rest];
 }
 
 function clearFilters() {
@@ -422,7 +436,8 @@ function clearFilters() {
         genre: '',
         status: '',
         rating: 0,
-        year: ''
+        year: '',
+        lang: ''
     };
 
     // Reset all filter inputs
@@ -432,18 +447,75 @@ function clearFilters() {
     document.getElementById('statusFilter').value = '';
     document.getElementById('ratingFilter').value = '0';
     document.getElementById('yearFilter').value = '';
+    document.getElementById('langFilter').value = '';
+    document.getElementById('onlyHighRated').checked = false; // Reset checkbox
 
     // Re-render the series
     renderSeries(uiState.shows);
 }
 
-function renderSeries(series) {
+// Mappa dei generi TMDb (può essere aggiornata dinamicamente)
+const tmdbGenres = {
+    10759: 'Action & Adventure',
+    16: 'Animation',
+    35: 'Comedy',
+    80: 'Crime',
+    99: 'Documentary',
+    18: 'Drama',
+    10751: 'Family',
+    10762: 'Kids',
+    9648: 'Mystery',
+    10763: 'News',
+    10764: 'Reality',
+    10765: 'Sci-Fi & Fantasy',
+    10766: 'Soap',
+    10767: 'Talk',
+    10768: 'War & Politics',
+    37: 'Western'
+};
+
+function truncate(str, n) {
+    return str && str.length > n ? str.substr(0, n - 1) + '…' : str;
+}
+
+// Modifica getProviders per restituire logo+link
+async function getProviders(showId) {
+    try {
+        const providers = await TMDBAPI.getShowProviders(showId);
+        // Preferisci flatrate (streaming), poi buy, poi rent
+        let entries = [];
+        if (providers && providers.flatrate) {
+            entries = providers.flatrate.map(p => ({
+                logo: p.logo_path ? `https://image.tmdb.org/t/p/w45${p.logo_path}` : null,
+                name: p.provider_name || p.provider_name || guessProviderName(p.logo_path) || 'la piattaforma',
+                link: p.link || providers.link || null
+            })).filter(e => e.logo);
+        } else if (providers && providers.buy) {
+            entries = providers.buy.map(p => ({
+                logo: p.logo_path ? `https://image.tmdb.org/t/p/w45${p.logo_path}` : null,
+                name: p.provider_name || p.provider_name || guessProviderName(p.logo_path) || 'la piattaforma',
+                link: p.link || providers.link || null
+            })).filter(e => e.logo);
+        } else if (providers && providers.rent) {
+            entries = providers.rent.map(p => ({
+                logo: p.logo_path ? `https://image.tmdb.org/t/p/w45${p.logo_path}` : null,
+                name: p.provider_name || p.provider_name || guessProviderName(p.logo_path) || 'la piattaforma',
+                link: p.link || providers.link || null
+            })).filter(e => e.logo);
+        }
+        return entries;
+    } catch {
+        return [];
+    }
+}
+
+async function renderSeries(series) {
     const container = document.getElementById('seriesContainer');
     if (!container) return;
 
     const filteredSeries = filterSeries(series);
-    const startIndex = (uiState.currentPage - 1) * config.itemsPerPage;
-    const endIndex = startIndex + config.itemsPerPage;
+    const startIndex = (uiState.currentPage - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
     const paginatedSeries = filteredSeries.slice(startIndex, endIndex);
 
     if (filteredSeries.length === 0) {
@@ -459,49 +531,48 @@ function renderSeries(series) {
         updatePagination(0);
         return;
     }
-    
     container.classList.add('has-results');
     
-    container.innerHTML = paginatedSeries.map(show => `
+    container.innerHTML = paginatedSeries.map(show => {
+        const posterUrl = show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : 'assets/images/placeholder.png';
+        const year = show.first_air_date ? show.first_air_date.slice(0, 4) : 'N/A';
+        const genres = show.genre_ids ? show.genre_ids.map(id => tmdbGenres[id] || id).join(', ') : 'N/A';
+        const rating = show.vote_average ? show.vote_average.toFixed(1) : 'N/A';
+        return `
         <div class="series-card" onclick="showSeriesDetails(${show.id})">
             <div class="series-image">
-                <img src="${show.image?.medium || 'assets/images/placeholder.png'}" 
-                     alt="${security.sanitizeInput(show.name)}"
-                     loading="lazy">
+                <img src="${posterUrl}" alt="${security.sanitizeInput(show.name || show.title)}" loading="lazy">
             </div>
             <div class="series-info">
-                <h3 class="series-title">${security.sanitizeInput(show.name)}</h3>
+                <h3 class="series-title">${security.sanitizeInput(show.name || show.title)}</h3>
                 <div class="series-meta">
                     <span class="series-rating">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
                         </svg>
-                        ${show.rating?.average || 'N/A'}
+                        ${rating}
                     </span>
-                    <span class="series-genre">${show.genres?.map(genre => translations.genres[genre] || genre).join(', ') || 'N/A'}</span>
+                    <span class="series-year">${year}</span>
+                    <span class="series-genre">${genres}</span>
                 </div>
             </div>
             </div>
-    `).join('');
-
+        `;
+    }).join('');
     updatePagination(filteredSeries.length);
 }
 
+// Modifica la paginazione per mostrare tutte le pagine
 function updatePagination(totalItems) {
     const paginationContainer = document.getElementById('pagination');
     if (!paginationContainer) return;
-
-    const totalPages = Math.ceil(totalItems / config.itemsPerPage);
-    
-    // Non mostrare la paginazione se c'è una sola pagina
+    const totalPages = Math.ceil(totalItems / PAGE_SIZE);
     if (totalPages <= 1) {
         paginationContainer.innerHTML = '';
         return;
     }
-    
     let paginationHTML = '';
-    
-    // Pulsante "Precedente" con icona freccia
+    // Pulsante "Precedente"
     paginationHTML += `
         <button class="pagination-button" 
                 ${uiState.currentPage === 1 ? 'disabled' : ''} 
@@ -512,50 +583,25 @@ function updatePagination(totalItems) {
             </svg>
         </button>
     `;
-    
-    // Calcola quali numeri di pagina mostrare
-    let pagesToShow = [];
-    if (totalPages <= 7) {
-        // Se ci sono 7 o meno pagine, mostra tutte
-        pagesToShow = Array.from({length: totalPages}, (_, i) => i + 1);
-    } else {
-        // Mostra sempre la prima pagina
-        pagesToShow.push(1);
-        
-        if (uiState.currentPage > 3) {
-            pagesToShow.push('...');
-        }
-        
-        // Mostra le pagine intorno alla pagina corrente
-        for (let i = Math.max(2, uiState.currentPage - 1); 
-             i <= Math.min(totalPages - 1, uiState.currentPage + 1); i++) {
-            pagesToShow.push(i);
-        }
-        
-        if (uiState.currentPage < totalPages - 2) {
-            pagesToShow.push('...');
-        }
-        
-        // Mostra sempre l'ultima pagina
-        pagesToShow.push(totalPages);
-    }
-
-    // Crea i pulsanti per ogni numero di pagina
-    pagesToShow.forEach(page => {
-        if (page === '...') {
-            paginationHTML += `<span class="pagination-ellipsis">...</span>`;
-        } else {
+    // Mostra sempre la pagina 1
             paginationHTML += `
-                <button class="pagination-button ${uiState.currentPage === page ? 'active' : ''}"
-                        onclick="changePage(${page})"
-                        aria-label="Pagina ${page}">
-                    ${page}
-                </button>
+        <button class="pagination-button ${uiState.currentPage === 1 ? 'active' : ''}"
+                onclick="changePage(1)"
+                aria-label="Pagina 1">1</button>
+    `;
+    // Mostra le pagine vicine a quella attuale (max 2 prima e 2 dopo)
+    let start = Math.max(2, uiState.currentPage - 2);
+    let end = Math.min(totalPages, uiState.currentPage + 2);
+    if (start > 2) paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+    for (let i = start; i <= end; i++) {
+        paginationHTML += `
+            <button class="pagination-button ${uiState.currentPage === i ? 'active' : ''}"
+                    onclick="changePage(${i})"
+                    aria-label="Pagina ${i}">${i}</button>
             `;
         }
-    });
-    
-    // Pulsante "Successivo" con icona freccia
+    // Nessun salto diretto all'ultima pagina
+    // Pulsante "Successivo"
     paginationHTML += `
         <button class="pagination-button" 
                 ${uiState.currentPage === totalPages ? 'disabled' : ''} 
@@ -566,24 +612,38 @@ function updatePagination(totalItems) {
             </svg>
         </button>
     `;
-    
     paginationContainer.innerHTML = paginationHTML;
 }
 
-function changePage(page) {
-    // Verifica che la pagina sia valida
-    const totalPages = Math.ceil(filterSeries(uiState.shows).length / config.itemsPerPage);
+// Modifica changePage per caricare la pagina al volo se serve
+window.changePage = async function(page) {
+    const totalPages = Math.ceil((TOTAL_PAGES * PAGE_SIZE) / PAGE_SIZE);
     if (page < 1 || page > totalPages) return;
-    
     uiState.currentPage = page;
-    renderSeries(uiState.shows);
-    
-    // Scroll to top of the series container
-    const container = document.getElementById('seriesContainer');
-    if (container) {
-        container.scrollIntoView({ behavior: 'smooth' });
+    const needed = page * PAGE_SIZE;
+    // Se la pagina richiesta non è ancora caricata, carica solo quella
+    if (allShows.length < needed) {
+        showLoadingBar(loadedPages, TOTAL_PAGES);
+        // Calcola quali pagine trending/popolari servono
+        const toLoad = [];
+        for (let p = loadedPages + 1; p <= page; p++) toLoad.push(p);
+        for (const p of toLoad) {
+            const trending = await TMDBAPI.getTrendingShows(p);
+            const popular = await TMDBAPI.getAllShows(p);
+            allShows = allShows.concat(trending, popular);
+            loadedPages = Math.max(loadedPages, p);
+            showLoadingBar(loadedPages, TOTAL_PAGES);
+        }
+        hideLoadingBar();
+        setAndSortShows(allShows);
+        updateFilterOptions(uiState.shows);
     }
-}
+    renderSeries(uiState.shows);
+    updatePagination(TOTAL_PAGES * PAGE_SIZE);
+    // Scroll to top
+    const container = document.getElementById('seriesContainer');
+    if (container) container.scrollIntoView({ behavior: 'smooth' });
+};
 
 async function searchShowOnJustWatch(title) {
     try {
@@ -633,22 +693,44 @@ async function searchShowOnJustWatch(title) {
     }
 }
 
+// Utility per mappare logo a nome piattaforma
+const PROVIDER_NAMES = {
+  'netflix': 'Netflix',
+  'prime': 'Prime Video',
+  'disney': 'Disney+',
+  'hbo': 'HBO',
+  'hulu': 'Hulu',
+  'apple': 'Apple TV+',
+  'paramount': 'Paramount+',
+  'showtime': 'Showtime',
+  'max': 'Max',
+  'amc': 'AMC',
+  // fallback generico
+};
+function guessProviderName(logoUrl) {
+  if (!logoUrl) return 'la piattaforma';
+  const match = logoUrl.match(/([a-z]+)\.(png|jpg|jpeg)$/i);
+  if (match && PROVIDER_NAMES[match[1]]) return PROVIDER_NAMES[match[1]];
+  if (match) return match[1].charAt(0).toUpperCase() + match[1].slice(1);
+  return 'la piattaforma';
+}
+
+// MODALE: mostra tutte le info avanzate
 async function showSeriesDetails(showIdOrObject) {
     try {
         const showId = typeof showIdOrObject === 'object' ? showIdOrObject.id : showIdOrObject;
-        
-        if (!window.TVMazeAPI) {
-            throw new Error('TVMazeAPI non è disponibile');
-        }
-
-        const details = await window.TVMazeAPI.getShowDetails(showId);
-        const seasons = await window.TVMazeAPI.getShowSeasons(showId);
-        
-        if (!details) {
-            throw new Error('Impossibile caricare i dettagli della serie');
-        }
-
-        // Crea il contenuto del modal
+        if (!window.TMDBAPI) throw new Error('TMDBAPI non è disponibile');
+        const details = await window.TMDBAPI.getShowDetails(showId);
+        const seasons = await window.TMDBAPI.getShowSeasons(showId);
+        const providers = await getProviders(showId);
+        const externalIds = await window.TMDBAPI.getExternalIds(showId);
+        if (!details) throw new Error('Impossibile caricare i dettagli della serie');
+        const posterUrl = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : 'assets/images/placeholder.png';
+        const year = details.first_air_date ? details.first_air_date.slice(0, 4) : 'N/A';
+        const genres = details.genres ? details.genres.map(g => g.name).join(', ') : 'N/A';
+        const rating = details.vote_average ? details.vote_average.toFixed(1) : 'N/A';
+        const description = details.overview || 'Nessuna descrizione disponibile.';
+        const seasonsCount = seasons.length;
         const modalHTML = `
             <div class="series-modal">
                 <div class="modal-content">
@@ -660,107 +742,89 @@ async function showSeriesDetails(showIdOrObject) {
                     </button>
                     <div class="modal-header">
                         <div class="modal-image">
-                            <img src="${details.image?.original || details.image?.medium || 'assets/images/no-image.png'}" 
-                                 alt="${details.name}"
-                                 loading="lazy">
+                            <img src="${posterUrl}" alt="${details.name || details.title}" loading="lazy">
                         </div>
                         <div class="modal-info">
-                            <h2>${details.name}</h2>
+                            <h2>${details.name || details.title}</h2>
                             <div class="modal-meta">
-                                ${details.rating?.average ? `
                                     <span class="rating">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                                         </svg>
-                                        ${details.rating.average}
-                                    </span>` : ''}
-                                ${details.genres?.length ? `
-                                    <span class="genres">${details.genres.map(genre => translations.genres[genre] || genre).join(', ')}</span>` : ''}
-                                ${details.premiered ? `
-                                    <span class="year">${new Date(details.premiered).getFullYear()}</span>` : ''}
-                                ${details.status ? `
-                                    <span class="status ${details.status.toLowerCase()}">${translations.status[details.status] || details.status}</span>` : ''}
-                                ${details.type !== 'Movie' ? `
-                                    <span class="seasons">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                                            <line x1="9" y1="21" x2="9" y2="9"></line>
-                                        </svg>
-                                        ${seasons.length} ${seasons.length === 1 ? 'stagione' : 'stagioni'}
-                                    </span>` : ''}
+                                    ${rating}
+                                </span>
+                                <span class="genres">${genres}</span>
+                                <span class="year">${year}</span>
+                                <span class="seasons">${seasonsCount} ${seasonsCount === 1 ? 'stagione' : 'stagioni'}</span>
                             </div>
-                            
-                            <div class="streaming-section">
-                                <h3>${translations.messages.whereToWatch}</h3>
-                                <div class="streaming-info">
-                                    <div class="info-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                        </svg>
-                                    </div>
-                                    <div class="info-text">
-                                        <p>La sezione delle piattaforme streaming sarà presto disponibile!</p>
-                                        <p>Stiamo lavorando per integrare le informazioni su dove guardare questa serie.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-body">
-                        ${details.summary ? `
                             <div class="series-description">
-                                <h3>${translations.messages.plot}</h3>
-                                <div class="description-note">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                    </svg>
-                                    <span>La descrizione è disponibile solo in inglese</span>
-                                </div>
-                                ${details.summary}
-                            </div>` : ''}
+                                <h3>Trama</h3>
+                                <p>${description}</p>
+                                    </div>
+                            ${providers.length > 0
+                              ? `<div class="series-providers-modal">
+                                    <h3>Dove guardare</h3>
+                                    <div class="providers-logos-row">
+                                        ${providers.map(p => `
+                                          <div class="provider-logo-wrapper">
+                                            <img src="${p.logo}" class="provider-logo" alt="Provider">
+                                            <div class="provider-tooltip" style="display:none"></div>
+                                            <div class="provider-name" style="display:none">${p.name}</div>
+                                            <div class="provider-name-always">${p.name}</div>
+                                          </div>
+                                        `).join('')}
+                                    </div>
+                                </div>`
+                              : ''}
+                            </div>
                     </div>
                 </div>
             </div>`;
-
         // Rimuovi eventuali modali esistenti
         const existingModal = document.querySelector('.series-modal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-
-        // Aggiungi il nuovo modal al DOM
+        if (existingModal) existingModal.remove();
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-        // Aggiungi gli event listener
         const modal = document.querySelector('.series-modal');
         const closeButton = modal.querySelector('.modal-close');
-
-        closeButton.addEventListener('click', () => {
-            modal.remove();
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
-
-        // Aggiungi gestione della chiusura con ESC
+        closeButton.addEventListener('click', () => { modal.remove(); });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
         document.addEventListener('keydown', function handleEsc(e) {
-            if (e.key === 'Escape') {
-                modal.remove();
-                document.removeEventListener('keydown', handleEsc);
-            }
+            if (e.key === 'Escape') { modal.remove(); document.removeEventListener('keydown', handleEsc); }
         });
-
+        // Tooltip/badge su hover/click provider
+        setTimeout(() => {
+          document.querySelectorAll('.provider-logo-wrapper').forEach(wrapper => {
+            const img = wrapper.querySelector('.provider-logo');
+            const tooltip = wrapper.querySelector('.provider-tooltip');
+            const providerName = wrapper.querySelector('.provider-name')?.textContent || 'la piattaforma';
+            function showTip() {
+              // Chiudi tutti gli altri tooltip attivi
+              document.querySelectorAll('.provider-tooltip.active').forEach(t => t.classList.remove('active'));
+              tooltip.textContent = `Serie visibile su ${providerName}`;
+              tooltip.style.display = 'block';
+              tooltip.classList.add('active');
+            }
+            function hideTip() {
+              tooltip.classList.remove('active');
+              setTimeout(() => { tooltip.style.display = 'none'; }, 200);
+            }
+            // Tooltip solo su desktop (hover/focus/click), non su mobile
+            const isMobile = window.matchMedia('(max-width: 600px)').matches;
+            if (!isMobile) {
+              img.addEventListener('mouseenter', showTip);
+              img.addEventListener('mouseleave', hideTip);
+              img.addEventListener('focus', showTip);
+              img.addEventListener('blur', hideTip);
+              img.addEventListener('click', () => {
+                showTip();
+                setTimeout(hideTip, 2000);
+              });
+            }
+          });
+        }, 0);
     } catch (error) {
         console.error('Error showing series details:', error);
-        showError(translations.messages.error);
+        showError('Errore nel caricamento dei dettagli della serie.');
     }
 }
 
@@ -783,7 +847,47 @@ function showError(message) {
     }
 }
 
-// Initialize all features
+// Funzione per mostrare la barra di caricamento
+function showLoadingBar(progress, total) {
+    let loader = document.getElementById('catalogLoader');
+    if (!loader) {
+        loader = document.createElement('div');
+        loader.id = 'catalogLoader';
+        loader.innerHTML = `
+            <div class="loading-bar-container">
+                <div class="loading-bar" style="width:0%"></div>
+                <span class="loading-text">Caricamento catalogo in corso...</span>
+            </div>
+        `;
+        // Inserisco la barra prima del container delle serie
+        const seriesContainer = document.getElementById('seriesContainer');
+        if (seriesContainer && seriesContainer.parentNode) {
+            seriesContainer.parentNode.insertBefore(loader, seriesContainer);
+        } else {
+            document.body.appendChild(loader);
+        }
+    }
+    const bar = loader.querySelector('.loading-bar');
+    if (bar) bar.style.width = ((progress / total) * 100) + '%';
+    const text = loader.querySelector('.loading-text');
+    if (text) text.textContent = `Caricamento catalogo in corso... (${progress}/${total})`;
+    loader.style.display = 'flex';
+}
+
+function hideLoadingBar() {
+    const loader = document.getElementById('catalogLoader');
+    if (loader) loader.style.display = 'none';
+}
+
+// All'avvio, rimuovi forzatamente ogni bottone 'Carica altre' residuo
+function removeLoadMoreBtn() {
+    const btn = document.getElementById('loadMoreBtn');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+}
+document.addEventListener('DOMContentLoaded', removeLoadMoreBtn);
+
+// 5. Inizializza il bottone dopo il primo caricamento
+// (dopo loadSeries)
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     loadSeries();
@@ -791,15 +895,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Search input with debounce
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('input', debounce(() => {
-            uiState.filters.search = searchInput.value;
+        searchInput.addEventListener('input', debounce(async () => {
+            const query = searchInput.value.trim();
+            uiState.filters.search = query;
             uiState.currentPage = 1;
+            if (query.length > 0) {
+                // Ricerca live su TMDb
+                const results = await TMDBAPI.searchShows(query, 1);
+                renderSeries(results);
+                updatePagination(results.length); // Mostra paginazione solo per i risultati trovati
+            } else {
+                // Mostra solo le popolari caricate localmente
             renderSeries(uiState.shows);
+                updatePagination(uiState.shows.length);
+            }
         }, config.debounceDelay));
     }
 
     // Filter change handlers
-    const filterIds = ['typeFilter', 'genreFilter', 'statusFilter', 'ratingFilter', 'yearFilter'];
+    const filterIds = ['typeFilter', 'genreFilter', 'statusFilter', 'ratingFilter', 'yearFilter', 'langFilter'];
     filterIds.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
@@ -823,6 +937,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
     }
+
+    // Solo serie top checkbox
+    const onlyHighRatedCheckbox = document.getElementById('onlyHighRated');
+    if (onlyHighRatedCheckbox) {
+        onlyHighRatedCheckbox.addEventListener('change', () => {
+            uiState.filters.onlyHighRated = onlyHighRatedCheckbox.checked;
+            uiState.currentPage = 1;
+            renderSeries(uiState.shows);
+        });
+    }
 });
 
 // Rendi la funzione changePage globale
@@ -834,9 +958,24 @@ window.showSeriesDetails = showSeriesDetails;
 // Funzione per aggiornare l'interfaccia con nuove serie
 window.updateUI = function(shows) {
     if (shows && shows.length > 0) {
-        uiState.shows = shows;
-        updateFilterOptions(shows);
-        renderSeries(shows);
-        updatePagination(shows.length);
+        setAndSortShows(shows);
+        updateFilterOptions(uiState.shows);
+        renderSeries(uiState.shows);
+        updatePagination(uiState.shows.length);
     }
 }; 
+
+// Funzione per ordinare e impostare le serie nello stato globale
+function setAndSortShows(shows) {
+    uiState.shows = dedupeAndSort(shows);
+}
+
+// Nuova funzione per il select dei generi (mostra nome, salva id)
+function updateGenreSelect(id, options) {
+    const select = document.getElementById(id);
+    if (select) {
+        const currentValue = select.value;
+        select.innerHTML = `<option value="">Tutti i generi</option>` +
+            options.map(opt => `<option value="${opt.id}" ${String(opt.id) === currentValue ? 'selected' : ''}>${opt.name}</option>`).join('');
+    }
+} 
