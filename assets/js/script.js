@@ -430,16 +430,6 @@ function filterSeries(series) {
 }
 
 function clearFilters() {
-    uiState.filters = {
-        search: '',
-        type: '',
-        genre: '',
-        status: '',
-        rating: 0,
-        year: '',
-        lang: ''
-    };
-
     // Reset all filter inputs
     document.getElementById('searchInput').value = '';
     document.getElementById('typeFilter').value = '';
@@ -450,9 +440,28 @@ function clearFilters() {
     document.getElementById('langFilter').value = '';
     document.getElementById('onlyHighRated').checked = false; // Reset checkbox
 
+    // Ripopola i select con tutte le opzioni e default
+    updateFilterOptions(uiState.shows);
+
+    // Aggiorna lo stato dei filtri leggendo dagli input
+    uiState.filters = {
+        search: document.getElementById('searchInput').value,
+        type: document.getElementById('typeFilter').value,
+        genre: document.getElementById('genreFilter').value,
+        status: document.getElementById('statusFilter').value,
+        rating: document.getElementById('ratingFilter').value,
+        year: document.getElementById('yearFilter').value,
+        lang: document.getElementById('langFilter').value
+    };
+
+    // Torna sempre alla prima pagina
+    uiState.currentPage = 1;
+
     // Re-render the series
     renderSeries(uiState.shows);
 }
+// Rendi la funzione clearFilters globale
+window.clearFilters = clearFilters;
 
 // Mappa dei generi TMDb (può essere aggiornata dinamicamente)
 const tmdbGenres = {
@@ -524,10 +533,13 @@ async function renderSeries(series) {
             <div class="loading-container">
             <div class="no-results">
                     <p>Nessun risultato trovato</p>
-                    <button onclick="clearFilters()" class="clear-filters">Cancella filtri</button>
+                    <button id="clearFiltersDynamic" class="clear-filters">Cancella filtri</button>
                 </div>
             </div>
         `;
+        // Aggiungi event listener anche al bottone creato dinamicamente
+        const clearBtn = document.getElementById('clearFiltersDynamic');
+        if (clearBtn) clearBtn.addEventListener('click', clearFilters);
         updatePagination(0);
         return;
     }
@@ -978,4 +990,362 @@ function updateGenreSelect(id, options) {
         select.innerHTML = `<option value="">Tutti i generi</option>` +
             options.map(opt => `<option value="${opt.id}" ${String(opt.id) === currentValue ? 'selected' : ''}>${opt.name}</option>`).join('');
     }
+} 
+
+// --- Netflix Style Catalog Loader (senza paginazione interna, slider continuo) ---
+
+const MIN_YEAR = 2022;
+function filterRecentAndValid(shows) {
+  return (shows || [])
+    .filter(s => s && s.poster_path && s.first_air_date && s.first_air_date.slice(0,4) >= MIN_YEAR)
+    .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+}
+
+const CATEGORIES = [
+  { id: 'tendenza', label: 'Tendenza', fetch: (page=1) => TMDBAPI.getTrendingShows(page) },
+  { id: 'popolari', label: 'Popolari', fetch: (page=1) => TMDBAPI.getMostPopularShows(page) },
+  { id: 'nuove-uscite', label: 'Nuove Uscite', fetch: (page=1) => TMDBAPI.getRecentShows(page) },
+  { id: 'top10', label: 'Top 10', fetch: () => TMDBAPI.getTrendingShows(1).then(list => list.slice(0, 10)) },
+  { id: 'azione', label: 'Azione', fetch: (page=1) => TMDBAPI.getShowsByGenre(10759, page) },
+  { id: 'commedia', label: 'Commedia', fetch: (page=1) => TMDBAPI.getShowsByGenre(35, page) },
+  { id: 'dramma', label: 'Dramma', fetch: (page=1) => TMDBAPI.getShowsByGenre(18, page) },
+  { id: 'fantascienza', label: 'Fantascienza', fetch: (page=1) => TMDBAPI.getShowsByGenre(10765, page) },
+  { id: 'animazione', label: 'Animazione', fetch: (page=1) => TMDBAPI.getShowsByGenre(16, page) },
+  { id: 'crime', label: 'Crime', fetch: (page=1) => TMDBAPI.getShowsByGenre(80, page) }
+];
+
+// --- Ricerca avanzata stile Netflix ---
+let searchSlider = null;
+
+async function showSearchResults(query) {
+  if (!query) {
+    if (searchSlider) searchSlider.style.display = 'none';
+    return;
+  }
+  let results = [];
+  for (let page = 1; page <= 5 && results.length < 100; page++) {
+    const pageResults = await TMDBAPI.searchShows(query, page);
+    if (!pageResults || pageResults.length === 0) break;
+    results = results.concat(pageResults);
+  }
+  renderSearchSlider(results);
+}
+
+function renderSearchSlider(series) {
+  if (!searchSlider) {
+    searchSlider = document.createElement('section');
+    searchSlider.className = 'search-slider-section';
+    searchSlider.innerHTML = `
+      <h2>Risultati ricerca</h2>
+      <div class="series-slider" id="search-slider"></div>
+    `;
+    const main = document.querySelector('.catalog-main .container');
+    if (main) main.prepend(searchSlider);
+  }
+  const slider = searchSlider.querySelector('#search-slider');
+  slider.innerHTML = '';
+  (series || []).forEach(show => {
+    const card = document.createElement('div');
+    card.className = 'series-card';
+    card.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" loading="lazy">
+      <div class="series-info">
+        <div class="series-title">${show.name}</div>
+        <div class="series-meta">
+          <span>${show.first_air_date ? show.first_air_date.slice(0,4) : ''}</span>
+          <span class="series-rating">⭐ ${show.vote_average ? show.vote_average.toFixed(1) : '-'}</span>
+        </div>
+      </div>
+    `;
+    card.onclick = () => openModal(show.id);
+    slider.appendChild(card);
+  });
+  searchSlider.style.display = (series && series.length) ? '' : 'none';
+}
+
+// Hook input ricerca
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  searchInput.addEventListener('input', debounce(async () => {
+    const query = searchInput.value.trim();
+    await showSearchResults(query);
+  }, 300));
+}
+
+const CATEGORY_MAX_SERIES = 200;
+const loadedCategoryData = {};
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderAllCategories();
+});
+
+// Filtri per categoria stile Netflix
+// Nessun filtro: mostra almeno 25 serie per categoria, senza limiti di anno o poster
+function filterForCategory(catId, shows) {
+  return (shows || [])
+    .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+}
+
+async function renderAllCategories() {
+  for (const cat of CATEGORIES) {
+    loadedCategoryData[cat.id] = [];
+    renderSkeleton(cat.id);
+    try {
+      let allShows = [];
+      let page = 1;
+      // Carica fino a 10 pagine o almeno 25 serie
+      while (allShows.length < 25 && page <= 10) {
+        const shows = await cat.fetch(page);
+        if (!shows || shows.length === 0) break;
+        allShows = allShows.concat(shows);
+        page++;
+      }
+      // Nessun filtro: solo deduplica e prendi le più popolari
+      const filtered = filterForCategory(cat.id, allShows);
+      const unique = {};
+      filtered.forEach(s => { if (s && s.id) unique[s.id] = s; });
+      loadedCategoryData[cat.id] = Object.values(unique).slice(0, CATEGORY_MAX_SERIES);
+      renderCategory(cat.id);
+    } catch (e) {
+      renderCategoryError(cat.id);
+    }
+  }
+}
+
+function renderSkeleton(catId) {
+  const slider = document.getElementById('cat-' + catId);
+  if (slider) {
+    slider.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton-card';
+      slider.appendChild(skeleton);
+    }
+  }
+}
+
+function renderCategory(catId) {
+  const slider = document.getElementById('cat-' + catId);
+  if (!slider) return;
+  slider.innerHTML = '';
+  const shows = loadedCategoryData[catId] || [];
+  shows.forEach(show => {
+    const card = document.createElement('div');
+    card.className = 'series-card';
+    card.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" loading="lazy">
+      <div class="series-info">
+        <div class="series-title">${show.name}</div>
+        <div class="series-meta">
+          <span>${show.first_air_date ? show.first_air_date.slice(0,4) : ''}</span>
+          <span class="series-rating">⭐ ${show.vote_average ? show.vote_average.toFixed(1) : '-'}</span>
+        </div>
+      </div>
+    `;
+    card.onclick = () => openModal(show.id);
+    slider.appendChild(card);
+  });
+  // --- AGGIUNTA: riquadro Carica Altro ---
+  if ((shows.length < CATEGORY_MAX_SERIES) && CATEGORIES.find(c => c.id === catId)) {
+    const loadMore = document.createElement('div');
+    loadMore.className = 'series-card load-more-card';
+    loadMore.innerHTML = `
+      <div class="load-more-inner">
+        <span class="load-more-plus">+</span>
+        <span class="load-more-text">Esplora di più</span>
+      </div>
+    `;
+    loadMore.style.display = 'flex';
+    loadMore.style.alignItems = 'center';
+    loadMore.style.justifyContent = 'center';
+    loadMore.style.cursor = 'pointer';
+    loadMore.onclick = async () => {
+      loadMore.classList.add('loading');
+      const cat = CATEGORIES.find(c => c.id === catId);
+      const PER_LOAD = 20;
+      if (!loadedCategoryData[catId]._lastPageLoaded) loadedCategoryData[catId]._lastPageLoaded = Math.ceil(shows.length / PER_LOAD);
+      loadedCategoryData[catId]._lastPageLoaded++;
+      const page = loadedCategoryData[catId]._lastPageLoaded;
+      const newShows = await cat.fetch(page);
+      if (newShows && newShows.length) {
+        // Aggiungi solo i primi 20 risultati nuovi
+        const existingIds = new Set(loadedCategoryData[catId].map(s => s && s.id));
+        let added = 0;
+        for (let i = 0; i < newShows.length && added < PER_LOAD; i++) {
+          const s = newShows[i];
+          if (s && s.id && !existingIds.has(s.id)) {
+            loadedCategoryData[catId].push(s);
+            added++;
+          }
+        }
+        loadedCategoryData[catId]._lastPageLoaded = page;
+        loadedCategoryData[catId] = loadedCategoryData[catId].slice(0, CATEGORY_MAX_SERIES);
+        renderCategory(catId);
+      } else {
+        loadMore.classList.remove('loading');
+      }
+    };
+    slider.appendChild(loadMore);
+  }
+}
+
+function renderCategoryError(catId) {
+  const slider = document.getElementById('cat-' + catId);
+  if (slider) slider.innerHTML = '<div style="color:#f55;padding:1rem;">Errore nel caricamento</div>';
+}
+
+// --- MODALE DETTAGLIO ---
+async function openModal(showId) {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('series-modal');
+  overlay.style.display = 'block';
+  modal.style.display = 'block';
+  modal.innerHTML = '<div class="skeleton-card" style="width:100%;height:340px;margin-bottom:1rem;"></div>';
+  document.body.style.overflow = 'hidden';
+  try {
+    const show = await TMDBAPI.getShowDetails(showId);
+    const seasons = await TMDBAPI.getShowSeasons(showId);
+    const seasonsCount = seasons.length;
+    // --- AGGIUNTA: badge stagioni ---
+    const seasonBadge = `<span class="season-badge">${seasonsCount} ${seasonsCount === 1 ? 'stagione' : 'stagioni'}</span>`;
+    // --- FINE AGGIUNTA ---
+    // --- AGGIUNTA: recupera providers ---
+    let providers = [];
+    if (typeof getProviders === 'function') {
+      providers = await getProviders(showId);
+    }
+    // --- FINE AGGIUNTA ---
+    modal.innerHTML = `
+      <button onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;font-size:2rem;background:none;border:none;color:#fff;cursor:pointer;">&times;</button>
+      <div style="display:flex;flex-wrap:wrap;gap:2rem;align-items:flex-start;">
+        <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" style="width:200px;border-radius:1rem;">
+        <div style="flex:1;min-width:200px;">
+          <h2 style="margin-bottom:0.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">${show.name} ${seasonBadge}</h2>
+          <div style="color:var(--color-accent);font-weight:700;margin-bottom:0.5rem;">⭐ ${show.vote_average ? show.vote_average.toFixed(1) : '-'}</div>
+          <div style="margin-bottom:1rem;">${show.overview || ''}</div>
+          <div style="color:var(--color-text-secondary);font-size:1rem;">${show.first_air_date ? 'Anno: ' + show.first_air_date.slice(0,4) : ''}</div>
+          <div style="color:var(--color-text-secondary);font-size:1rem;">${show.genres && show.genres.length ? 'Generi: ' + show.genres.map(g=>g.name).join(', ') : ''}</div>
+          <!-- AGGIUNTA: piattaforme -->
+          ${providers.length > 0 ? `
+            <div class="series-providers-modal" style="margin-top:1.5rem;">
+              <h3 style="margin-bottom:0.5rem;">Dove guardare</h3>
+              <div class="providers-logos-row" style="display:flex;gap:1rem;flex-wrap:wrap;">
+                ${providers.map(p => `
+                  <div class="provider-logo-wrapper" style="position:relative;display:inline-block;">
+                    <img src="${p.logo}" class="provider-logo" alt="${p.name}" tabindex="0" style="width:45px;height:45px;object-fit:contain;cursor:pointer;">
+                    <div class="provider-tooltip" style="display:none;position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(20,20,20,0.97);color:#fff;padding:0.4em 0.8em;border-radius:0.5em;font-size:0.95em;white-space:nowrap;box-shadow:0 2px 8px #0008;z-index:10;pointer-events:none;"></div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+          <!-- FINE AGGIUNTA -->
+        </div>
+      </div>
+    `;
+    // AGGIUNTA: Tooltip/badge su hover/click provider
+    setTimeout(() => {
+      document.querySelectorAll('.provider-logo-wrapper').forEach(wrapper => {
+        const img = wrapper.querySelector('.provider-logo');
+        const tooltip = wrapper.querySelector('.provider-tooltip');
+        const providerName = img ? img.alt : 'la piattaforma';
+        function showTip() {
+          // Chiudi tutti gli altri tooltip attivi
+          document.querySelectorAll('.provider-tooltip.active').forEach(t => t.classList.remove('active'));
+          // --- MODIFICA: testo diverso mobile/desktop ---
+          const isMobile = window.matchMedia('(max-width: 600px)').matches;
+          tooltip.textContent = isMobile ? providerName : `Serie visibile su ${providerName}`;
+          tooltip.style.display = 'block';
+          tooltip.classList.add('active');
+          // --- AGGIUNTA: riposizionamento dinamico ---
+          setTimeout(() => {
+            const rect = tooltip.getBoundingClientRect();
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            // Reset
+            tooltip.style.left = '50%';
+            tooltip.style.right = '';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.maxWidth = '90vw';
+            // Se esce a sinistra
+            if (rect.left < 8) {
+              tooltip.style.left = '8px';
+              tooltip.style.transform = 'none';
+            }
+            // Se esce a destra
+            if (rect.right > vw - 8) {
+              tooltip.style.left = '';
+              tooltip.style.right = '8px';
+              tooltip.style.transform = 'none';
+            }
+            // Migliora padding/dimensione su mobile
+            if (isMobile) {
+              tooltip.style.fontSize = '1.05em';
+              tooltip.style.padding = '0.6em 1em';
+            } else {
+              tooltip.style.fontSize = '0.95em';
+              tooltip.style.padding = '0.4em 0.8em';
+            }
+          }, 0);
+          // --- FINE AGGIUNTA ---
+        }
+        function hideTip() {
+          tooltip.classList.remove('active');
+          setTimeout(() => { tooltip.style.display = 'none'; }, 200);
+        }
+        const isMobile = window.matchMedia('(max-width: 600px)').matches;
+        if (!isMobile) {
+          img.addEventListener('mouseenter', showTip);
+          img.addEventListener('mouseleave', hideTip);
+          img.addEventListener('focus', showTip);
+          img.addEventListener('blur', hideTip);
+          img.addEventListener('click', () => {
+            showTip();
+            setTimeout(hideTip, 2000);
+          });
+        } else {
+          // Mobile: tap per mostrare/nascondere tooltip
+          let tipVisible = false;
+          img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!tipVisible) {
+              // Chiudi altri tooltip
+              document.querySelectorAll('.provider-tooltip.active').forEach(t => {
+                t.classList.remove('active');
+                t.style.display = 'none';
+              });
+              tooltip.textContent = `Serie visibile su ${providerName}`;
+              tooltip.style.display = 'block';
+              tooltip.classList.add('active');
+              tipVisible = true;
+              // Chiudi se tocchi fuori
+              const closeOnOutside = (ev) => {
+                if (!wrapper.contains(ev.target)) {
+                  tooltip.classList.remove('active');
+                  tooltip.style.display = 'none';
+                  tipVisible = false;
+                  document.removeEventListener('touchstart', closeOnOutside);
+                }
+              };
+              setTimeout(() => {
+                document.addEventListener('touchstart', closeOnOutside);
+              }, 0);
+            } else {
+              tooltip.classList.remove('active');
+              tooltip.style.display = 'none';
+              tipVisible = false;
+            }
+          });
+        }
+      });
+    }, 0);
+    // FINE AGGIUNTA
+  } catch (e) {
+    modal.innerHTML = '<div style="color:#f55;padding:2rem;">Errore nel caricamento dettagli</div>';
+  }
+  overlay.onclick = closeModal;
+}
+function closeModal() {
+  document.getElementById('modal-overlay').style.display = 'none';
+  document.getElementById('series-modal').style.display = 'none';
+  document.body.style.overflow = '';
 } 
